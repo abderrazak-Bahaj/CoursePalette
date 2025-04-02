@@ -25,6 +25,9 @@ export interface Lesson {
   videoUrl?: string;
   isPreview?: boolean;
   completed?: boolean;
+  content?: string;
+  description?: string;
+  order?: number;
 }
 
 export interface Category {

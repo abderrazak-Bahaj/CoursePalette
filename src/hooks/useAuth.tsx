@@ -43,8 +43,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const getMe = async () => {
-      const user = await authService.getCurrentUser();
-      setUser(user);
+      const response = await authService.getCurrentUser();
+      if (!response && !response.user) return;
+      setUser(response.user as User);
       setIsLoading(false);
     };
     const savedToken = localStorage.getItem("token");
@@ -104,7 +105,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         password,
         password_confirmation: password,
         role: "STUDENT",
-      });      
+      });
       if (!response?.user) {
         throw new Error("Registration failed: No user returned");
       }
@@ -121,9 +122,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const errorMessages = Object.values(validationErrors)
           .flat()
           .filter((msg) => typeof msg === "string");
-        const errorMessage = errorMessages.join("\n")
-
-
+        const errorMessage = errorMessages.join("\n");
 
         toast({
           title: "Registration failed",

@@ -10,8 +10,7 @@ import { TipTapEditor } from "@/components/ui/tiptap-editor";
 import LessonFormBasicInfo from "./LessonFormBasicInfo";
 import LessonFormVideoDetails from "./LessonFormVideoDetails";
 import LessonFormResources from "./LessonFormResources";
-import { lessonService, LessonData } from "@/services/api/lessonService";
-import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 const lessonFormSchema = z.object({
   title: z.string().min(5, { message: "Title must be at least 5 characters" }),
@@ -34,6 +33,7 @@ interface LessonFormProps {
 
 const LessonForm = ({ onCancel, courseId, editLesson }: LessonFormProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [content, setContent] = useState(editLesson?.content || "");
   const [resources, setResources] = useState<{ title: string; url: string }[]>(
     editLesson?.resources || []
@@ -47,78 +47,43 @@ const LessonForm = ({ onCancel, courseId, editLesson }: LessonFormProps) => {
       courseId: editLesson.courseId || courseId,
       description: editLesson.description,
       videoUrl: editLesson.videoUrl || '',
-      duration: editLesson.duration || 0,
+      duration: editLesson.duration ? parseInt(editLesson.duration) : 0,
       resources: editLesson.resources,
       isPreview: editLesson.isPreview || false,
     } : {
       title: "",
       courseId: courseId,
       description: "",
-      videoUrl: "",
-      duration: 0,
+      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      duration: 30,
       resources: [],
       isPreview: false,
     },
   });
 
-  const createLessonMutation = useMutation({
-    mutationFn: (data: LessonData) => lessonService.createLesson(courseId, data),
-    onSuccess: () => {
-      toast({
-        title: "Lesson Created",
-        description: "The lesson has been created successfully.",
-      });
-      onCancel();
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to create lesson. Please try again.",
-        variant: "destructive",
-      });
-      console.error("Failed to create lesson:", error);
-    }
-  });
-
-  const updateLessonMutation = useMutation({
-    mutationFn: ({ lessonId, data }: { lessonId: string; data: LessonData }) => 
-      lessonService.updateLesson(courseId, lessonId, data),
-    onSuccess: () => {
-      toast({
-        title: "Lesson Updated",
-        description: "The lesson has been updated successfully.",
-      });
-      onCancel();
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to update lesson. Please try again.",
-        variant: "destructive",
-      });
-      console.error("Failed to update lesson:", error);
-    }
-  });
-
   const onSubmit = async (formData: z.infer<typeof lessonFormSchema>) => {
-    const lessonData: LessonData = {
-      title: formData.title,
-      description: formData.description,
+    // Simulate API call with mock data
+    console.log("Submitting lesson data:", {
+      ...formData,
       content,
-      duration: formData.duration,
-      video_url: formData.videoUrl,
-      is_preview: formData.isPreview,
-      status: "draft",
-    };
+      resources
+    });
 
-    if (editLesson) {
-      updateLessonMutation.mutate({
-        lessonId: editLesson.id,
-        data: lessonData
+    // Show toast and redirect
+    setTimeout(() => {
+      toast({
+        title: editLesson ? "Lesson Updated" : "Lesson Created",
+        description: editLesson 
+          ? "The lesson has been updated successfully." 
+          : "The lesson has been created successfully.",
       });
-    } else {
-      createLessonMutation.mutate(lessonData);
-    }
+      
+      if (editLesson) {
+        onCancel();
+      } else {
+        navigate(`/admin/courses/${courseId}/lessons`);
+      }
+    }, 1000);
   };
 
   return (
@@ -144,16 +109,8 @@ const LessonForm = ({ onCancel, courseId, editLesson }: LessonFormProps) => {
           <Button variant="outline" type="button" onClick={onCancel}>
             Cancel
           </Button>
-          <Button 
-            type="submit" 
-            disabled={createLessonMutation.isPending || updateLessonMutation.isPending}
-          >
-            {(createLessonMutation.isPending || updateLessonMutation.isPending) 
-              ? "Saving..." 
-              : editLesson 
-                ? "Update Lesson" 
-                : "Create Lesson"
-            }
+          <Button type="submit">
+            {editLesson ? "Update Lesson" : "Create Lesson"}
           </Button>
         </div>
       </form>

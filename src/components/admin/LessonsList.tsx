@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { 
   Table, 
   TableBody, 
@@ -32,6 +33,7 @@ interface LessonsListProps {
 const LessonsList = ({ courseId }: LessonsListProps) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>(undefined);
   const [lessonToDelete, setLessonToDelete] = useState<Lesson | null>(null);
@@ -63,13 +65,16 @@ const LessonsList = ({ courseId }: LessonsListProps) => {
   });
 
   const handleAddNew = () => {
-    setSelectedLesson(undefined);
-    setIsModalOpen(true);
+    navigate(`/admin/courses/${courseId}/lessons/create`);
   };
 
   const handleEdit = (lesson: Lesson) => {
     setSelectedLesson(lesson);
     setIsModalOpen(true);
+  };
+
+  const handleView = (lesson: Lesson) => {
+    navigate(`/admin/courses/${courseId}/lessons/${lesson.id}`);
   };
 
   const handleDelete = (lessonId: string) => {
@@ -156,7 +161,7 @@ const LessonsList = ({ courseId }: LessonsListProps) => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem className="flex items-center">
+                          <DropdownMenuItem onClick={() => handleView(lesson)} className="flex items-center">
                             <Eye className="mr-2 h-4 w-4" />
                             <span>View</span>
                           </DropdownMenuItem>

@@ -34,7 +34,7 @@ type LessonModalProps = {
 const LessonModal = ({ isOpen, onClose, courseId, lesson }: LessonModalProps) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [content, setContent] = useState(lesson?.videoUrl || "");
+  const [content, setContent] = useState(lesson?.content || "");
   const isEditing = !!lesson;
 
   const form = useForm<z.infer<typeof lessonSchema>>({
@@ -92,8 +92,14 @@ const LessonModal = ({ isOpen, onClose, courseId, lesson }: LessonModalProps) =>
 
   const handleSubmit = (values: z.infer<typeof lessonSchema>) => {
     const lessonData: LessonData = {
-      ...values,
-      content
+      title: values.title, // Ensure title is included
+      description: values.description,
+      content,
+      duration: values.duration,
+      video_url: values.video_url,
+      is_preview: values.is_preview,
+      order: values.order,
+      status: "draft",
     };
 
     if (isEditing && lesson) {

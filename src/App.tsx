@@ -32,6 +32,8 @@ import BlogDetailPage from "./pages/BlogDetailPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/Login";
+import CreateLessonPage from "./pages/CreateLessonPage";
+import LessonDetailPage from "./pages/LessonDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -48,9 +50,16 @@ const App = () => (
             <Route path="/courses/:id" element={<CourseDetailPage />} />
             <Route path="/courses/:courseId/learn" element={<LessonPage />} />
             <Route path="/courses/:courseId/learn/:lessonId" element={<LessonPage />} />
+
+            <Route path="/courses/:courseId/learn" element={<LessonPage />} />
+            <Route path="/courses/:courseId/learn/:lessonId" element={<LessonPage />} />
+
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/admin/courses" element={<AdminCoursesPage />} />
             <Route path="/admin/lessons" element={<AdminLessonsPage />} />
+            <Route path="/admin/courses/:courseId/lessons/create" element={<CreateLessonPage />} />
+            <Route path="/admin/courses/:courseId/lessons/:lessonId" element={<LessonDetailPage />} />
+
             <Route path="/admin/students" element={<StudentsPage />} />
             <Route path="/admin/reports" element={<ReportsPage />} />
             <Route path="/admin/instructors" element={<InstructorsPage />} />

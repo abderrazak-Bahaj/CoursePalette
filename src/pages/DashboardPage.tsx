@@ -18,7 +18,7 @@ const DashboardPage = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
 
-  if (user?.isAdmin) {
+  if (user?.role === "ADMIN") {
     return (
       <AdminLayout title="Admin Dashboard">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -105,7 +105,6 @@ const DashboardPage = () => {
     );
   }
 
-  // For regular users, show the normal dashboard
   return (
     <MainLayout>
       <div className="bg-gray-50 py-8">
