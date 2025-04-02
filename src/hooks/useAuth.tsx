@@ -1,14 +1,18 @@
-
-import { createContext, useContext, ReactNode, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useEffect,
+} from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { authService } from "@/services/api/authService";
-
 
 interface User {
   id: number;
   name: string;
   email: string;
-  role: 'STUDENT' | 'TEACHER' | 'ADMIN';
+  role: "STUDENT" | "TEACHER" | "ADMIN";
   avatar: string | null;
   bio?: string;
   phone?: string;
@@ -20,20 +24,19 @@ interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User | null>;
+  register: (
+    name: string,
+    email: string,
+    password: string
+  ) => Promise<User | null>;
   logout: () => void;
 }
-
-
-
-
-
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);  
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
@@ -42,109 +45,107 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const getMe = async () => {
       const user = await authService.getCurrentUser();
       setUser(user);
-
-    }
+      setIsLoading(false);
+    };
     const savedToken = localStorage.getItem("token");
     if (savedToken) {
       setToken(savedToken);
       getMe();
+    } else {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, []);
 
   const login = async (email: string, password: string): Promise<User> => {
     setIsLoading(true);
-    
+
     try {
       const response = await authService.login({ email, password });
       if (!response?.user) {
-        throw new Error('Login failed: No user returned');
+        throw new Error("Login failed: No user returned");
       }
-      
+
       const user = response.user as User;
       setUser(user);
       setToken(response.token);
       localStorage.setItem("token", response.token);
-      
+
       toast({
         title: "Login successful",
         description: `Welcome back, ${user.name}!`,
       });
-      
+
       return user;
     } catch (error) {
       console.error("Error logging in:", error);
-      
+
       toast({
         title: "Error login",
         description: `Invalid email or password`,
         variant: "destructive",
       });
-      
+
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const register = async (name: string, email: string, password: string) => {
+  const register = async (
+    name: string,
+    email: string,
+    password: string
+  ): Promise<User> => {
     setIsLoading(true);
-
     try {
       const response = await authService.register({
         name,
         email,
         password,
         password_confirmation: password,
-        role: "STUDENT"
-      });
-
-      const newUser = {
-        id: response.user.id,
-        name: response.user.name,
-        email: response.user.email,
-        profileUrl: response.user.profile_url || `https://ui-avatars.com/api/?name=${name.split(' ').join('+')}&background=0D8ABC&color=fff`,
-        isAdmin: response.user.role === "ADMIN",
-        token: response.token,
-      };
-
-      setUser(newUser);
+        role: "STUDENT",
+      });      
+      if (!response?.user) {
+        throw new Error("Registration failed: No user returned");
+      }
 
       toast({
         title: "Registration successful",
         description: `Welcome to CoursePalette, ${name}!`,
       });
 
-    } catch (error) {
-      // Fall back to mock data if API fails
-      console.error("API registration failed, using mock data:", error);
+      return response.user as User;
+    } catch (error: any) {
+      if (error.response?.status === 422) {
+        const validationErrors = error.response?.data?.errors || {};
+        const errorMessages = Object.values(validationErrors)
+          .flat()
+          .filter((msg) => typeof msg === "string");
+        const errorMessage = errorMessages.join("\n")
 
-      const existingUser = MOCK_USERS.find((u) => u.email === email);
 
-      if (existingUser) {
-        setIsLoading(false);
-        throw new Error("Email is already in use");
+
+        toast({
+          title: "Registration failed",
+          description: errorMessage || "Validation failed",
+          variant: "destructive",
+        });
+
+        throw new Error(errorMessage || "Validation failed");
+      } else {
+        console.error("Error registering:", error);
+
+        toast({
+          title: "Registration failed",
+          description: "Please check your credentials and try again",
+          variant: "destructive",
+        });
+
+        throw error;
       }
-
-      // In a real app, we would create a new user in the database
-      const newUser = {
-        id: `${MOCK_USERS.length + 1}`,
-        name,
-        email,
-        profileUrl: `https://ui-avatars.com/api/?name=${name.split(' ').join('+')}&background=0D8ABC&color=fff`,
-        isAdmin: false,
-      };
-
-      setUser(newUser);
-      localStorage.setItem("user", JSON.stringify(newUser));
-
-      toast({
-        title: "Registration successful (mock)",
-        description: `Welcome to CoursePalette, ${name}!`,
-      });
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const logout = () => {
@@ -166,6 +167,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const value = {
     user,
+    token,
     isAuthenticated: !!user,
     isLoading,
     login,
@@ -173,7 +175,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     logout,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {isLoading && <div>Loading...</div>}
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {

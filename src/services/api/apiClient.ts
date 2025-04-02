@@ -1,7 +1,7 @@
 
 import { toast } from "@/hooks/use-toast";
 
-const API_BASE_URL = "http://localhost:8000/api";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
 
 interface ApiOptions {
   token?: string;
@@ -72,9 +72,26 @@ export const apiClient = async (
   try {
     const response = await fetch(url, requestOptions);
     
-    // Handle non-successful response
     if (!response.ok) {
+      
+      if(response.status === 422) {
+        
+        const errors = await response.json();
+        const validationErrors = errors?.errors || {};
+        const errorMessages = Object.values(validationErrors)
+          .flat()
+          .filter((msg) => typeof msg === "string");
+        const errorMessage = errorMessages.join("\n");
+        toast({
+          title: "API Error",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        throw new Error(errorMessage);
+      }
+      
       const errorData = await response.json().catch(() => ({}));
+
       const errorMessage = errorData.message || `Error: ${response.status} ${response.statusText}`;
       
       toast({

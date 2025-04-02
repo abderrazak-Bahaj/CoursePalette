@@ -18,7 +18,7 @@ import CategoriesPage from "./pages/CategoriesPage";
 import CategoryDetailPage from "./pages/CategoryDetailPage";
 import SearchResultsPage from "./pages/SearchResultsPage";
 import ProfilePage from "./pages/ProfilePage";
-import { LoginPage, RegisterPage, ForgotPasswordPage, AuthPages } from "./pages/AuthPages";
+
 import { AuthProvider } from "./hooks/useAuth";
 import HelpPage from "./pages/HelpPage";
 import ContactPage from "./pages/ContactPage";
@@ -29,6 +29,9 @@ import ReportsPage from "./pages/ReportsPage";
 import InstructorsPage from "./pages/InstructorsPage";
 import BlogPage from "./pages/BlogPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/Login";
 
 const queryClient = new QueryClient();
 
@@ -60,7 +63,6 @@ const App = () => (
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/auth" element={<AuthPages />} />
             <Route path="/help" element={<HelpPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
