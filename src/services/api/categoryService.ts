@@ -11,22 +11,20 @@ interface CategoryData {
 }
 
 export const categoryService = {
-  getCategories: () => {
-    return get("/categories");
+  getAllCategories: (query?: string) => {
+    return get(`/categories${query ? '?'+query : ''}`);
   },
-  
   getCategory: (id: string) => {
     return get(`/categories/${id}`);
   },
-  
+
   createCategory: (data: CategoryData) => {
     return post("/categories", data);
   },
-  
+
   updateCategory: (id: string, data: CategoryData) => {
     return put(`/categories/${id}`, data);
   },
-  
   deleteCategory: (id: string) => {
     return del(`/categories/${id}`);
   }

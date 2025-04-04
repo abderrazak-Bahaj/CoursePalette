@@ -3,12 +3,25 @@ import { useParams } from "react-router-dom";
 import MainLayout from "@/components/layout/MainLayout";
 import CourseList from "@/components/course/CourseList";
 import { mockCategories, mockCourses } from "@/data/mockData";
+import { useQuery } from "@tanstack/react-query";
+import { categoryService } from "@/services/api";
 
 const CategoryDetailPage = () => {
   const { id } = useParams<{ id: string }>();
+
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => categoryService.getCategory(id),
+  });
+  
+  console.log(data);
   
   // Find the category by ID
-  const category = mockCategories.find((cat) => cat.id === id);
+  const category = mockCategories.find((cat) => cat.id.toString() === id);
+
+  console.log("sssss",category,id,mockCategories);
+
   
   // Filter courses by category
   const categoryCourses = mockCourses.filter(

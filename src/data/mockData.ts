@@ -327,10 +327,10 @@ export const userEnrolledCourses = [
 
 // Mock categories with counts
 export const mockCategories = [
-  { id: "web-development", name: "Web Development", count: 425 },
-  { id: "data-science", name: "Data Science", count: 380 },
-  { id: "business", name: "Business", count: 510 },
-  { id: "design", name: "Design", count: 320 },
+  { id: 1, name: "Web Development", count: 425 },
+  { id: 2, name: "Data Science", count: 380 },
+  { id: 3, name: "Business", count: 510 },
+  { id: 4, name: "Design", count: 320 },
   { id: "marketing", name: "Marketing", count: 290 },
   { id: "photography", name: "Photography", count: 210 },
   { id: "health", name: "Health & Fitness", count: 180 },

@@ -17,7 +17,7 @@ const Index = () => {
   
   // Redirect admin users to dashboard
   useEffect(() => {
-    if (user?.isAdmin) {
+    if (user?.role === "ADMIN") {
       navigate("/dashboard");
     }
   }, [user, navigate]);
