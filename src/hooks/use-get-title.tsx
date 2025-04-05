@@ -4,9 +4,7 @@ export const useGetTitle = () => {
     const location = useLocation();
     const path = location.pathname;
 
-    const titles =  {
-        
-    }
+    const titles =  {}
 
     return {
         title: titles?.[path]|| 'Home',
