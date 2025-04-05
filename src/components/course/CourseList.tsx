@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CourseCard from "./CourseCard";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,57 +12,69 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Course } from "@/types/course";
+import { categoryService, courseService } from "@/services/api";
+import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
+import { useDebounce } from "@/hooks/useDebounce";
+import WrapperLoading from "../ui/wrapper-loading";
 
 interface CourseListProps {
-  courses: Course[];
+  defaultFilter?: Record<string, string>;
   title?: string;
   description?: string;
   showFilters?: boolean;
 }
 
 const CourseList = ({
-  courses,
+  defaultFilter,
   title = "All Courses",
   description,
   showFilters = true,
 }: CourseListProps) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
-  const [levelFilter, setLevelFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("popularity");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const [categoryFilter, setCategoryFilter] = useState(searchParams.get("category_id") || "all");
+  const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "all");
+  const [levelFilter, setLevelFilter] = useState(searchParams.get("level") || "all");
+  const [sortBy, setSortBy] = useState(searchParams.get("sort_by") || "created_at");
+  const [sortOrder, setSortOrder] = useState(searchParams.get("sort_order") || "desc");
 
-  // Get unique categories from courses
-  const categories = [
-    "all",
-    ...Array.from(new Set(courses.map((course) => course.category))),
-  ];
+  // Build query parameters
+  const queryParams = {
+    ...(debouncedSearchTerm && { search: debouncedSearchTerm }),
+    ...(categoryFilter !== "all" && { category_id: categoryFilter }),
+    ...(statusFilter !== "all" && { status: statusFilter }),
+    ...(levelFilter !== "all" && { level: levelFilter }),
+    sort_by: sortBy,
+    sort_order: sortOrder,
+    ...defaultFilter,
+  };
 
-  // Filter courses based on search term and filters
-  const filteredCourses = courses.filter((course) => {
-    const matchesSearch = course.title
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      categoryFilter === "all" || course.category === categoryFilter;
-    const matchesLevel = levelFilter === "all" || course.level === levelFilter;
-    return matchesSearch && matchesCategory && matchesLevel;
+  const { data: categories = [], isLoading: categoriesIsLoading } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => await categoryService.getAllCategories(),
   });
 
-  // Sort courses based on selected sort option
-  const sortedCourses = [...filteredCourses].sort((a, b) => {
-    switch (sortBy) {
-      case "popularity":
-        return b.reviewCount - a.reviewCount;
-      case "rating":
-        return b.rating - a.rating;
-      case "priceAsc":
-        return a.price - b.price;
-      case "priceDesc":
-        return b.price - a.price;
-      default:
-        return 0;
-    }
+  const { data: courses = [], isLoading: courseIsLoading } = useQuery({
+    queryKey: ["courses", queryParams],
+    queryFn: async () => await courseService.getAllCourses(queryParams),
   });
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (debouncedSearchTerm) params.set("search", debouncedSearchTerm);
+    if (categoryFilter !== "all") params.set("category_id", categoryFilter);
+    if (statusFilter !== "all") params.set("status", statusFilter);
+    if (levelFilter !== "all") params.set("level", levelFilter);
+    params.set("sort_by", sortBy);
+    params.set("sort_order", sortOrder);
+    setSearchParams(params);
+  }, [debouncedSearchTerm, categoryFilter, statusFilter, levelFilter, sortBy, sortOrder, setSearchParams]);
+
+
+  console.log("categories",categories);
+  
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -74,7 +85,7 @@ const CourseList = ({
 
       {showFilters && (
         <div className="mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
               <Input
@@ -93,9 +104,10 @@ const CourseList = ({
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category === "all" ? "All Categories" : category}
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories?.categories?.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -109,9 +121,9 @@ const CourseList = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Levels</SelectItem>
-                <SelectItem value="Beginner">Beginner</SelectItem>
-                <SelectItem value="Intermediate">Intermediate</SelectItem>
-                <SelectItem value="Advanced">Advanced</SelectItem>
+                <SelectItem value="BEGINNER">Beginner</SelectItem>
+                <SelectItem value="INTERMEDIATE">Intermediate</SelectItem>
+                <SelectItem value="ADVANCED">Advanced</SelectItem>
               </SelectContent>
             </Select>
             <Select
@@ -122,10 +134,22 @@ const CourseList = ({
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="popularity">Most Popular</SelectItem>
-                <SelectItem value="rating">Highest Rated</SelectItem>
-                <SelectItem value="priceAsc">Price: Low to High</SelectItem>
-                <SelectItem value="priceDesc">Price: High to Low</SelectItem>
+                <SelectItem value="title">Title</SelectItem>
+                <SelectItem value="price">Price</SelectItem>
+                <SelectItem value="created_at">Date Created</SelectItem>
+                <SelectItem value="rating">Rating</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select
+              value={sortOrder}
+              onValueChange={(value) => setSortOrder(value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Order" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="asc">Ascending</SelectItem>
+                <SelectItem value="desc">Descending</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -133,7 +157,7 @@ const CourseList = ({
           <Tabs defaultValue="grid" className="w-full">
             <div className="flex justify-between items-center mb-4">
               <span className="text-sm text-gray-500">
-                {sortedCourses.length} courses
+                {courses?.courses?.length} courses
               </span>
               <TabsList>
                 <TabsTrigger value="grid">Grid</TabsTrigger>
@@ -142,76 +166,22 @@ const CourseList = ({
             </div>
 
             <TabsContent value="grid" className="mt-0">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {sortedCourses.map((course) => (
-                  <CourseCard key={course.id} {...course} />
-                ))}
-              </div>
+              <WrapperLoading isLoading={categoriesIsLoading || courseIsLoading} >
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {courses?.courses?.map((course) => (
+                    <CourseCard key={course.id} {...course} />
+                  ))}
+                </div>
+              </WrapperLoading>
             </TabsContent>
-
             <TabsContent value="list" className="mt-0">
-              <div className="space-y-4">
-                {sortedCourses.map((course) => (
-                  <div
-                    key={course.id}
-                    className="flex flex-col md:flex-row border rounded-lg overflow-hidden course-card-shadow"
-                  >
-                    <div className="w-full md:w-64 h-48 md:h-auto">
-                      <img
-                        src={course.image}
-                        alt={course.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 p-4">
-                      <h3 className="font-semibold text-lg mb-1">
-                        {course.title}
-                      </h3>
-                      <p className="text-sm text-gray-500 mb-2">
-                        {course.instructor}
-                      </p>
-                      <div className="flex items-center space-x-1 mb-2">
-                        <span className="font-medium">
-                          {course.rating.toFixed(1)}
-                        </span>
-                        <div className="flex items-center">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star
-                              key={i}
-                              size={16}
-                              className={`${
-                                i < Math.floor(course.rating)
-                                  ? "text-yellow-400 fill-yellow-400"
-                                  : "text-gray-300"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <span className="text-sm text-gray-500">
-                          ({course.reviewCount})
-                        </span>
-                      </div>
-                      <div className="flex space-x-2 mb-2">
-                        <Badge variant="outline" className="bg-gray-50">
-                          {course.category}
-                        </Badge>
-                        <Badge className="bg-course-blue">{course.level}</Badge>
-                      </div>
-                      <div className="mt-2 flex justify-between items-center">
-                        <span className="font-bold text-lg">
-                          ${course.price.toFixed(2)}
-                        </span>
-                        <a
-                          href={`/courses/${course.id}`}
-                          className="text-course-blue hover:underline font-medium"
-                        >
-                          View Course
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <WrapperLoading isLoading={categoriesIsLoading || courseIsLoading}>
+                <div className="space-y-4">
+                  {courses?.courses?.map((course) => (
+                    <CourseCard key={course.id} {...course} variant="list" />
+                  ))}
+                </div>
+              </WrapperLoading>
             </TabsContent>
           </Tabs>
         </div>
@@ -219,7 +189,7 @@ const CourseList = ({
 
       {!showFilters && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {courses.map((course) => (
+          {courses?.courses?.map((course) => (
             <CourseCard key={course.id} {...course} />
           ))}
         </div>

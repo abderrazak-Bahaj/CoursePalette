@@ -8,7 +8,6 @@ import FeaturedCourses from "@/components/home/FeaturedCourses";
 import TestimonialSection from "@/components/home/TestimonialSection";
 import StatisticsSection from "@/components/home/StatisticsSection";
 import CtaSection from "@/components/home/CtaSection";
-import { mockCourses } from "@/data/mockData";
 import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
@@ -22,17 +21,14 @@ const Index = () => {
     }
   }, [user, navigate]);
 
-  // Get top-rated courses for the featured section
-  const featuredCourses = [...mockCourses]
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 8);
 
+
+        
   return (
     <MainLayout>
       <HeroSection />
       <CategorySection />
       <FeaturedCourses 
-        courses={featuredCourses} 
         title="Top-Rated Courses"
         description="Explore our highest-rated courses across different categories"
       />

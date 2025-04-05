@@ -11,8 +11,8 @@ interface CategoryData {
 }
 
 export const categoryService = {
-  getAllCategories: (query?: string) => {
-    return get(`/categories${query ? '?'+query : ''}`);
+  getAllCategories: (params?: Record<string, string>)=> {
+    return get(`/categories`,{ params });
   },
   getCategory: (id: string) => {
     return get(`/categories/${id}`);

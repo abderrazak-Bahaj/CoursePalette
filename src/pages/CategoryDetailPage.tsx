@@ -20,14 +20,6 @@ const CategoryDetailPage = () => {
   // Find the category by ID
   const category = mockCategories.find((cat) => cat.id.toString() === id);
 
-  console.log("sssss",category,id,mockCategories);
-
-  
-  // Filter courses by category
-  const categoryCourses = mockCourses.filter(
-    (course) => course.category.toLowerCase() === (category?.name.toLowerCase() || "")
-  );
-
   if (!category) {
     return (
       <MainLayout>
@@ -51,7 +43,6 @@ const CategoryDetailPage = () => {
       </div>
       
       <CourseList
-        courses={categoryCourses}
         title=""
         description={`Learn ${category.name} with these comprehensive courses.`}
         showFilters={true}

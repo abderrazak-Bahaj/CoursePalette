@@ -8,31 +8,28 @@ interface CourseCardProps {
   id: string;
   title: string;
   instructor: string;
-  image: string;
+  image_url: string;
   rating: number;
   reviewCount: number;
   price: number;
-  category: string;
+  category: any;
   level: string;
 }
 
 const CourseCard = ({
   id,
   title,
-  instructor,
-  image,
-  rating,
-  reviewCount,
+  image_url,
   price,
   category,
   level,
-}: CourseCardProps) => {
+}: CourseCardProps) => {  
   return (
     <Link to={`/courses/${id}`}>
       <Card className="overflow-hidden h-full course-card-shadow course-card-hover">
         <div className="relative h-40 overflow-hidden">
           <img
-            src={image}
+            src={image_url}
             alt={title}
             className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
           />
@@ -40,31 +37,16 @@ const CourseCard = ({
         </div>
         <CardContent className="pt-4">
           <h3 className="font-semibold text-lg line-clamp-2 mb-1">{title}</h3>
-          <p className="text-sm text-gray-500 mb-2">{instructor}</p>
-          <div className="flex items-center space-x-1 mb-2">
-            <span className="font-medium">{rating.toFixed(1)}</span>
-            <div className="flex items-center">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star
-                  key={i}
-                  size={16}
-                  className={`${
-                    i < Math.floor(rating)
-                      ? "text-yellow-400 fill-yellow-400"
-                      : "text-gray-300"
-                  }`}
-                />
-              ))}
-            </div>
-            <span className="text-sm text-gray-500">({reviewCount})</span>
+{/*           <p className="text-sm text-gray-500 mb-2">{instructor}</p>
+ */}          <div className="flex items-center space-x-1 mb-2">
           </div>
           <Badge variant="outline" className="bg-gray-50">
-            {category}
+            {category?.name}
           </Badge>
         </CardContent>
         <CardFooter className="border-t pt-3 pb-4">
           <div className="w-full flex justify-between items-center">
-            <span className="font-bold text-lg">${price.toFixed(2)}</span>
+            <span className="font-bold text-lg">${Number(price).toFixed(2)}</span>
           </div>
         </CardFooter>
       </Card>

@@ -81,7 +81,7 @@ const CategoriesPage = () => {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {filteredCategories?.map((category) => (
-                  <Link key={category.id} to={`/categories/${category.id}`}>
+                  <Link key={category.id} to={`/courses?category_id=${category.id}&sort_by=created_at&sort_order=desc`}>
                     <Card className="h-full course-card-shadow course-card-hover">
                       <CardContent className="p-6">
                         <div className="flex flex-col h-full">

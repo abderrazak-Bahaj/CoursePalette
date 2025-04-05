@@ -16,7 +16,7 @@ const CategorySection = () => {
 
   const { data, isLoading } = useQuery({
     queryKey: ["categories"],
-    queryFn: () => categoryService.getAllCategories(`per_page=8`),
+    queryFn: () => categoryService.getAllCategories({per_page:'8'}),
   });
 
   const mappedCategories = useMemo(() => {

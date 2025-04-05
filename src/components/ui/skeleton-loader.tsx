@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface SkeletonLoaderProps extends React.HTMLAttributes<HTMLDivElement> {
   isLoading: boolean;
   children: React.ReactNode;
-  variant?: "card" | "list" | "grid" | "text" | "custom";
+  variant?: "card" | "list" | "grid" | "text" | "custom" | "card-horizontal";
   count?: number;
 }
 
@@ -30,6 +30,22 @@ const SkeletonLoader = ({
               <Skeleton className="h-6 w-3/4 mb-2" />
               <Skeleton className="h-4 w-2/3 mb-1" />
               <Skeleton className="h-4 w-1/2" />
+            </div>
+          ));
+      case "card-horizontal":
+        return Array(count)
+          .fill(0)
+          .map((_, index) => (
+            <div key={index} className="flex gap-4 w-full rounded-lg overflow-hidden border p-4">
+              <Skeleton className="h-24 w-24 rounded-md" />
+              <div className="flex-1 flex flex-col justify-between">
+                <div>
+                  <Skeleton className="h-6 w-3/4 mb-2" />
+                  <Skeleton className="h-4 w-1/2 mb-2" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+                <Skeleton className="h-8 w-24 mt-2" />
+              </div>
             </div>
           ));
       case "grid":
