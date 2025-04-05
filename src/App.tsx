@@ -15,7 +15,6 @@ import AdminLessonsPage from "./pages/AdminLessonsPage";
 import CertificatesPage from "./pages/CertificatesPage";
 import CertificateDetailPage from "./pages/CertificateDetailPage";
 import CategoriesPage from "./pages/CategoriesPage";
-import CategoryDetailPage from "./pages/CategoryDetailPage";
 import SearchResultsPage from "./pages/SearchResultsPage";
 import ProfilePage from "./pages/ProfilePage";
 
@@ -66,7 +65,6 @@ const App = () => (
             <Route path="/certificates" element={<CertificatesPage />} />
             <Route path="/certificates/:id" element={<CertificateDetailPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
-            <Route path="/categories/:id" element={<CategoryDetailPage />} />
             <Route path="/search" element={<SearchResultsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/login" element={<LoginPage />} />

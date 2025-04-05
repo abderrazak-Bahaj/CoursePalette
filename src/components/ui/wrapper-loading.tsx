@@ -6,7 +6,7 @@ interface WrapperLoadingProps {
     children: React.ReactNode;
     isLoading: boolean;
     useSkeletonLoader?: boolean;
-    skeletonVariant?: "card" | "list" | "grid" | "text" | "custom";
+    skeletonVariant?: "card" | "list" | "grid" | "text" | "custom" | "card-horizontal";
     skeletonCount?: number;
 }
 

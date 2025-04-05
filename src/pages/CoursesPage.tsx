@@ -4,6 +4,7 @@ import CourseList from "@/components/course/CourseList";
 import { mockCourses } from "@/data/mockData";
 
 const CoursesPage = () => {
+
   return (
     <MainLayout>
       <div className="bg-gray-50 py-8">
@@ -15,7 +16,6 @@ const CoursesPage = () => {
         </div>
       </div>
       <CourseList
-        courses={mockCourses}
         title=""
         showFilters={true}
       />

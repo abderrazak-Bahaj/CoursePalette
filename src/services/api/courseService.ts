@@ -14,7 +14,7 @@ export interface CourseData {
 }
 
 export const courseService = {
-  getCourses: (params?: Record<string, string>) => {
+  getAllCourses: (params?: Record<string, string>) => {
     return get("/courses", { params });
   },
   

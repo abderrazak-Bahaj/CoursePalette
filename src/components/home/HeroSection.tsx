@@ -41,7 +41,7 @@ const HeroSection = () => {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-white text-white hover:bg-white/10 shadow-lg shadow-blue-900/10"
+                className="border-white/10  hover:border-white bg-white/10  text-white hover:text-white hover:bg-white/10 shadow-lg shadow-blue-900/10"
               >
                 <Link to="/register">Join for Free</Link>
               </Button>
