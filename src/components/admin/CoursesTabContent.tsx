@@ -1,8 +1,7 @@
-
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
-import CourseForm from "./CourseForm";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
+import CourseForm from './CourseForm';
 
 interface CoursesTabContentProps {
   className?: string;
@@ -20,7 +19,7 @@ const CoursesTabContent = ({ className }: CoursesTabContentProps) => {
           Add Course
         </Button>
       </div>
-      
+
       {isAddingCourse ? (
         <CourseForm onCancel={() => setIsAddingCourse(false)} />
       ) : (

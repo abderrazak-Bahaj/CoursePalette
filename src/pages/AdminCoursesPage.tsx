@@ -1,23 +1,22 @@
-
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import AdminLayout from "@/components/layout/AdminLayout";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import { PlusCircle, Search } from "lucide-react";
-import AdminCourseList from "@/components/admin/AdminCourseList";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import AdminLayout from '@/components/layout/AdminLayout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { PlusCircle, Search } from 'lucide-react';
+import AdminCourseList from '@/components/admin/AdminCourseList';
 
 const AdminCoursesPage = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   return (
     <AdminLayout title="Course Management">

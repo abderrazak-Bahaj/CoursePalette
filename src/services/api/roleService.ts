@@ -1,23 +1,25 @@
-
-import { User } from "@/types/user";
+import { User } from '@/types/user';
 
 export enum UserRole {
-  ADMIN = "admin",
-  TEACHER = "teacher",
-  STUDENT = "student"
+  ADMIN = 'admin',
+  TEACHER = 'teacher',
+  STUDENT = 'student',
 }
 
-export const checkUserRole = (user: User | null, requiredRoles: UserRole[]): boolean => {
+export const checkUserRole = (
+  user: User | null,
+  requiredRoles: UserRole[]
+): boolean => {
   if (!user) return false;
-  
+
   if (requiredRoles.includes(UserRole.ADMIN)) {
     return true;
   }
-  
+
   if (user.role) {
     return requiredRoles.includes(user.role as UserRole);
   }
-  
+
   return false;
 };
 export const isAdmin = (user: User | null): boolean => {
@@ -42,4 +44,3 @@ export const canViewReports = (user: User | null): boolean => {
 export const canManageUsers = (user: User | null): boolean => {
   return isAdmin(user);
 };
-

@@ -1,7 +1,6 @@
-
-import { Link } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Link } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 interface CertificateCardProps {
   id: string;
@@ -11,7 +10,13 @@ interface CertificateCardProps {
   issueDate: string;
 }
 
-const CertificateCard = ({ id, title, courseName, image, issueDate }: CertificateCardProps) => {
+const CertificateCard = ({
+  id,
+  title,
+  courseName,
+  image,
+  issueDate,
+}: CertificateCardProps) => {
   return (
     <Card key={id} className="overflow-hidden course-card-shadow">
       <div className="p-4 border-b bg-gray-50">

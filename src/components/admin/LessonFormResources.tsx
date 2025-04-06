@@ -1,9 +1,8 @@
-
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { X } from "lucide-react";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { X } from 'lucide-react';
 
 interface Resource {
   title: string;
@@ -15,13 +14,19 @@ interface LessonFormResourcesProps {
   setResources: (resources: Resource[]) => void;
 }
 
-const LessonFormResources = ({ resources, setResources }: LessonFormResourcesProps) => {
-  const [newResource, setNewResource] = useState<Resource>({ title: "", url: "" });
+const LessonFormResources = ({
+  resources,
+  setResources,
+}: LessonFormResourcesProps) => {
+  const [newResource, setNewResource] = useState<Resource>({
+    title: '',
+    url: '',
+  });
 
   const addResource = () => {
     if (newResource.title && newResource.url) {
       setResources([...resources, { ...newResource }]);
-      setNewResource({ title: "", url: "" });
+      setNewResource({ title: '', url: '' });
     }
   };
 
@@ -37,14 +42,14 @@ const LessonFormResources = ({ resources, setResources }: LessonFormResourcesPro
           <Input
             placeholder="Resource Title"
             value={newResource.title}
-            onChange={(e) => 
+            onChange={(e) =>
               setNewResource({ ...newResource, title: e.target.value })
             }
           />
           <Input
             placeholder="Resource URL"
             value={newResource.url}
-            onChange={(e) => 
+            onChange={(e) =>
               setNewResource({ ...newResource, url: e.target.value })
             }
           />
@@ -58,7 +63,7 @@ const LessonFormResources = ({ resources, setResources }: LessonFormResourcesPro
           Add Resource
         </Button>
       </div>
-      
+
       {resources.length > 0 && (
         <div className="space-y-2">
           <h4 className="text-sm font-medium">Added Resources:</h4>
@@ -68,7 +73,9 @@ const LessonFormResources = ({ resources, setResources }: LessonFormResourcesPro
                 <CardContent className="p-3 flex justify-between items-center">
                   <div>
                     <p className="font-medium">{resource.title}</p>
-                    <p className="text-sm text-gray-500 truncate">{resource.url}</p>
+                    <p className="text-sm text-gray-500 truncate">
+                      {resource.url}
+                    </p>
                   </div>
                   <Button
                     type="button"

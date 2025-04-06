@@ -1,10 +1,9 @@
-
-import MainLayout from "@/components/layout/MainLayout";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { mockCertificates } from "@/data/mockData";
-import { Award, Download, Share2 } from "lucide-react";
+import MainLayout from '@/components/layout/MainLayout';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { mockCertificates } from '@/data/mockData';
+import { Award, Download, Share2 } from 'lucide-react';
 
 const CertificatesPage = () => {
   return (
@@ -22,7 +21,7 @@ const CertificatesPage = () => {
               </p>
             </div>
           </div>
-          
+
           {mockCertificates.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-lg shadow-sm">
               <Award className="h-16 w-16 mx-auto text-gray-300 mb-4" />
@@ -37,7 +36,10 @@ const CertificatesPage = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {mockCertificates.map((certificate) => (
-                <CertificateCard key={certificate.id} certificate={certificate} />
+                <CertificateCard
+                  key={certificate.id}
+                  certificate={certificate}
+                />
               ))}
             </div>
           )}
@@ -75,22 +77,26 @@ const CertificateCard = ({ certificate }: CertificateCardProps) => {
                 <div className="text-md mb-1">This certifies that</div>
                 <div className="text-xl font-bold mb-1">John Doe</div>
                 <div className="text-md mb-3">successfully completed</div>
-                <div className="text-lg font-semibold mb-1">{certificate.courseName}</div>
-                <div className="text-sm text-gray-500">Issued on {certificate.issueDate}</div>
+                <div className="text-lg font-semibold mb-1">
+                  {certificate.courseName}
+                </div>
+                <div className="text-sm text-gray-500">
+                  Issued on {certificate.issueDate}
+                </div>
               </div>
             </div>
           </div>
-          
+
           <div className="mb-4">
             <div className="text-sm text-gray-500 mb-1">Course</div>
-            <Link 
+            <Link
               to={`/courses/${certificate.courseId}`}
               className="font-medium hover:text-course-blue transition-colors line-clamp-2"
             >
               {certificate.courseName}
             </Link>
           </div>
-          
+
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm text-gray-500 mb-1">Issue Date</div>
@@ -102,17 +108,15 @@ const CertificateCard = ({ certificate }: CertificateCardProps) => {
             </div>
           </div>
         </div>
-        
+
         <div className="flex p-4">
-          <Button 
+          <Button
             asChild
-            variant="outline" 
+            variant="outline"
             className="mr-2 flex-1"
             onClick={(e) => e.stopPropagation()}
           >
-            <Link to={`/certificates/${certificate.id}`}>
-              View
-            </Link>
+            <Link to={`/certificates/${certificate.id}`}>View</Link>
           </Button>
           <Button
             variant="outline"
@@ -121,7 +125,7 @@ const CertificateCard = ({ certificate }: CertificateCardProps) => {
             onClick={(e) => {
               e.stopPropagation();
               // Download functionality would be implemented here
-              alert("Certificate download started");
+              alert('Certificate download started');
             }}
           >
             <Download className="h-4 w-4" />
@@ -132,7 +136,7 @@ const CertificateCard = ({ certificate }: CertificateCardProps) => {
             onClick={(e) => {
               e.stopPropagation();
               // Share functionality would be implemented here
-              alert("Share certificate");
+              alert('Share certificate');
             }}
           >
             <Share2 className="h-4 w-4" />

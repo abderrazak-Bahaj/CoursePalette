@@ -1,5 +1,4 @@
-
-import { get, post } from "./apiClient";
+import { get, post } from './apiClient';
 
 interface AssignmentData {
   title: string;
@@ -29,16 +28,20 @@ export const assignmentService = {
   getCourseAssignments: (courseId: string) => {
     return get(`/courses/${courseId}/assignments`);
   },
-  
+
   getAssignment: (courseId: string, assignmentId: string) => {
     return get(`/courses/${courseId}/assignments/${assignmentId}`);
   },
-  
+
   createAssignment: (courseId: string, data: AssignmentData) => {
     return post(`/courses/${courseId}/assignments`, data);
   },
-  
-  gradeAssignment: (courseId: string, assignmentId: string, data: GradeAssignmentData) => {
+
+  gradeAssignment: (
+    courseId: string,
+    assignmentId: string,
+    data: GradeAssignmentData
+  ) => {
     return post(`/courses/${courseId}/assignments/${assignmentId}/grade`, data);
-  }
+  },
 };

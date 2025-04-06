@@ -1,33 +1,37 @@
-
-import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { 
-  Accordion, 
-  AccordionContent, 
-  AccordionItem, 
-  AccordionTrigger 
-} from "@/components/ui/accordion";
-import { Play, Check, Lock, ChevronLeft, ChevronRight } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { mockCourses } from "@/data/mockData";
-import { Lesson } from "@/types/course";
+import { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import { Play, Check, Lock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { mockCourses } from '@/data/mockData';
+import { Lesson } from '@/types/course';
 
 const LessonPage = () => {
-  const { courseId, lessonId } = useParams<{ courseId: string; lessonId?: string }>();
+  const { courseId, lessonId } = useParams<{
+    courseId: string;
+    lessonId?: string;
+  }>();
   const { toast } = useToast();
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
-  
+
   // Find the course by ID
   const course = mockCourses.find((course) => course.id === courseId);
-  
+
   if (!course || !course.lessons || course.lessons.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Course Not Found</h1>
-          <p className="mb-6">The course you are looking for does not exist or has no lessons.</p>
+          <p className="mb-6">
+            The course you are looking for does not exist or has no lessons.
+          </p>
           <Button asChild>
             <Link to="/courses">Back to Courses</Link>
           </Button>
@@ -38,8 +42,10 @@ const LessonPage = () => {
 
   // If no lessonId is provided, use the first lesson
   const currentLessonId = lessonId || course.lessons[0].id;
-  const currentLesson = course.lessons.find(lesson => lesson.id === currentLessonId);
-  
+  const currentLesson = course.lessons.find(
+    (lesson) => lesson.id === currentLessonId
+  );
+
   if (!currentLesson) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -55,34 +61,37 @@ const LessonPage = () => {
   }
 
   // Calculate the current lesson index and determine next/previous lessons
-  const currentIndex = course.lessons.findIndex(lesson => lesson.id === currentLessonId);
-  const previousLesson = currentIndex > 0 ? course.lessons[currentIndex - 1] : null;
-  const nextLesson = currentIndex < course.lessons.length - 1 ? course.lessons[currentIndex + 1] : null;
-  
+  const currentIndex = course.lessons.findIndex(
+    (lesson) => lesson.id === currentLessonId
+  );
+  const previousLesson =
+    currentIndex > 0 ? course.lessons[currentIndex - 1] : null;
+  const nextLesson =
+    currentIndex < course.lessons.length - 1
+      ? course.lessons[currentIndex + 1]
+      : null;
+
   // Calculate progress percentage
-  const progressPercentage = (completedLessons.length / course.lessons.length) * 100;
+  const progressPercentage =
+    (completedLessons.length / course.lessons.length) * 100;
 
   const markAsCompleted = () => {
     if (!completedLessons.includes(currentLessonId)) {
       const newCompletedLessons = [...completedLessons, currentLessonId];
       setCompletedLessons(newCompletedLessons);
-      
+
       toast({
-        title: "Lesson Completed",
-        description: "Your progress has been updated.",
+        title: 'Lesson Completed',
+        description: 'Your progress has been updated.',
       });
 
       // If there's a next lesson, suggest navigating to it
       if (nextLesson) {
         toast({
-          title: "Next Lesson",
-          description: "Continue to the next lesson to keep learning.",
+          title: 'Next Lesson',
+          description: 'Continue to the next lesson to keep learning.',
           action: (
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-            >
+            <Button asChild variant="outline" size="sm">
               <Link to={`/courses/${courseId}/learn/${nextLesson.id}`}>
                 Continue
               </Link>
@@ -91,8 +100,8 @@ const LessonPage = () => {
         });
       } else {
         toast({
-          title: "Course Completed",
-          description: "Congratulations on completing the course!",
+          title: 'Course Completed',
+          description: 'Congratulations on completing the course!',
         });
       }
     }
@@ -147,13 +156,15 @@ const LessonPage = () => {
             <div className="prose max-w-none mb-8">
               <h3>Lesson Notes</h3>
               <p>
-                This is where the lesson content would appear. In a real application, 
-                this would include detailed explanations, code examples, images, and other 
-                educational materials relevant to this specific lesson.
+                This is where the lesson content would appear. In a real
+                application, this would include detailed explanations, code
+                examples, images, and other educational materials relevant to
+                this specific lesson.
               </p>
               <p>
-                The content would be structured to help students understand the concepts 
-                being taught and provide practical examples to reinforce learning.
+                The content would be structured to help students understand the
+                concepts being taught and provide practical examples to
+                reinforce learning.
               </p>
               <h4>Key Points</h4>
               <ul>
@@ -162,20 +173,18 @@ const LessonPage = () => {
                 <li>Important concept #3 related to this lesson</li>
               </ul>
               <h4>Example</h4>
-              <pre><code>
-                // Example code or demonstration
-                // This would be specific to the course subject
-              </code></pre>
+              <pre>
+                <code>
+                  // Example code or demonstration // This would be specific to
+                  the course subject
+                </code>
+              </pre>
             </div>
 
             {/* Next/Previous navigation */}
             <div className="flex justify-between border-t pt-6">
               {previousLesson ? (
-                <Button
-                  asChild
-                  variant="outline"
-                  className="flex items-center"
-                >
+                <Button asChild variant="outline" className="flex items-center">
                   <Link to={`/courses/${courseId}/learn/${previousLesson.id}`}>
                     <ChevronLeft className="h-5 w-5 mr-1" />
                     Previous Lesson
@@ -202,10 +211,7 @@ const LessonPage = () => {
                 )}
               </Button>
               {nextLesson ? (
-                <Button
-                  asChild
-                  className="flex items-center bg-course-blue"
-                >
+                <Button asChild className="flex items-center bg-course-blue">
                   <Link to={`/courses/${courseId}/learn/${nextLesson.id}`}>
                     Next Lesson
                     <ChevronRight className="h-5 w-5 ml-1" />
@@ -222,29 +228,34 @@ const LessonPage = () => {
         <div className="md:w-80 border-l flex-shrink-0 overflow-y-auto bg-gray-50">
           <div className="p-4">
             <h3 className="font-bold mb-4">Course Curriculum</h3>
-            <Accordion type="multiple" defaultValue={["section-1"]} className="w-full">
+            <Accordion
+              type="multiple"
+              defaultValue={['section-1']}
+              className="w-full"
+            >
               <AccordionItem value="section-1">
                 <AccordionTrigger>
                   <div className="text-left">
-                    <div className="font-semibold">
-                      Section 1: Introduction
-                    </div>
+                    <div className="font-semibold">Section 1: Introduction</div>
                     <div className="text-sm text-gray-500">
-                      {course.lessons?.filter((_, i) => i < 2).length || 0} lessons
+                      {course.lessons?.filter((_, i) => i < 2).length || 0}{' '}
+                      lessons
                     </div>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
                   <ul className="space-y-2">
-                    {course.lessons?.filter((_, i) => i < 2).map((lesson) => (
-                      <LessonItem
-                        key={lesson.id}
-                        lesson={lesson}
-                        courseId={courseId}
-                        isActive={lesson.id === currentLessonId}
-                        isCompleted={isLessonCompleted(lesson.id)}
-                      />
-                    ))}
+                    {course.lessons
+                      ?.filter((_, i) => i < 2)
+                      .map((lesson) => (
+                        <LessonItem
+                          key={lesson.id}
+                          lesson={lesson}
+                          courseId={courseId}
+                          isActive={lesson.id === currentLessonId}
+                          isCompleted={isLessonCompleted(lesson.id)}
+                        />
+                      ))}
                   </ul>
                 </AccordionContent>
               </AccordionItem>
@@ -256,21 +267,24 @@ const LessonPage = () => {
                       Section 2: Getting Started
                     </div>
                     <div className="text-sm text-gray-500">
-                      {course.lessons?.filter((_, i) => i >= 2).length || 0} lessons
+                      {course.lessons?.filter((_, i) => i >= 2).length || 0}{' '}
+                      lessons
                     </div>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
                   <ul className="space-y-2">
-                    {course.lessons?.filter((_, i) => i >= 2).map((lesson) => (
-                      <LessonItem
-                        key={lesson.id}
-                        lesson={lesson}
-                        courseId={courseId}
-                        isActive={lesson.id === currentLessonId}
-                        isCompleted={isLessonCompleted(lesson.id)}
-                      />
-                    ))}
+                    {course.lessons
+                      ?.filter((_, i) => i >= 2)
+                      .map((lesson) => (
+                        <LessonItem
+                          key={lesson.id}
+                          lesson={lesson}
+                          courseId={courseId}
+                          isActive={lesson.id === currentLessonId}
+                          isCompleted={isLessonCompleted(lesson.id)}
+                        />
+                      ))}
                   </ul>
                 </AccordionContent>
               </AccordionItem>
@@ -290,15 +304,20 @@ interface LessonItemProps {
   isCompleted: boolean;
 }
 
-const LessonItem = ({ lesson, courseId, isActive, isCompleted }: LessonItemProps) => {
+const LessonItem = ({
+  lesson,
+  courseId,
+  isActive,
+  isCompleted,
+}: LessonItemProps) => {
   return (
     <li>
       <Link
         to={`/courses/${courseId}/learn/${lesson.id}`}
         className={`flex items-center p-2 rounded-md ${
           isActive
-            ? "bg-course-blue bg-opacity-10 text-course-blue"
-            : "hover:bg-gray-100"
+            ? 'bg-course-blue bg-opacity-10 text-course-blue'
+            : 'hover:bg-gray-100'
         }`}
       >
         <div className="flex-shrink-0 mr-2">

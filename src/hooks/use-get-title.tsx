@@ -1,13 +1,13 @@
 import { useLocation } from 'react-router-dom';
 
 export const useGetTitle = () => {
-    const location = useLocation();
-    const path = location.pathname;
+  const location = useLocation();
+  const path = location.pathname;
 
-    const titles =  {}
+  const titles = {};
 
-    return {
-        title: titles?.[path]|| 'Home',
-        path: location.pathname
-    };
+  return {
+    title: titles?.[path] || 'Home',
+    path: location.pathname,
+  };
 };

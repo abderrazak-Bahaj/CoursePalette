@@ -1,10 +1,8 @@
-
-import MainLayout from "@/components/layout/MainLayout";
-import CourseList from "@/components/course/CourseList";
-import { mockCourses } from "@/data/mockData";
+import MainLayout from '@/components/layout/MainLayout';
+import CourseList from '@/components/course/CourseList';
+import { mockCourses } from '@/data/mockData';
 
 const CoursesPage = () => {
-
   return (
     <MainLayout>
       <div className="bg-gray-50 py-8">
@@ -15,10 +13,7 @@ const CoursesPage = () => {
           </p>
         </div>
       </div>
-      <CourseList
-        title=""
-        showFilters={true}
-      />
+      <CourseList title="" showFilters={true} />
     </MainLayout>
   );
 };

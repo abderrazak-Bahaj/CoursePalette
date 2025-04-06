@@ -1,7 +1,13 @@
-
-import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { UseFormReturn } from "react-hook-form";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+  FormDescription,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { UseFormReturn } from 'react-hook-form';
 
 interface CourseFormDetailsProps {
   form: UseFormReturn<any>;
@@ -24,7 +30,7 @@ const CourseFormDetails = ({ form }: CourseFormDetailsProps) => {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="duration"
@@ -39,7 +45,7 @@ const CourseFormDetails = ({ form }: CourseFormDetailsProps) => {
           )}
         />
       </div>
-      
+
       <FormField
         control={form.control}
         name="imageUrl"

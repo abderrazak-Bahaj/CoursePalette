@@ -1,16 +1,23 @@
-
 import { useState, useEffect } from 'react';
 import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
-import { 
-  Bold, Italic, List, ListOrdered, Link as LinkIcon, 
-  Image as ImageIcon, Heading1, Heading2, Undo, Redo 
+import {
+  Bold,
+  Italic,
+  List,
+  ListOrdered,
+  Link as LinkIcon,
+  Image as ImageIcon,
+  Heading1,
+  Heading2,
+  Undo,
+  Redo,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from './input';
-import { 
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -23,11 +30,11 @@ interface TipTapEditorProps {
   editable?: boolean;
 }
 
-const TipTapEditor = ({ 
-  content, 
-  onChange, 
+const TipTapEditor = ({
+  content,
+  onChange,
   placeholder = 'Write something...',
-  editable = true 
+  editable = true,
 }: TipTapEditorProps) => {
   const [imageUrl, setImageUrl] = useState('');
 
@@ -47,7 +54,8 @@ const TipTapEditor = ({
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose-base lg:prose-lg max-w-none focus:outline-none min-h-[150px] p-4',
+        class:
+          'prose prose-sm sm:prose-base lg:prose-lg max-w-none focus:outline-none min-h-[150px] p-4',
       },
     },
   });
@@ -91,7 +99,9 @@ const TipTapEditor = ({
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 1 }).run()
+          }
           className={editor.isActive('heading', { level: 1 }) ? 'bg-muted' : ''}
         >
           <Heading1 className="h-4 w-4" />
@@ -99,7 +109,9 @@ const TipTapEditor = ({
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
           className={editor.isActive('heading', { level: 2 }) ? 'bg-muted' : ''}
         >
           <Heading2 className="h-4 w-4" />
@@ -152,7 +164,7 @@ const TipTapEditor = ({
                   }
                 }}
               />
-              <Button 
+              <Button
                 variant="outline"
                 size="sm"
                 onClick={() => editor.chain().focus().unsetLink().run()}
@@ -176,7 +188,7 @@ const TipTapEditor = ({
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
               />
-              <Button 
+              <Button
                 variant="outline"
                 size="sm"
                 onClick={addImage}
@@ -233,8 +245,12 @@ const TipTapEditor = ({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            className={editor.isActive('heading', { level: 2 }) ? 'bg-muted' : ''}
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 2 }).run()
+            }
+            className={
+              editor.isActive('heading', { level: 2 }) ? 'bg-muted' : ''
+            }
           >
             <Heading2 className="h-4 w-4" />
           </Button>

@@ -1,98 +1,113 @@
-
-import AdminLayout from "@/components/layout/AdminLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Download, Filter, Star, UserPlus, FileEdit, Trash2, EyeIcon } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
+import AdminLayout from '@/components/layout/AdminLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Search,
+  Download,
+  Filter,
+  Star,
+  UserPlus,
+  FileEdit,
+  Trash2,
+  EyeIcon,
+} from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 
 const mockInstructors = [
-  { 
-    id: 1, 
-    name: "Dr. Alex Johnson", 
-    email: "alex.johnson@example.com", 
-    specialty: "Web Development", 
-    courses: 12, 
-    students: 450, 
+  {
+    id: 1,
+    name: 'Dr. Alex Johnson',
+    email: 'alex.johnson@example.com',
+    specialty: 'Web Development',
+    courses: 12,
+    students: 450,
     rating: 4.8,
-    status: "active",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg" 
+    status: 'active',
+    avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
   },
-  { 
-    id: 2, 
-    name: "Prof. Sarah Williams", 
-    email: "sarah.williams@example.com", 
-    specialty: "Data Science", 
-    courses: 8, 
-    students: 320, 
+  {
+    id: 2,
+    name: 'Prof. Sarah Williams',
+    email: 'sarah.williams@example.com',
+    specialty: 'Data Science',
+    courses: 8,
+    students: 320,
     rating: 4.9,
-    status: "active",
-    avatar: "https://randomuser.me/api/portraits/women/2.jpg" 
+    status: 'active',
+    avatar: 'https://randomuser.me/api/portraits/women/2.jpg',
   },
-  { 
-    id: 3, 
-    name: "Dr. Michael Chen", 
-    email: "michael.chen@example.com", 
-    specialty: "Machine Learning", 
-    courses: 10, 
-    students: 380, 
+  {
+    id: 3,
+    name: 'Dr. Michael Chen',
+    email: 'michael.chen@example.com',
+    specialty: 'Machine Learning',
+    courses: 10,
+    students: 380,
     rating: 4.7,
-    status: "on leave",
-    avatar: "https://randomuser.me/api/portraits/men/3.jpg" 
+    status: 'on leave',
+    avatar: 'https://randomuser.me/api/portraits/men/3.jpg',
   },
-  { 
-    id: 4, 
-    name: "Prof. Lisa Roberts", 
-    email: "lisa.roberts@example.com", 
-    specialty: "UX Design", 
-    courses: 6, 
-    students: 290, 
+  {
+    id: 4,
+    name: 'Prof. Lisa Roberts',
+    email: 'lisa.roberts@example.com',
+    specialty: 'UX Design',
+    courses: 6,
+    students: 290,
     rating: 4.6,
-    status: "active",
-    avatar: "https://randomuser.me/api/portraits/women/4.jpg" 
+    status: 'active',
+    avatar: 'https://randomuser.me/api/portraits/women/4.jpg',
   },
-  { 
-    id: 5, 
-    name: "Dr. James Wilson", 
-    email: "james.wilson@example.com", 
-    specialty: "Mobile Development", 
-    courses: 9, 
-    students: 410, 
+  {
+    id: 5,
+    name: 'Dr. James Wilson',
+    email: 'james.wilson@example.com',
+    specialty: 'Mobile Development',
+    courses: 9,
+    students: 410,
     rating: 4.9,
-    status: "active",
-    avatar: "https://randomuser.me/api/portraits/men/5.jpg" 
+    status: 'active',
+    avatar: 'https://randomuser.me/api/portraits/men/5.jpg',
   },
-  { 
-    id: 6, 
-    name: "Prof. Maria Garcia", 
-    email: "maria.garcia@example.com", 
-    specialty: "Cloud Computing", 
-    courses: 7, 
-    students: 340, 
+  {
+    id: 6,
+    name: 'Prof. Maria Garcia',
+    email: 'maria.garcia@example.com',
+    specialty: 'Cloud Computing',
+    courses: 7,
+    students: 340,
     rating: 4.8,
-    status: "inactive",
-    avatar: "https://randomuser.me/api/portraits/women/6.jpg" 
+    status: 'inactive',
+    avatar: 'https://randomuser.me/api/portraits/women/6.jpg',
   },
 ];
 
 const InstructorsPage = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const { user } = useAuth();
   const { toast } = useToast();
-  
+
   const filteredInstructors = mockInstructors.filter(
-    instructor => 
+    (instructor) =>
       instructor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       instructor.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       instructor.specialty.toLowerCase().includes(searchQuery.toLowerCase())
@@ -119,14 +134,16 @@ const InstructorsPage = () => {
   };
 
   // Only render with AdminLayout if user is admin, fallback to normal view for others
-  const LayoutComponent = user?.isAdmin ? AdminLayout : "div";
-  const layoutProps = user?.isAdmin ? { title: "Manage Instructors" } : {};
+  const LayoutComponent = user?.isAdmin ? AdminLayout : 'div';
+  const layoutProps = user?.isAdmin ? { title: 'Manage Instructors' } : {};
 
   return (
     <LayoutComponent {...layoutProps}>
       <div className="container mx-auto px-4 py-8">
-        {!user?.isAdmin && <h1 className="text-3xl font-bold mb-6">Instructors</h1>}
-        
+        {!user?.isAdmin && (
+          <h1 className="text-3xl font-bold mb-6">Instructors</h1>
+        )}
+
         <Card className="mb-8 shadow-md">
           <CardHeader className="pb-2">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -140,9 +157,12 @@ const InstructorsPage = () => {
           <CardContent>
             <div className="flex flex-col md:flex-row gap-4 mb-6">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                <Input 
-                  placeholder="Search instructors..." 
+                <Search
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
+                <Input
+                  placeholder="Search instructors..."
                   className="pl-10 w-full"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -159,7 +179,7 @@ const InstructorsPage = () => {
                 </Button>
               </div>
             </div>
-            
+
             <div className="overflow-x-auto rounded-md border">
               <Table>
                 <TableHeader>
@@ -174,17 +194,24 @@ const InstructorsPage = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredInstructors.map(instructor => (
+                  {filteredInstructors.map((instructor) => (
                     <TableRow key={instructor.id}>
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar>
-                            <AvatarImage src={instructor.avatar} alt={instructor.name} />
-                            <AvatarFallback>{instructor.name.charAt(0)}</AvatarFallback>
+                            <AvatarImage
+                              src={instructor.avatar}
+                              alt={instructor.name}
+                            />
+                            <AvatarFallback>
+                              {instructor.name.charAt(0)}
+                            </AvatarFallback>
                           </Avatar>
                           <div>
                             <div className="font-medium">{instructor.name}</div>
-                            <div className="text-sm text-muted-foreground">{instructor.email}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {instructor.email}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -192,8 +219,12 @@ const InstructorsPage = () => {
                         <Badge variant="outline">{instructor.specialty}</Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge className={getStatusColor(instructor.status)} variant="outline">
-                          {instructor.status.charAt(0).toUpperCase() + instructor.status.slice(1)}
+                        <Badge
+                          className={getStatusColor(instructor.status)}
+                          variant="outline"
+                        >
+                          {instructor.status.charAt(0).toUpperCase() +
+                            instructor.status.slice(1)}
                         </Badge>
                       </TableCell>
                       <TableCell>{instructor.courses}</TableCell>
@@ -212,15 +243,39 @@ const InstructorsPage = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleAction('View', instructor.id, instructor.name)}>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleAction(
+                                  'View',
+                                  instructor.id,
+                                  instructor.name
+                                )
+                              }
+                            >
                               <EyeIcon className="mr-2 h-4 w-4" />
                               <span>View</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleAction('Edit', instructor.id, instructor.name)}>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleAction(
+                                  'Edit',
+                                  instructor.id,
+                                  instructor.name
+                                )
+                              }
+                            >
                               <FileEdit className="mr-2 h-4 w-4" />
                               <span>Edit</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleAction('Delete', instructor.id, instructor.name)}>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleAction(
+                                  'Delete',
+                                  instructor.id,
+                                  instructor.name
+                                )
+                              }
+                            >
                               <Trash2 className="mr-2 h-4 w-4" />
                               <span>Delete</span>
                             </DropdownMenuItem>

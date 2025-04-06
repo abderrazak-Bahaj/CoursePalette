@@ -1,5 +1,4 @@
-
-import { get, post } from "./apiClient";
+import { get, post } from './apiClient';
 
 interface RegisterData {
   name: string;
@@ -19,29 +18,29 @@ interface LoginData {
 
 export const authService = {
   register: (data: RegisterData) => {
-    return post("/register", data);
+    return post('/register', data);
   },
-  
+
   login: async (data: LoginData) => {
-    const response = await post("/login", data);
+    const response = await post('/login', data);
     if (response.token) {
       // Store user with token in localStorage
       const user = {
         ...response.user,
-        token: response.token
+        token: response.token,
       };
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem('user', JSON.stringify(user));
     }
     return response;
   },
-  
+
   logout: () => {
-    return post("/logout").finally(() => {
-      localStorage.removeItem("user");
+    return post('/logout').finally(() => {
+      localStorage.removeItem('user');
     });
   },
-  
+
   getCurrentUser: () => {
-    return get("/me");
-  }
+    return get('/me');
+  },
 };

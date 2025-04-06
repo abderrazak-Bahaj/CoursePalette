@@ -1,5 +1,4 @@
-
-import { get, post, put, del } from "./apiClient";
+import { get, post, put, del } from './apiClient';
 
 interface CategoryData {
   name: string;
@@ -11,15 +10,15 @@ interface CategoryData {
 }
 
 export const categoryService = {
-  getAllCategories: (params?: Record<string, string>)=> {
-    return get(`/categories`,{ params });
+  getAllCategories: (params?: Record<string, string>) => {
+    return get(`/categories`, { params });
   },
   getCategory: (id: string) => {
     return get(`/categories/${id}`);
   },
 
   createCategory: (data: CategoryData) => {
-    return post("/categories", data);
+    return post('/categories', data);
   },
 
   updateCategory: (id: string, data: CategoryData) => {
@@ -27,5 +26,5 @@ export const categoryService = {
   },
   deleteCategory: (id: string) => {
     return del(`/categories/${id}`);
-  }
+  },
 };

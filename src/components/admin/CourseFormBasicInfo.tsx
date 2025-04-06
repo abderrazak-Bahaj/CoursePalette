@@ -1,8 +1,13 @@
-
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { UseFormReturn } from "react-hook-form";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { UseFormReturn } from 'react-hook-form';
 
 interface CourseFormBasicInfoProps {
   form: UseFormReturn<any>;
@@ -25,7 +30,7 @@ const CourseFormBasicInfo = ({ form }: CourseFormBasicInfoProps) => {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="instructor"
@@ -40,7 +45,7 @@ const CourseFormBasicInfo = ({ form }: CourseFormBasicInfoProps) => {
           )}
         />
       </div>
-      
+
       <FormField
         control={form.control}
         name="description"
@@ -48,10 +53,10 @@ const CourseFormBasicInfo = ({ form }: CourseFormBasicInfoProps) => {
           <FormItem>
             <FormLabel>Description</FormLabel>
             <FormControl>
-              <Textarea 
-                placeholder="A comprehensive introduction to React.js..." 
+              <Textarea
+                placeholder="A comprehensive introduction to React.js..."
                 rows={4}
-                {...field} 
+                {...field}
               />
             </FormControl>
             <FormMessage />

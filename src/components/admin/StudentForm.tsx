@@ -1,26 +1,44 @@
-
-import { useState } from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
-import { userService, UserData } from "@/services/api/userService";
-import { useMutation } from "@tanstack/react-query";
-import { UserRole } from "@/services/api/roleService";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState } from 'react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Card, CardContent } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import { userService, UserData } from '@/services/api/userService';
+import { useMutation } from '@tanstack/react-query';
+import { UserRole } from '@/services/api/roleService';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const studentFormSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  role: z.enum(["admin", "teacher", "student"]),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }).optional(),
-  profileUrl: z.string().url({ message: "Please enter a valid URL" }).optional(),
+  name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
+  email: z.string().email({ message: 'Please enter a valid email address' }),
+  role: z.enum(['admin', 'teacher', 'student']),
+  password: z
+    .string()
+    .min(6, { message: 'Password must be at least 6 characters' })
+    .optional(),
+  profileUrl: z
+    .string()
+    .url({ message: 'Please enter a valid URL' })
+    .optional(),
   isActive: z.boolean().default(true),
 });
 
@@ -30,64 +48,70 @@ interface StudentFormProps {
   viewOnly?: boolean;
 }
 
-const StudentForm = ({ onCancel, editStudent, viewOnly = false }: StudentFormProps) => {
+const StudentForm = ({
+  onCancel,
+  editStudent,
+  viewOnly = false,
+}: StudentFormProps) => {
   const { toast } = useToast();
   const [avatar, setAvatar] = useState<File | null>(null);
 
   // Initialize the form with default values or values from editStudent if provided
   const form = useForm<z.infer<typeof studentFormSchema>>({
     resolver: zodResolver(studentFormSchema),
-    defaultValues: editStudent ? {
-      name: editStudent.name,
-      email: editStudent.email,
-      role: editStudent.role || "student",
-      profileUrl: editStudent.profileUrl,
-      isActive: editStudent.status !== "inactive",
-    } : {
-      name: "",
-      email: "",
-      role: "student",
-      isActive: true,
-    },
+    defaultValues: editStudent
+      ? {
+          name: editStudent.name,
+          email: editStudent.email,
+          role: editStudent.role || 'student',
+          profileUrl: editStudent.profileUrl,
+          isActive: editStudent.status !== 'inactive',
+        }
+      : {
+          name: '',
+          email: '',
+          role: 'student',
+          isActive: true,
+        },
   });
 
   const createUserMutation = useMutation({
     mutationFn: (data: UserData) => userService.createUser(data),
     onSuccess: () => {
       toast({
-        title: "Student Created",
-        description: "The student has been created successfully.",
+        title: 'Student Created',
+        description: 'The student has been created successfully.',
       });
       onCancel();
     },
     onError: (error) => {
       toast({
-        title: "Error",
-        description: "Failed to create student. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to create student. Please try again.',
+        variant: 'destructive',
       });
-      console.error("Failed to create student:", error);
-    }
+      console.error('Failed to create student:', error);
+    },
   });
 
   const updateUserMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<UserData> }) => 
+    mutationFn: ({ id, data }: { id: string; data: Partial<UserData> }) =>
       userService.updateUser(id, data),
     onSuccess: () => {
       toast({
-        title: "Student Updated",
-        description: "The student has been updated successfully.",
+        title: 'Student Updated',
+        description: 'The student has been updated successfully.',
       });
       onCancel();
     },
     onError: (error) => {
       toast({
-        title: "Error",
-        description: "Failed to update student. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to update student. Please try again.',
+        variant: 'destructive',
       });
-      console.error("Failed to update student:", error);
-    }
+      console.error('Failed to update student:', error);
+    },
   });
 
   const onSubmit = async (formData: z.infer<typeof studentFormSchema>) => {
@@ -102,7 +126,7 @@ const StudentForm = ({ onCancel, editStudent, viewOnly = false }: StudentFormPro
     if (editStudent) {
       updateUserMutation.mutate({
         id: editStudent.id,
-        data: userData
+        data: userData,
       });
     } else {
       createUserMutation.mutate(userData);
@@ -117,9 +141,11 @@ const StudentForm = ({ onCancel, editStudent, viewOnly = false }: StudentFormPro
             <div className="flex justify-center mb-6">
               <div className="relative">
                 <Avatar className="w-24 h-24">
-                  <AvatarImage src={form.watch("profileUrl") || (editStudent?.avatar || "")} />
+                  <AvatarImage
+                    src={form.watch('profileUrl') || editStudent?.avatar || ''}
+                  />
                   <AvatarFallback className="text-xl">
-                    {form.watch("name")?.charAt(0) || "U"}
+                    {form.watch('name')?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 {!viewOnly && (
@@ -135,7 +161,10 @@ const StudentForm = ({ onCancel, editStudent, viewOnly = false }: StudentFormPro
                           const reader = new FileReader();
                           reader.onload = (event) => {
                             if (event.target?.result) {
-                              form.setValue("profileUrl", URL.createObjectURL(file));
+                              form.setValue(
+                                'profileUrl',
+                                URL.createObjectURL(file)
+                              );
                             }
                           };
                           reader.readAsDataURL(file);
@@ -147,7 +176,7 @@ const StudentForm = ({ onCancel, editStudent, viewOnly = false }: StudentFormPro
                       size="sm"
                       variant="outline"
                       className="rounded-full"
-                      onClick={() => document.getElementById("avatar")?.click()}
+                      onClick={() => document.getElementById('avatar')?.click()}
                     >
                       Edit
                     </Button>
@@ -155,7 +184,7 @@ const StudentForm = ({ onCancel, editStudent, viewOnly = false }: StudentFormPro
                 )}
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -164,13 +193,17 @@ const StudentForm = ({ onCancel, editStudent, viewOnly = false }: StudentFormPro
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="John Doe" {...field} readOnly={viewOnly} />
+                      <Input
+                        placeholder="John Doe"
+                        {...field}
+                        readOnly={viewOnly}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="email"
@@ -178,14 +211,18 @@ const StudentForm = ({ onCancel, editStudent, viewOnly = false }: StudentFormPro
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="john@example.com" {...field} readOnly={viewOnly} />
+                      <Input
+                        placeholder="john@example.com"
+                        {...field}
+                        readOnly={viewOnly}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -204,16 +241,22 @@ const StudentForm = ({ onCancel, editStudent, viewOnly = false }: StudentFormPro
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value={UserRole.ADMIN}>Administrator</SelectItem>
-                        <SelectItem value={UserRole.TEACHER}>Teacher</SelectItem>
-                        <SelectItem value={UserRole.STUDENT}>Student</SelectItem>
+                        <SelectItem value={UserRole.ADMIN}>
+                          Administrator
+                        </SelectItem>
+                        <SelectItem value={UserRole.TEACHER}>
+                          Teacher
+                        </SelectItem>
+                        <SelectItem value={UserRole.STUDENT}>
+                          Student
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               {!editStudent && (
                 <FormField
                   control={form.control}
@@ -230,7 +273,7 @@ const StudentForm = ({ onCancel, editStudent, viewOnly = false }: StudentFormPro
                 />
               )}
             </div>
-            
+
             <FormField
               control={form.control}
               name="profileUrl"
@@ -238,13 +281,17 @@ const StudentForm = ({ onCancel, editStudent, viewOnly = false }: StudentFormPro
                 <FormItem>
                   <FormLabel>Profile Image URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://example.com/avatar.jpg" {...field} readOnly={viewOnly} />
+                    <Input
+                      placeholder="https://example.com/avatar.jpg"
+                      {...field}
+                      readOnly={viewOnly}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="isActive"
@@ -257,31 +304,34 @@ const StudentForm = ({ onCancel, editStudent, viewOnly = false }: StudentFormPro
                       disabled={viewOnly}
                     />
                   </FormControl>
-                  <FormLabel className="cursor-pointer">Active account</FormLabel>
+                  <FormLabel className="cursor-pointer">
+                    Active account
+                  </FormLabel>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             {!viewOnly && (
               <div className="flex justify-end space-x-2 pt-4">
                 <Button variant="outline" type="button" onClick={onCancel}>
                   Cancel
                 </Button>
-                <Button 
-                  type="submit" 
-                  disabled={createUserMutation.isPending || updateUserMutation.isPending}
-                >
-                  {(createUserMutation.isPending || updateUserMutation.isPending) 
-                    ? "Saving..." 
-                    : editStudent 
-                      ? "Update Student" 
-                      : "Create Student"
+                <Button
+                  type="submit"
+                  disabled={
+                    createUserMutation.isPending || updateUserMutation.isPending
                   }
+                >
+                  {createUserMutation.isPending || updateUserMutation.isPending
+                    ? 'Saving...'
+                    : editStudent
+                      ? 'Update Student'
+                      : 'Create Student'}
                 </Button>
               </div>
             )}
-            
+
             {viewOnly && (
               <div className="flex justify-end space-x-2 pt-4">
                 <Button type="button" onClick={onCancel}>

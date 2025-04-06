@@ -1,19 +1,30 @@
-
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useToast } from "@/components/ui/use-toast";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useToast } from '@/components/ui/use-toast';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Search, Menu, X, LogIn, User, BookOpen, Award, Home, Users, PieChart, BookText } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useAuth } from "@/hooks/useAuth";
+} from '@/components/ui/dropdown-menu';
+import {
+  Search,
+  Menu,
+  X,
+  LogIn,
+  User,
+  BookOpen,
+  Award,
+  Home,
+  Users,
+  PieChart,
+  BookText,
+} from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/hooks/useAuth';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,10 +36,10 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     toast({
-      title: "Logged out successfully",
-      description: "You have been logged out of your account",
+      title: 'Logged out successfully',
+      description: 'You have been logged out of your account',
     });
-    navigate("/");
+    navigate('/');
   };
 
   const toggleMenu = () => {
@@ -79,12 +90,15 @@ const Navbar = () => {
           {!isMobile && (
             <div className="hidden md:flex items-center flex-1 max-w-md mx-4">
               <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <Search
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
                 <Input
                   placeholder="Search for courses..."
                   className="pl-10 w-full"
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") {
+                    if (e.key === 'Enter') {
                       navigate(`/search?q=${e.currentTarget.value}`);
                     }
                   }}
@@ -106,34 +120,36 @@ const Navbar = () => {
                     <Avatar className="cursor-pointer">
                       <AvatarImage src={user?.profileUrl} />
                       <AvatarFallback className="bg-course-blue text-white">
-                        {user?.name?.charAt(0) || "U"}
+                        {user?.name?.charAt(0) || 'U'}
                       </AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuItem onClick={() => navigate("/profile")}>
+                    <DropdownMenuItem onClick={() => navigate('/profile')}>
                       <User className="mr-2 h-4 w-4" />
                       <span>Profile</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>
                       <BookOpen className="mr-2 h-4 w-4" />
                       <span>My Learning</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate("/certificates")}>
+                    <DropdownMenuItem onClick={() => navigate('/certificates')}>
                       <Award className="mr-2 h-4 w-4" />
                       <span>Certificates</span>
                     </DropdownMenuItem>
                     {user?.isAdmin && (
                       <>
-                        <DropdownMenuItem onClick={() => navigate("/admin/courses")}>
+                        <DropdownMenuItem
+                          onClick={() => navigate('/admin/courses')}
+                        >
                           <BookText className="mr-2 h-4 w-4" />
                           <span>Admin Dashboard</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate("/students")}>
+                        <DropdownMenuItem onClick={() => navigate('/students')}>
                           <Users className="mr-2 h-4 w-4" />
                           <span>Students</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate("/reports")}>
+                        <DropdownMenuItem onClick={() => navigate('/reports')}>
                           <PieChart className="mr-2 h-4 w-4" />
                           <span>Reports</span>
                         </DropdownMenuItem>
@@ -177,12 +193,15 @@ const Navbar = () => {
         {isMobile && isOpen && (
           <div className="md:hidden mt-3 pb-3 animate-fade-in">
             <div className="relative w-full mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+              <Search
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={18}
+              />
               <Input
                 placeholder="Search for courses..."
                 className="pl-10 w-full"
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === 'Enter') {
                     navigate(`/search?q=${e.currentTarget.value}`);
                     setIsOpen(false);
                   }

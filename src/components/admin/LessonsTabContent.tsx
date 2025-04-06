@@ -1,16 +1,15 @@
-
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
-import LessonForm from "./LessonForm";
-import LessonsList from "./LessonsList";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
+import LessonForm from './LessonForm';
+import LessonsList from './LessonsList';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface LessonsTabContentProps {
   className?: string;
@@ -18,13 +17,13 @@ interface LessonsTabContentProps {
 
 const LessonsTabContent = ({ className }: LessonsTabContentProps) => {
   const [isAddingLesson, setIsAddingLesson] = useState(false);
-  const [selectedCourseId, setSelectedCourseId] = useState("1"); // Default courseId
+  const [selectedCourseId, setSelectedCourseId] = useState('1'); // Default courseId
 
   // Mock courses - in a real app, these would come from an API
   const courses = [
-    { id: "1", title: "Web Development Basics" },
-    { id: "2", title: "React for Beginners" },
-    { id: "3", title: "JavaScript Masterclass" }
+    { id: '1', title: 'Web Development Basics' },
+    { id: '2', title: 'React for Beginners' },
+    { id: '3', title: 'JavaScript Masterclass' },
   ];
 
   return (
@@ -38,21 +37,18 @@ const LessonsTabContent = ({ className }: LessonsTabContentProps) => {
           </Button>
         )}
       </div>
-      
+
       {!isAddingLesson && (
         <div className="mb-4">
           <p className="text-sm text-gray-500 mb-2">
             Select a course to manage its lessons:
           </p>
-          <Select 
-            value={selectedCourseId} 
-            onValueChange={setSelectedCourseId}
-          >
+          <Select value={selectedCourseId} onValueChange={setSelectedCourseId}>
             <SelectTrigger className="w-full md:w-[300px]">
               <SelectValue placeholder="Select a course" />
             </SelectTrigger>
             <SelectContent>
-              {courses.map(course => (
+              {courses.map((course) => (
                 <SelectItem key={course.id} value={course.id}>
                   {course.title}
                 </SelectItem>
@@ -61,10 +57,10 @@ const LessonsTabContent = ({ className }: LessonsTabContentProps) => {
           </Select>
         </div>
       )}
-      
+
       {isAddingLesson ? (
-        <LessonForm 
-          onCancel={() => setIsAddingLesson(false)} 
+        <LessonForm
+          onCancel={() => setIsAddingLesson(false)}
           courseId={selectedCourseId}
         />
       ) : (

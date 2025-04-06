@@ -1,18 +1,18 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/hooks/useAuth";
-import { Eye, EyeOff } from "lucide-react";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+import { Eye, EyeOff } from 'lucide-react';
 
 export const RegisterPage = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -24,9 +24,9 @@ export const RegisterPage = () => {
 
     if (!name || !email || !password) {
       toast({
-        title: "Error",
-        description: "Please fill in all fields",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Please fill in all fields',
+        variant: 'destructive',
       });
       return;
     }
@@ -36,13 +36,13 @@ export const RegisterPage = () => {
     try {
       const user = await register(name, email, password);
       if (user) {
-        navigate("/login");
+        navigate('/login');
       }
     } catch (error: any) {
       toast({
-        title: "Registration Failed",
-        description: error?.message || "An error occurred during registration",
-        variant: "destructive",
+        title: 'Registration Failed',
+        description: error?.message || 'An error occurred during registration',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -93,7 +93,7 @@ export const RegisterPage = () => {
                 <div className="relative">
                   <Input
                     id="password"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="Create a password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -113,14 +113,14 @@ export const RegisterPage = () => {
               <div className="flex items-start">
                 <Checkbox id="terms" className="mt-1" />
                 <Label htmlFor="terms" className="ml-2 text-sm">
-                  I agree to the{" "}
+                  I agree to the{' '}
                   <Link
                     to="/terms"
                     className="text-course-blue hover:underline"
                   >
                     Terms of Service
-                  </Link>{" "}
-                  and{" "}
+                  </Link>{' '}
+                  and{' '}
                   <Link
                     to="/privacy"
                     className="text-course-blue hover:underline"
@@ -134,7 +134,7 @@ export const RegisterPage = () => {
                 className="w-full bg-course-blue"
                 disabled={isLoading}
               >
-                {isLoading ? "Creating account..." : "Sign Up"}
+                {isLoading ? 'Creating account...' : 'Sign Up'}
               </Button>
             </form>
 
@@ -157,7 +157,7 @@ export const RegisterPage = () => {
             </div>
 
             <div className="mt-6 text-center text-sm text-gray-600">
-              Already have an account?{" "}
+              Already have an account?{' '}
               <Link to="/login" className="text-course-blue hover:underline">
                 Log in
               </Link>

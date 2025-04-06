@@ -1,19 +1,18 @@
-
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { userEnrolledCourses } from "@/data/mockData";
-import CourseProgressCard from "./CourseProgressCard";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { userEnrolledCourses } from '@/data/mockData';
+import CourseProgressCard from './CourseProgressCard';
 
 const CourseProgressTabs = () => {
-  const [activeTab, setActiveTab] = useState("in-progress");
+  const [activeTab, setActiveTab] = useState('in-progress');
 
   // Filter courses based on active tab
   const filteredCourses = userEnrolledCourses.filter((course) => {
-    if (activeTab === "in-progress") {
+    if (activeTab === 'in-progress') {
       return course.progress < 100;
-    } else if (activeTab === "completed") {
+    } else if (activeTab === 'completed') {
       return course.progress === 100;
     }
     return true;
@@ -26,7 +25,7 @@ const CourseProgressTabs = () => {
         <TabsTrigger value="completed">Completed</TabsTrigger>
         <TabsTrigger value="all">All Courses</TabsTrigger>
       </TabsList>
-      
+
       <TabsContent value="in-progress" className="mt-0">
         {filteredCourses.length === 0 ? (
           <div className="text-center py-8">
@@ -45,7 +44,7 @@ const CourseProgressTabs = () => {
           </div>
         )}
       </TabsContent>
-      
+
       <TabsContent value="completed" className="mt-0">
         {filteredCourses.length === 0 ? (
           <div className="text-center py-8">
@@ -64,7 +63,7 @@ const CourseProgressTabs = () => {
           </div>
         )}
       </TabsContent>
-      
+
       <TabsContent value="all" className="mt-0">
         <div className="space-y-4">
           {userEnrolledCourses.map((course) => (

@@ -1,18 +1,17 @@
-
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/hooks/useAuth";
-import { Eye, EyeOff } from "lucide-react";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+import { Eye, EyeOff } from 'lucide-react';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -21,27 +20,28 @@ const LoginPage = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       toast({
-        title: "Error",
-        description: "Please fill in all fields",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Please fill in all fields',
+        variant: 'destructive',
       });
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       const user = await login(email, password);
-      console.log("user", user);
-      navigate("/dashboard");
+      console.log('user', user);
+      navigate('/dashboard');
     } catch (error: any) {
       toast({
-        title: "Login Failed",
-        description: error.message || "Please check your credentials and try again",
-        variant: "destructive",
+        title: 'Login Failed',
+        description:
+          error.message || 'Please check your credentials and try again',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -53,12 +53,16 @@ const LoginPage = () => {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <Link to="/" className="inline-block mb-6">
-            <h1 className="text-3xl font-bold text-course-blue">CoursePalette</h1>
+            <h1 className="text-3xl font-bold text-course-blue">
+              CoursePalette
+            </h1>
           </Link>
           <h2 className="text-2xl font-bold">Welcome back</h2>
-          <p className="text-gray-600">Log in to your account to continue learning</p>
+          <p className="text-gray-600">
+            Log in to your account to continue learning
+          </p>
         </div>
-        
+
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">Log In</CardTitle>
@@ -80,7 +84,7 @@ const LoginPage = () => {
                 <div className="relative">
                   <Input
                     id="password"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -113,17 +117,19 @@ const LoginPage = () => {
                 className="w-full bg-course-blue"
                 disabled={isLoading}
               >
-                {isLoading ? "Logging in..." : "Log In"}
+                {isLoading ? 'Logging in...' : 'Log In'}
               </Button>
             </form>
-            
+
             <div className="mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                  <span className="px-2 bg-white text-gray-500">
+                    Or continue with
+                  </span>
                 </div>
               </div>
 
@@ -132,9 +138,9 @@ const LoginPage = () => {
                 <Button variant="outline">Facebook</Button>
               </div> */}
             </div>
-            
+
             <div className="mt-6 text-center text-sm text-gray-600">
-              Don't have an account?{" "}
+              Don't have an account?{' '}
               <Link to="/register" className="text-course-blue hover:underline">
                 Sign up
               </Link>

@@ -1,50 +1,49 @@
-
-import { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Star } from "lucide-react";
+import { useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Star } from 'lucide-react';
 
 // Mock testimonials data
 const testimonials = [
   {
     id: 1,
-    name: "Alex Johnson",
-    role: "Software Developer",
-    image: "https://randomuser.me/api/portraits/men/32.jpg",
+    name: 'Alex Johnson',
+    role: 'Software Developer',
+    image: 'https://randomuser.me/api/portraits/men/32.jpg',
     content:
-      "CoursePalette completely changed my career path. I went from knowing basic HTML to becoming a full-stack developer in just 6 months. The instructors are world-class and the community support is incredible!",
-    course: "Complete Web Development Bootcamp",
+      'CoursePalette completely changed my career path. I went from knowing basic HTML to becoming a full-stack developer in just 6 months. The instructors are world-class and the community support is incredible!',
+    course: 'Complete Web Development Bootcamp',
     rating: 5,
   },
   {
     id: 2,
-    name: "Sarah Williams",
-    role: "Data Analyst",
-    image: "https://randomuser.me/api/portraits/women/44.jpg",
+    name: 'Sarah Williams',
+    role: 'Data Analyst',
+    image: 'https://randomuser.me/api/portraits/women/44.jpg',
     content:
-      "As someone with no background in data science, I was amazed at how well-structured the courses were. The step-by-step approach helped me land my dream job as a data analyst at a Fortune 500 company.",
-    course: "Data Science Specialization",
+      'As someone with no background in data science, I was amazed at how well-structured the courses were. The step-by-step approach helped me land my dream job as a data analyst at a Fortune 500 company.',
+    course: 'Data Science Specialization',
     rating: 5,
   },
   {
     id: 3,
-    name: "Michael Chen",
-    role: "Marketing Manager",
-    image: "https://randomuser.me/api/portraits/men/67.jpg",
+    name: 'Michael Chen',
+    role: 'Marketing Manager',
+    image: 'https://randomuser.me/api/portraits/men/67.jpg',
     content:
       "The digital marketing courses here are top-notch. I implemented the strategies I learned and saw a 200% increase in our company's conversion rate within just three months.",
-    course: "Digital Marketing Masterclass",
+    course: 'Digital Marketing Masterclass',
     rating: 4,
   },
   {
     id: 4,
-    name: "Emily Rodriguez",
-    role: "UI/UX Designer",
-    image: "https://randomuser.me/api/portraits/women/28.jpg",
+    name: 'Emily Rodriguez',
+    role: 'UI/UX Designer',
+    image: 'https://randomuser.me/api/portraits/women/28.jpg',
     content:
-      "I switched from graphic design to UX design after taking courses here. The practical projects and portfolio reviews were invaluable. I now work at a leading tech company designing user experiences.",
-    course: "UI/UX Design Professional Certificate",
+      'I switched from graphic design to UX design after taking courses here. The practical projects and portfolio reviews were invaluable. I now work at a leading tech company designing user experiences.',
+    course: 'UI/UX Design Professional Certificate',
     rating: 5,
   },
 ];
@@ -53,13 +52,13 @@ const TestimonialSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => 
+    setCurrentIndex((prevIndex) =>
       prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1
     );
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prevIndex) => 
+    setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1
     );
   };
@@ -82,8 +81,13 @@ const TestimonialSection = () => {
               <div className="flex flex-col md:flex-row md:items-start gap-6">
                 <div className="flex-shrink-0 flex flex-col items-center">
                   <Avatar className="w-20 h-20 md:w-24 md:h-24 mb-4">
-                    <AvatarImage src={testimonial.image} alt={testimonial.name} />
-                    <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
+                    <AvatarImage
+                      src={testimonial.image}
+                      alt={testimonial.name}
+                    />
+                    <AvatarFallback>
+                      {testimonial.name.charAt(0)}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="flex mb-1">
                     {Array.from({ length: 5 }).map((_, i) => (
@@ -92,20 +96,22 @@ const TestimonialSection = () => {
                         size={16}
                         className={`${
                           i < testimonial.rating
-                            ? "text-yellow-400 fill-yellow-400"
-                            : "text-gray-300"
+                            ? 'text-yellow-400 fill-yellow-400'
+                            : 'text-gray-300'
                         }`}
                       />
                     ))}
                   </div>
                 </div>
-                
+
                 <div className="flex-1">
                   <div className="text-xl md:text-2xl mb-4 italic text-gray-700">
                     "{testimonial.content}"
                   </div>
                   <div className="mb-2">
-                    <div className="font-semibold text-lg">{testimonial.name}</div>
+                    <div className="font-semibold text-lg">
+                      {testimonial.name}
+                    </div>
                     <div className="text-gray-600">{testimonial.role}</div>
                   </div>
                   <div className="text-sm text-course-blue">
@@ -123,14 +129,14 @@ const TestimonialSection = () => {
                 onClick={() => setCurrentIndex(index)}
                 className={`w-3 h-3 rounded-full transition-all ${
                   index === currentIndex
-                    ? "bg-course-blue scale-110"
-                    : "bg-gray-300"
+                    ? 'bg-course-blue scale-110'
+                    : 'bg-gray-300'
                 }`}
                 aria-label={`Go to testimonial ${index + 1}`}
               />
             ))}
           </div>
-          
+
           <div className="flex justify-center mt-6 space-x-4">
             <Button
               variant="outline"

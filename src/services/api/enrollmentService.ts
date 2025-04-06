@@ -1,5 +1,4 @@
-
-import { get, post, put } from "./apiClient";
+import { get, post, put } from './apiClient';
 
 interface EnrollmentData {
   status?: string;
@@ -11,28 +10,35 @@ export const enrollmentService = {
   getCourseEnrollments: (courseId: string) => {
     return get(`/courses/${courseId}/enrollments`);
   },
-  
+
   getMyEnrollments: () => {
-    return get("/enrollments/me");
+    return get('/enrollments/me');
   },
-  
-  enrollInCourse: (courseId: string, data: EnrollmentData = { status: "ACTIVE" }) => {
+
+  enrollInCourse: (
+    courseId: string,
+    data: EnrollmentData = { status: 'ACTIVE' }
+  ) => {
     return post(`/courses/${courseId}/enrollments`, data);
   },
-  
+
   getEnrollment: (courseId: string, enrollmentId: string) => {
     return get(`/courses/${courseId}/enrollments/${enrollmentId}`);
   },
-  
-  updateEnrollment: (courseId: string, enrollmentId: string, data: EnrollmentData) => {
+
+  updateEnrollment: (
+    courseId: string,
+    enrollmentId: string,
+    data: EnrollmentData
+  ) => {
     return put(`/courses/${courseId}/enrollments/${enrollmentId}`, data);
   },
-  
+
   completeCourse: (courseId: string, enrollmentId: string) => {
     return post(`/courses/${courseId}/enrollments/${enrollmentId}/complete`);
   },
-  
+
   dropCourse: (courseId: string, enrollmentId: string) => {
     return post(`/courses/${courseId}/enrollments/${enrollmentId}/drop`);
-  }
+  },
 };

@@ -1,7 +1,6 @@
-
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { ChevronRight, CheckCircle } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { ChevronRight, CheckCircle } from 'lucide-react';
 
 const HeroSection = () => {
   return (
@@ -12,7 +11,7 @@ const HeroSection = () => {
         <div className="absolute bottom-10 right-20 w-60 h-60 rounded-full bg-white"></div>
         <div className="absolute top-1/2 left-1/3 w-20 h-20 rounded-full bg-white"></div>
       </div>
-      
+
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 mb-8 md:mb-0">
@@ -23,9 +22,9 @@ const HeroSection = () => {
               Learn Without <span className="text-yellow-300">Limits</span>
             </h1>
             <p className="text-lg md:text-xl mb-8 opacity-90 leading-relaxed">
-              Start, switch, or advance your career with thousands of courses, 
-              professional certificates, and degrees from world-class universities
-              and companies.
+              Start, switch, or advance your career with thousands of courses,
+              professional certificates, and degrees from world-class
+              universities and companies.
             </p>
             <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
               <Button
@@ -49,31 +48,41 @@ const HeroSection = () => {
           </div>
           <div className="md:w-1/2 md:pl-10">
             <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-2xl p-6 border border-white/20 text-gray-100">
-              <h3 className="text-xl font-semibold mb-4 text-white">Why CoursePalette?</h3>
+              <h3 className="text-xl font-semibold mb-4 text-white">
+                Why CoursePalette?
+              </h3>
               <ul className="space-y-4">
                 <li className="flex items-start">
                   <span className="bg-course-blue rounded-full p-1 flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
                     <CheckCircle className="h-4 w-4 text-white" />
                   </span>
-                  <span className="opacity-90">Access to 10,000+ top-rated courses</span>
+                  <span className="opacity-90">
+                    Access to 10,000+ top-rated courses
+                  </span>
                 </li>
                 <li className="flex items-start">
                   <span className="bg-course-blue rounded-full p-1 flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
                     <CheckCircle className="h-4 w-4 text-white" />
                   </span>
-                  <span className="opacity-90">Earn certificates from leading institutions</span>
+                  <span className="opacity-90">
+                    Earn certificates from leading institutions
+                  </span>
                 </li>
                 <li className="flex items-start">
                   <span className="bg-course-blue rounded-full p-1 flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
                     <CheckCircle className="h-4 w-4 text-white" />
                   </span>
-                  <span className="opacity-90">Learn at your own pace, anytime, anywhere</span>
+                  <span className="opacity-90">
+                    Learn at your own pace, anytime, anywhere
+                  </span>
                 </li>
                 <li className="flex items-start">
                   <span className="bg-course-blue rounded-full p-1 flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
                     <CheckCircle className="h-4 w-4 text-white" />
                   </span>
-                  <span className="opacity-90">Instructors from top global universities</span>
+                  <span className="opacity-90">
+                    Instructors from top global universities
+                  </span>
                 </li>
               </ul>
             </div>

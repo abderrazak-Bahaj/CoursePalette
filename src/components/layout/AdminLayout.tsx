@@ -1,18 +1,17 @@
-
-import { ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
-import { 
-  BookText, 
-  LayoutDashboard, 
-  FolderKanban, 
-  Users, 
-  BarChart3, 
+import { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  BookText,
+  LayoutDashboard,
+  FolderKanban,
+  Users,
+  BarChart3,
   Settings,
-  LogOut
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
+  LogOut,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import {
   SidebarProvider,
   Sidebar,
@@ -25,17 +24,17 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarGroup,
-  SidebarGroupLabel
-} from "@/components/ui/sidebar";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
+  SidebarGroupLabel,
+} from '@/components/ui/sidebar';
+import Navbar from './Navbar';
+import Footer from './Footer';
 
 interface AdminLayoutProps {
   children: ReactNode;
   title?: string;
 }
 
-const AdminLayout = ({ children, title = "Dashboard" }: AdminLayoutProps) => {
+const AdminLayout = ({ children, title = 'Dashboard' }: AdminLayoutProps) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -44,16 +43,16 @@ const AdminLayout = ({ children, title = "Dashboard" }: AdminLayoutProps) => {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate("/login");
+      navigate('/login');
       toast({
-        title: "Logged out successfully",
-        description: "You have been logged out of your account",
+        title: 'Logged out successfully',
+        description: 'You have been logged out of your account',
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to log out. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to log out. Please try again.',
+        variant: 'destructive',
       });
     }
   };

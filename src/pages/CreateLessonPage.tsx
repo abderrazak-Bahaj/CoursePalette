@@ -1,38 +1,37 @@
-
-import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import AdminLayout from "@/components/layout/AdminLayout";
-import { mockCourses } from "@/data/mockData";
-import { useToast } from "@/hooks/use-toast";
-import LessonForm from "@/components/admin/LessonForm";
+import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import AdminLayout from '@/components/layout/AdminLayout';
+import { mockCourses } from '@/data/mockData';
+import { useToast } from '@/hooks/use-toast';
+import LessonForm from '@/components/admin/LessonForm';
 
 const CreateLessonPage = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+
   // Find the course from mockData
-  const course = courseId ? mockCourses.find(c => c.id === courseId) : null;
+  const course = courseId ? mockCourses.find((c) => c.id === courseId) : null;
   const isLoading = false;
-  
+
   // If no courseId, redirect to the courses page
   if (!courseId) {
     toast({
-      title: "Error",
-      description: "No course selected. Please select a course first.",
-      variant: "destructive"
+      title: 'Error',
+      description: 'No course selected. Please select a course first.',
+      variant: 'destructive',
     });
-    navigate("/admin/courses");
+    navigate('/admin/courses');
     return null;
   }
 
   const handleCancel = () => {
     navigate(-1);
   };
-  
+
   if (isLoading) {
     return (
       <AdminLayout title="Create New Lesson">
@@ -51,20 +50,22 @@ const CreateLessonPage = () => {
       </AdminLayout>
     );
   }
-  
+
   if (!course) {
     return (
       <AdminLayout title="Create New Lesson">
         <div className="flex flex-col items-center justify-center p-6">
-          <p className="text-destructive mb-4">Failed to load course information</p>
-          <Button onClick={() => navigate("/admin/courses")}>
+          <p className="text-destructive mb-4">
+            Failed to load course information
+          </p>
+          <Button onClick={() => navigate('/admin/courses')}>
             Return to Courses
           </Button>
         </div>
       </AdminLayout>
     );
   }
-  
+
   return (
     <AdminLayout title="Create New Lesson">
       <div className="flex items-center space-x-4 mb-6">
@@ -74,16 +75,15 @@ const CreateLessonPage = () => {
         </Button>
         <h1 className="text-2xl font-bold">
           Create New Lesson
-          <span className="text-lg font-normal ml-2 text-muted-foreground">for {course.title}</span>
+          <span className="text-lg font-normal ml-2 text-muted-foreground">
+            for {course.title}
+          </span>
         </h1>
       </div>
-      
+
       <Card>
         <CardContent className="p-6">
-          <LessonForm 
-            onCancel={handleCancel}
-            courseId={courseId}
-          />
+          <LessonForm onCancel={handleCancel} courseId={courseId} />
         </CardContent>
       </Card>
     </AdminLayout>

@@ -1,7 +1,18 @@
-
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UseFormReturn } from "react-hook-form";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { UseFormReturn } from 'react-hook-form';
 
 interface CourseFormCategoriesProps {
   form: UseFormReturn<any>;
@@ -16,10 +27,7 @@ const CourseFormCategories = ({ form }: CourseFormCategoriesProps) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Category</FormLabel>
-            <Select 
-              onValueChange={field.onChange} 
-              defaultValue={field.value}
-            >
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a category" />
@@ -37,17 +45,14 @@ const CourseFormCategories = ({ form }: CourseFormCategoriesProps) => {
           </FormItem>
         )}
       />
-      
+
       <FormField
         control={form.control}
         name="level"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Level</FormLabel>
-            <Select 
-              onValueChange={field.onChange} 
-              defaultValue={field.value}
-            >
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a level" />

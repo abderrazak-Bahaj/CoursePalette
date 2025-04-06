@@ -1,26 +1,46 @@
-
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { TipTapEditor } from "@/components/ui/tiptap-editor";
-import { useToast } from "@/hooks/use-toast";
-import { courseService, CourseData } from "@/services/api/courseService";
-import { Course } from "@/types/course";
+import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { TipTapEditor } from '@/components/ui/tiptap-editor';
+import { useToast } from '@/hooks/use-toast';
+import { courseService, CourseData } from '@/services/api/courseService';
+import { Course } from '@/types/course';
 
 const courseSchema = z.object({
-  title: z.string().min(5, { message: "Title must be at least 5 characters" }),
-  description: z.string().min(10, { message: "Description must be at least 10 characters" }),
-  category_id: z.string().min(1, { message: "Please select a category" }),
-  price: z.coerce.number().min(0, { message: "Price cannot be negative" }),
-  level: z.string().min(1, { message: "Please select a level" }),
+  title: z.string().min(5, { message: 'Title must be at least 5 characters' }),
+  description: z
+    .string()
+    .min(10, { message: 'Description must be at least 10 characters' }),
+  category_id: z.string().min(1, { message: 'Please select a category' }),
+  price: z.coerce.number().min(0, { message: 'Price cannot be negative' }),
+  level: z.string().min(1, { message: 'Please select a level' }),
   instructor_id: z.string().optional(),
   status: z.string().optional(),
 });
@@ -34,57 +54,57 @@ type CourseModalProps = {
 const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [content, setContent] = useState(course?.description || "");
+  const [content, setContent] = useState(course?.description || '');
   const isEditing = !!course;
 
   const form = useForm<z.infer<typeof courseSchema>>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
-      title: course?.title || "",
-      description: course?.description || "",
-      category_id: course?.category || "",
+      title: course?.title || '',
+      description: course?.description || '',
+      category_id: course?.category || '',
       price: course?.price || 0,
-      level: course?.level || "",
-      status: "draft",
+      level: course?.level || '',
+      status: 'draft',
     },
   });
 
   const createMutation = useMutation({
     mutationFn: (data: CourseData) => courseService.createCourse(data),
     onSuccess: () => {
-      toast({ 
-        title: "Success", 
-        description: "Course created successfully" 
+      toast({
+        title: 'Success',
+        description: 'Course created successfully',
       });
-      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({ queryKey: ['courses'] });
       handleClose();
     },
     onError: (error) => {
-      toast({ 
-        title: "Error", 
-        description: "Failed to create course", 
-        variant: "destructive" 
+      toast({
+        title: 'Error',
+        description: 'Failed to create course',
+        variant: 'destructive',
       });
       console.error(error);
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CourseData }) => 
+    mutationFn: ({ id, data }: { id: string; data: CourseData }) =>
       courseService.updateCourse(id, data),
     onSuccess: () => {
-      toast({ 
-        title: "Success", 
-        description: "Course updated successfully" 
+      toast({
+        title: 'Success',
+        description: 'Course updated successfully',
       });
-      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({ queryKey: ['courses'] });
       handleClose();
     },
     onError: (error) => {
-      toast({ 
-        title: "Error", 
-        description: "Failed to update course", 
-        variant: "destructive" 
+      toast({
+        title: 'Error',
+        description: 'Failed to update course',
+        variant: 'destructive',
       });
       console.error(error);
     },
@@ -93,7 +113,7 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
   const handleSubmit = (values: z.infer<typeof courseSchema>) => {
     const courseData: CourseData = {
       ...values,
-      content
+      content,
     };
 
     if (isEditing && course) {
@@ -105,7 +125,7 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
 
   const handleClose = () => {
     form.reset();
-    setContent("");
+    setContent('');
     onClose();
   };
 
@@ -115,11 +135,16 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Course" : "Create New Course"}</DialogTitle>
+          <DialogTitle>
+            {isEditing ? 'Edit Course' : 'Create New Course'}
+          </DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-6"
+          >
             <FormField
               control={form.control}
               name="title"
@@ -141,9 +166,9 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
                 <FormItem>
                   <FormLabel>Short Description</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Enter a brief description" 
-                      {...field} 
+                    <Textarea
+                      placeholder="Enter a brief description"
+                      {...field}
                       rows={3}
                     />
                   </FormControl>
@@ -154,10 +179,10 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
 
             <div className="space-y-2">
               <FormLabel>Detailed Content</FormLabel>
-              <TipTapEditor 
-                content={content} 
-                onChange={setContent} 
-                placeholder="Write detailed course content here..." 
+              <TipTapEditor
+                content={content}
+                onChange={setContent}
+                placeholder="Write detailed course content here..."
               />
             </div>
 
@@ -168,15 +193,22 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Category</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Web Development">Web Development</SelectItem>
-                        <SelectItem value="Data Science">Data Science</SelectItem>
+                        <SelectItem value="Web Development">
+                          Web Development
+                        </SelectItem>
+                        <SelectItem value="Data Science">
+                          Data Science
+                        </SelectItem>
                         <SelectItem value="Design">Design</SelectItem>
                         <SelectItem value="Business">Business</SelectItem>
                         <SelectItem value="Marketing">Marketing</SelectItem>
@@ -193,7 +225,10 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Level</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select a level" />
@@ -201,7 +236,9 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="Beginner">Beginner</SelectItem>
-                        <SelectItem value="Intermediate">Intermediate</SelectItem>
+                        <SelectItem value="Intermediate">
+                          Intermediate
+                        </SelectItem>
                         <SelectItem value="Advanced">Advanced</SelectItem>
                       </SelectContent>
                     </Select>
@@ -230,7 +267,10 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Status</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select status" />
@@ -253,7 +293,11 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
                 Cancel
               </Button>
               <Button type="submit" disabled={isPending}>
-                {isPending ? "Saving..." : isEditing ? "Update Course" : "Create Course"}
+                {isPending
+                  ? 'Saving...'
+                  : isEditing
+                    ? 'Update Course'
+                    : 'Create Course'}
               </Button>
             </DialogFooter>
           </form>

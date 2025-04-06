@@ -1,31 +1,30 @@
-
-import { Card, CardContent } from "@/components/ui/card";
-import { UsersRound, GraduationCap, Globe, BookOpen } from "lucide-react";
+import { Card, CardContent } from '@/components/ui/card';
+import { UsersRound, GraduationCap, Globe, BookOpen } from 'lucide-react';
 
 const stats = [
   {
-    title: "Active Learners",
-    value: "15M+",
+    title: 'Active Learners',
+    value: '15M+',
     icon: <UsersRound className="h-10 w-10 text-course-blue" />,
-    description: "From 190+ countries",
+    description: 'From 190+ countries',
   },
   {
-    title: "Courses",
-    value: "10K+",
+    title: 'Courses',
+    value: '10K+',
     icon: <BookOpen className="h-10 w-10 text-course-teal" />,
-    description: "Across all subjects",
+    description: 'Across all subjects',
   },
   {
-    title: "Certificates Earned",
-    value: "2M+",
+    title: 'Certificates Earned',
+    value: '2M+',
     icon: <GraduationCap className="h-10 w-10 text-course-green" />,
-    description: "Career-advancing credentials",
+    description: 'Career-advancing credentials',
   },
   {
-    title: "Partner Institutions",
-    value: "250+",
+    title: 'Partner Institutions',
+    value: '250+',
     icon: <Globe className="h-10 w-10 text-course-purple" />,
-    description: "Universities & companies",
+    description: 'Universities & companies',
   },
 ];
 
@@ -40,7 +39,7 @@ const StatisticsSection = () => {
             their goals with CoursePalette
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => (
             <Card key={index} className="border-none course-card-shadow">

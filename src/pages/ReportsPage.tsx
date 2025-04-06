@@ -1,52 +1,86 @@
-
-import AdminLayout from "@/components/layout/AdminLayout";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
-import { Calendar, Download, FileText, UserCheck, BookOpen, Award } from "lucide-react";
-import AdminEnrollmentStats from "@/components/admin/AdminEnrollmentStats";
-import { useAuth } from "@/hooks/useAuth";
+import AdminLayout from '@/components/layout/AdminLayout';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+} from 'recharts';
+import {
+  Calendar,
+  Download,
+  FileText,
+  UserCheck,
+  BookOpen,
+  Award,
+} from 'lucide-react';
+import AdminEnrollmentStats from '@/components/admin/AdminEnrollmentStats';
+import { useAuth } from '@/hooks/useAuth';
 
 const enrollmentData = [
-  { name: "JavaScript Basics", value: 400, color: "#8884d8" },
-  { name: "Python for Beginners", value: 300, color: "#82ca9d" },
-  { name: "Web Development", value: 300, color: "#ffc658" },
-  { name: "Machine Learning", value: 200, color: "#ff8042" },
-  { name: "Data Science", value: 100, color: "#0088fe" },
+  { name: 'JavaScript Basics', value: 400, color: '#8884d8' },
+  { name: 'Python for Beginners', value: 300, color: '#82ca9d' },
+  { name: 'Web Development', value: 300, color: '#ffc658' },
+  { name: 'Machine Learning', value: 200, color: '#ff8042' },
+  { name: 'Data Science', value: 100, color: '#0088fe' },
 ];
 
 const completionRateData = [
-  { name: "Completed", value: 68, color: "#4ade80" },
-  { name: "In Progress", value: 22, color: "#facc15" },
-  { name: "Not Started", value: 10, color: "#ef4444" },
+  { name: 'Completed', value: 68, color: '#4ade80' },
+  { name: 'In Progress', value: 22, color: '#facc15' },
+  { name: 'Not Started', value: 10, color: '#ef4444' },
 ];
 
 const userActivityData = [
-  { name: "Jan", students: 65, teachers: 28 },
-  { name: "Feb", students: 59, teachers: 30 },
-  { name: "Mar", students: 80, teachers: 32 },
-  { name: "Apr", students: 81, teachers: 35 },
-  { name: "May", students: 56, teachers: 31 },
-  { name: "Jun", students: 55, teachers: 29 },
-  { name: "Jul", students: 40, teachers: 25 },
+  { name: 'Jan', students: 65, teachers: 28 },
+  { name: 'Feb', students: 59, teachers: 30 },
+  { name: 'Mar', students: 80, teachers: 32 },
+  { name: 'Apr', students: 81, teachers: 35 },
+  { name: 'May', students: 56, teachers: 31 },
+  { name: 'Jun', students: 55, teachers: 29 },
+  { name: 'Jul', students: 40, teachers: 25 },
 ];
 
 const ReportsPage = () => {
   const { user } = useAuth();
-  
+
   // Only render with AdminLayout if user is admin, fallback to normal view for others
-  const LayoutComponent = user?.isAdmin ? AdminLayout : "div";
-  const layoutProps = user?.isAdmin ? { title: "Reports & Analytics" } : {};
+  const LayoutComponent = user?.isAdmin ? AdminLayout : 'div';
+  const layoutProps = user?.isAdmin ? { title: 'Reports & Analytics' } : {};
 
   return (
     <LayoutComponent {...layoutProps}>
       <div className="container mx-auto px-4 py-8">
-        {!user?.isAdmin && <h1 className="text-3xl font-bold mb-6">Reports & Analytics</h1>}
-        
+        {!user?.isAdmin && (
+          <h1 className="text-3xl font-bold mb-6">Reports & Analytics</h1>
+        )}
+
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          {!user?.isAdmin && <h2 className="text-2xl font-semibold">Dashboard Overview</h2>}
+          {!user?.isAdmin && (
+            <h2 className="text-2xl font-semibold">Dashboard Overview</h2>
+          )}
           <div className="flex gap-3">
             <Select defaultValue="this-month">
               <SelectTrigger className="w-[180px]">
@@ -70,7 +104,7 @@ const ReportsPage = () => {
             </Button>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="shadow-md">
             <CardHeader className="pb-2">
@@ -83,14 +117,23 @@ const ReportsPage = () => {
             <CardContent>
               <div className="text-3xl font-bold">2,543</div>
               <p className="text-sm text-green-500 mt-1 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 mr-1">
-                  <path fillRule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clipRule="evenodd" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="w-4 h-4 mr-1"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 +12% from last month
               </p>
             </CardContent>
           </Card>
-          
+
           <Card className="shadow-md">
             <CardHeader className="pb-2">
               <CardTitle className="text-base font-medium flex items-center">
@@ -102,14 +145,23 @@ const ReportsPage = () => {
             <CardContent>
               <div className="text-3xl font-bold">854</div>
               <p className="text-sm text-green-500 mt-1 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 mr-1">
-                  <path fillRule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clipRule="evenodd" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="w-4 h-4 mr-1"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 +8% from last month
               </p>
             </CardContent>
           </Card>
-          
+
           <Card className="shadow-md">
             <CardHeader className="pb-2">
               <CardTitle className="text-base font-medium flex items-center">
@@ -121,14 +173,23 @@ const ReportsPage = () => {
             <CardContent>
               <div className="text-3xl font-bold">68%</div>
               <p className="text-sm text-green-500 mt-1 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 mr-1">
-                  <path fillRule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clipRule="evenodd" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="w-4 h-4 mr-1"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 +5% from last month
               </p>
             </CardContent>
           </Card>
-          
+
           <Card className="shadow-md">
             <CardHeader className="pb-2">
               <CardTitle className="text-base font-medium flex items-center">
@@ -140,15 +201,24 @@ const ReportsPage = () => {
             <CardContent>
               <div className="text-3xl font-bold">128</div>
               <p className="text-sm text-green-500 mt-1 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 mr-1">
-                  <path fillRule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clipRule="evenodd" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="w-4 h-4 mr-1"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 +15% from last month
               </p>
             </CardContent>
           </Card>
         </div>
-        
+
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="bg-card border shadow-sm">
             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -157,10 +227,10 @@ const ReportsPage = () => {
             <TabsTrigger value="revenue">Revenue</TabsTrigger>
             <TabsTrigger value="users">User Activity</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="overview" className="space-y-6">
             <AdminEnrollmentStats />
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card className="shadow-md">
                 <CardHeader>
@@ -181,7 +251,9 @@ const ReportsPage = () => {
                           outerRadius={80}
                           fill="#8884d8"
                           dataKey="value"
-                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          label={({ name, percent }) =>
+                            `${name}: ${(percent * 100).toFixed(0)}%`
+                          }
                         >
                           {enrollmentData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
@@ -194,7 +266,7 @@ const ReportsPage = () => {
                   </div>
                 </CardContent>
               </Card>
-              
+
               <Card className="shadow-md">
                 <CardHeader>
                   <CardTitle className="text-lg">Completion Status</CardTitle>
@@ -229,14 +301,12 @@ const ReportsPage = () => {
               </Card>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="enrollments">
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle>Enrollment Details</CardTitle>
-                <CardDescription>
-                  Monthly enrollment statistics
-                </CardDescription>
+                <CardDescription>Monthly enrollment statistics</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="h-[400px]">
@@ -255,14 +325,18 @@ const ReportsPage = () => {
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Bar dataKey="students" name="Student Enrollments" fill="#8884d8" />
+                      <Bar
+                        dataKey="students"
+                        name="Student Enrollments"
+                        fill="#8884d8"
+                      />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="completion">
             <Card className="shadow-md">
               <CardHeader>
@@ -276,11 +350,11 @@ const ReportsPage = () => {
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={[
-                        { name: "Web Dev", completion: 78 },
-                        { name: "Data Science", completion: 62 },
-                        { name: "UX Design", completion: 85 },
-                        { name: "Mobile Dev", completion: 71 },
-                        { name: "Cloud Computing", completion: 68 },
+                        { name: 'Web Dev', completion: 78 },
+                        { name: 'Data Science', completion: 62 },
+                        { name: 'UX Design', completion: 85 },
+                        { name: 'Mobile Dev', completion: 71 },
+                        { name: 'Cloud Computing', completion: 68 },
                       ]}
                       margin={{
                         top: 20,
@@ -294,14 +368,18 @@ const ReportsPage = () => {
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Bar dataKey="completion" name="Completion Rate (%)" fill="#82ca9d" />
+                      <Bar
+                        dataKey="completion"
+                        name="Completion Rate (%)"
+                        fill="#82ca9d"
+                      />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="revenue">
             <Card className="shadow-md">
               <CardHeader>
@@ -315,13 +393,13 @@ const ReportsPage = () => {
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={[
-                        { name: "Jan", revenue: 4000 },
-                        { name: "Feb", revenue: 3000 },
-                        { name: "Mar", revenue: 5000 },
-                        { name: "Apr", revenue: 4500 },
-                        { name: "May", revenue: 3800 },
-                        { name: "Jun", revenue: 4200 },
-                        { name: "Jul", revenue: 4800 },
+                        { name: 'Jan', revenue: 4000 },
+                        { name: 'Feb', revenue: 3000 },
+                        { name: 'Mar', revenue: 5000 },
+                        { name: 'Apr', revenue: 4500 },
+                        { name: 'May', revenue: 3800 },
+                        { name: 'Jun', revenue: 4200 },
+                        { name: 'Jul', revenue: 4800 },
                       ]}
                       margin={{
                         top: 20,
@@ -333,23 +411,27 @@ const ReportsPage = () => {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" />
                       <YAxis />
-                      <Tooltip formatter={(value) => [`$${value}`, "Revenue"]} />
+                      <Tooltip
+                        formatter={(value) => [`$${value}`, 'Revenue']}
+                      />
                       <Legend />
-                      <Bar dataKey="revenue" name="Revenue ($)" fill="#ff8042" />
+                      <Bar
+                        dataKey="revenue"
+                        name="Revenue ($)"
+                        fill="#ff8042"
+                      />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="users">
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle>User Activity</CardTitle>
-                <CardDescription>
-                  Monthly activity by user role
-                </CardDescription>
+                <CardDescription>Monthly activity by user role</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="h-[400px]">

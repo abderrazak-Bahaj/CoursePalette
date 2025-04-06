@@ -1,8 +1,7 @@
-
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
-import CategoryForm from "./CategoryForm";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
+import CategoryForm from './CategoryForm';
 
 interface CategoriesTabContentProps {
   className?: string;
@@ -20,7 +19,7 @@ const CategoriesTabContent = ({ className }: CategoriesTabContentProps) => {
           Add Category
         </Button>
       </div>
-      
+
       {isAddingCategory ? (
         <CategoryForm onCancel={() => setIsAddingCategory(false)} />
       ) : (

@@ -1,8 +1,14 @@
-
-import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { UseFormReturn } from "react-hook-form";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+  FormDescription,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { UseFormReturn } from 'react-hook-form';
 
 interface LessonFormVideoDetailsProps {
   form: UseFormReturn<any>;
@@ -28,7 +34,7 @@ const LessonFormVideoDetails = ({ form }: LessonFormVideoDetailsProps) => {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="duration"
@@ -43,7 +49,7 @@ const LessonFormVideoDetails = ({ form }: LessonFormVideoDetailsProps) => {
           )}
         />
       </div>
-      
+
       <FormField
         control={form.control}
         name="content"
@@ -51,10 +57,10 @@ const LessonFormVideoDetails = ({ form }: LessonFormVideoDetailsProps) => {
           <FormItem>
             <FormLabel>Lesson Content</FormLabel>
             <FormControl>
-              <Textarea 
-                placeholder="Enter the main content of the lesson..." 
+              <Textarea
+                placeholder="Enter the main content of the lesson..."
                 rows={6}
-                {...field} 
+                {...field}
               />
             </FormControl>
             <FormDescription>

@@ -1,6 +1,5 @@
-
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const CtaSection = () => {
   return (
@@ -10,8 +9,9 @@ const CtaSection = () => {
           Ready to Start Your Learning Journey?
         </h2>
         <p className="text-lg md:text-xl max-w-3xl mx-auto mb-8 opacity-90">
-          Join our global community of learners and transform your future with in-demand 
-          skills. Get started today with thousands of courses taught by expert instructors.
+          Join our global community of learners and transform your future with
+          in-demand skills. Get started today with thousands of courses taught
+          by expert instructors.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Button

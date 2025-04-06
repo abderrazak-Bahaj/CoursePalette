@@ -1,8 +1,7 @@
-
-import { BookOpen, Award, Clock } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { userEnrolledCourses } from "@/data/mockData";
-import { mockCertificates } from "@/data/mockData";
+import { BookOpen, Award, Clock } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { userEnrolledCourses } from '@/data/mockData';
+import { mockCertificates } from '@/data/mockData';
 
 const DashboardStats = () => {
   return (
@@ -15,7 +14,9 @@ const DashboardStats = () => {
             </div>
             <div>
               <div className="text-sm text-gray-500">Enrolled Courses</div>
-              <div className="text-2xl font-bold">{userEnrolledCourses.length}</div>
+              <div className="text-2xl font-bold">
+                {userEnrolledCourses.length}
+              </div>
             </div>
           </div>
         </CardContent>
@@ -28,7 +29,9 @@ const DashboardStats = () => {
             </div>
             <div>
               <div className="text-sm text-gray-500">Certificates</div>
-              <div className="text-2xl font-bold">{mockCertificates.length}</div>
+              <div className="text-2xl font-bold">
+                {mockCertificates.length}
+              </div>
             </div>
           </div>
         </CardContent>

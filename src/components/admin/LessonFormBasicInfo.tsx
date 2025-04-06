@@ -1,9 +1,20 @@
-
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UseFormReturn } from "react-hook-form";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { UseFormReturn } from 'react-hook-form';
 
 interface LessonFormBasicInfoProps {
   form: UseFormReturn<any>;
@@ -26,17 +37,14 @@ const LessonFormBasicInfo = ({ form }: LessonFormBasicInfoProps) => {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="courseId"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Course</FormLabel>
-              <Select 
-                onValueChange={field.onChange} 
-                defaultValue={field.value}
-              >
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a course" />
@@ -53,7 +61,7 @@ const LessonFormBasicInfo = ({ form }: LessonFormBasicInfoProps) => {
           )}
         />
       </div>
-      
+
       <FormField
         control={form.control}
         name="description"
@@ -61,10 +69,10 @@ const LessonFormBasicInfo = ({ form }: LessonFormBasicInfoProps) => {
           <FormItem>
             <FormLabel>Description</FormLabel>
             <FormControl>
-              <Textarea 
-                placeholder="A detailed introduction to React Hooks..." 
+              <Textarea
+                placeholder="A detailed introduction to React Hooks..."
                 rows={3}
-                {...field} 
+                {...field}
               />
             </FormControl>
             <FormMessage />

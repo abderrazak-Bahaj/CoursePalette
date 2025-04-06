@@ -1,17 +1,32 @@
-
-import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import MainLayout from "@/components/layout/MainLayout";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { User, Clock, BarChart, Star, Calendar, Video, Play, Lock, Check, Globe } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { mockCourses } from "@/data/mockData";
-import { useAuth } from "@/hooks/useAuth";
-import CourseCard from "@/components/course/CourseCard";
+import { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import MainLayout from '@/components/layout/MainLayout';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import {
+  User,
+  Clock,
+  BarChart,
+  Star,
+  Calendar,
+  Video,
+  Play,
+  Lock,
+  Check,
+  Globe,
+} from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { mockCourses } from '@/data/mockData';
+import { useAuth } from '@/hooks/useAuth';
+import CourseCard from '@/components/course/CourseCard';
 
 const CourseDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -44,16 +59,16 @@ const CourseDetailPage = () => {
   const handleEnroll = () => {
     if (!isAuthenticated) {
       toast({
-        title: "Authentication Required",
-        description: "Please log in or register to enroll in this course.",
-        variant: "destructive",
+        title: 'Authentication Required',
+        description: 'Please log in or register to enroll in this course.',
+        variant: 'destructive',
       });
       return;
     }
 
     setIsEnrolled(true);
     toast({
-      title: "Enrollment Successful",
+      title: 'Enrollment Successful',
       description: `You have successfully enrolled in "${course.title}"`,
     });
   };
@@ -71,8 +86,12 @@ const CourseDetailPage = () => {
               <div className="flex flex-wrap items-center gap-3 mb-4">
                 <div className="flex items-center">
                   <Star className="text-yellow-400 fill-yellow-400 h-5 w-5 mr-1" />
-                  <span className="font-medium mr-1">{course.rating.toFixed(1)}</span>
-                  <span className="text-gray-300">({course.reviewCount} reviews)</span>
+                  <span className="font-medium mr-1">
+                    {course.rating.toFixed(1)}
+                  </span>
+                  <span className="text-gray-300">
+                    ({course.reviewCount} reviews)
+                  </span>
                 </div>
                 <div className="flex items-center">
                   <User className="h-5 w-5 mr-1 text-gray-300" />
@@ -145,14 +164,16 @@ const CourseDetailPage = () => {
                 </div>
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="text-3xl font-bold">${course.price.toFixed(2)}</div>
+                    <div className="text-3xl font-bold">
+                      ${course.price.toFixed(2)}
+                    </div>
                   </div>
                   <Button
                     className="w-full mb-3 bg-course-blue"
                     size="lg"
                     onClick={handleEnroll}
                   >
-                    {isEnrolled ? "Already Enrolled" : "Enroll Now"}
+                    {isEnrolled ? 'Already Enrolled' : 'Enroll Now'}
                   </Button>
                   <p className="text-center text-sm mb-4">
                     30-day money-back guarantee
@@ -164,15 +185,11 @@ const CourseDetailPage = () => {
                     </div>
                     <div className="flex items-start">
                       <BarChart className="h-5 w-5 mr-2 mt-0.5 text-gray-300" />
-                      <span>
-                        {course.level} level
-                      </span>
+                      <span>{course.level} level</span>
                     </div>
                     <div className="flex items-start">
                       <Globe className="h-5 w-5 mr-2 mt-0.5 text-gray-300" />
-                      <span>
-                        {course.language}
-                      </span>
+                      <span>{course.language}</span>
                     </div>
                   </div>
                 </div>
@@ -196,7 +213,8 @@ const CourseDetailPage = () => {
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-bold mb-6">Course Content</h2>
               <div className="text-sm text-gray-500 mb-6">
-                {course.lessons?.length || 0} lessons • {course.duration} total length
+                {course.lessons?.length || 0} lessons • {course.duration} total
+                length
               </div>
 
               <Accordion type="single" collapsible className="w-full">
@@ -207,36 +225,50 @@ const CourseDetailPage = () => {
                         Section 1: Introduction
                       </div>
                       <div className="text-sm text-gray-500">
-                        {course.lessons?.filter((_, i) => i < 2).length || 0} lessons • 
-                        {course.lessons?.filter((_, i) => i < 2).reduce((acc, lesson) => {
-                          const [mins, secs] = lesson.duration.split(':').map(Number);
-                          return acc + mins + secs / 60;
-                        }, 0).toFixed(0) || 0} mins
+                        {course.lessons?.filter((_, i) => i < 2).length || 0}{' '}
+                        lessons •
+                        {course.lessons
+                          ?.filter((_, i) => i < 2)
+                          .reduce((acc, lesson) => {
+                            const [mins, secs] = lesson.duration
+                              .split(':')
+                              .map(Number);
+                            return acc + mins + secs / 60;
+                          }, 0)
+                          .toFixed(0) || 0}{' '}
+                        mins
                       </div>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
                     <ul className="space-y-4">
-                      {course.lessons?.filter((_, i) => i < 2).map((lesson) => (
-                        <li key={lesson.id} className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            {lesson.isPreview ? (
-                              <Play className="h-5 w-5 mr-3 text-course-blue" />
-                            ) : (
-                              <Lock className="h-5 w-5 mr-3 text-gray-400" />
-                            )}
-                            <div>
-                              <div className="font-medium">{lesson.title}</div>
-                              <div className="text-sm text-gray-500">
-                                {lesson.duration}
+                      {course.lessons
+                        ?.filter((_, i) => i < 2)
+                        .map((lesson) => (
+                          <li
+                            key={lesson.id}
+                            className="flex items-center justify-between"
+                          >
+                            <div className="flex items-center">
+                              {lesson.isPreview ? (
+                                <Play className="h-5 w-5 mr-3 text-course-blue" />
+                              ) : (
+                                <Lock className="h-5 w-5 mr-3 text-gray-400" />
+                              )}
+                              <div>
+                                <div className="font-medium">
+                                  {lesson.title}
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  {lesson.duration}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          {lesson.isPreview && (
-                            <Badge variant="outline">Preview</Badge>
-                          )}
-                        </li>
-                      ))}
+                            {lesson.isPreview && (
+                              <Badge variant="outline">Preview</Badge>
+                            )}
+                          </li>
+                        ))}
                     </ul>
                   </AccordionContent>
                 </AccordionItem>
@@ -248,29 +280,43 @@ const CourseDetailPage = () => {
                         Section 2: Getting Started
                       </div>
                       <div className="text-sm text-gray-500">
-                        {course.lessons?.filter((_, i) => i >= 2).length || 0} lessons • 
-                        {course.lessons?.filter((_, i) => i >= 2).reduce((acc, lesson) => {
-                          const [mins, secs] = lesson.duration.split(':').map(Number);
-                          return acc + mins + secs / 60;
-                        }, 0).toFixed(0) || 0} mins
+                        {course.lessons?.filter((_, i) => i >= 2).length || 0}{' '}
+                        lessons •
+                        {course.lessons
+                          ?.filter((_, i) => i >= 2)
+                          .reduce((acc, lesson) => {
+                            const [mins, secs] = lesson.duration
+                              .split(':')
+                              .map(Number);
+                            return acc + mins + secs / 60;
+                          }, 0)
+                          .toFixed(0) || 0}{' '}
+                        mins
                       </div>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
                     <ul className="space-y-4">
-                      {course.lessons?.filter((_, i) => i >= 2).map((lesson) => (
-                        <li key={lesson.id} className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <Lock className="h-5 w-5 mr-3 text-gray-400" />
-                            <div>
-                              <div className="font-medium">{lesson.title}</div>
-                              <div className="text-sm text-gray-500">
-                                {lesson.duration}
+                      {course.lessons
+                        ?.filter((_, i) => i >= 2)
+                        .map((lesson) => (
+                          <li
+                            key={lesson.id}
+                            className="flex items-center justify-between"
+                          >
+                            <div className="flex items-center">
+                              <Lock className="h-5 w-5 mr-3 text-gray-400" />
+                              <div>
+                                <div className="font-medium">
+                                  {lesson.title}
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  {lesson.duration}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </li>
-                      ))}
+                          </li>
+                        ))}
                     </ul>
                   </AccordionContent>
                 </AccordionItem>
@@ -295,15 +341,22 @@ const CourseDetailPage = () => {
 
               <h3 className="text-xl font-bold mb-4">Requirements</h3>
               <ul className="list-disc pl-5 mb-8 space-y-2">
-                <li>No prior knowledge is required - we'll teach you everything you need to know</li>
+                <li>
+                  No prior knowledge is required - we'll teach you everything
+                  you need to know
+                </li>
                 <li>A computer with internet access</li>
                 <li>Enthusiasm and determination to learn</li>
               </ul>
 
-              <h3 className="text-xl font-bold mb-4">Who this course is for:</h3>
+              <h3 className="text-xl font-bold mb-4">
+                Who this course is for:
+              </h3>
               <ul className="list-disc pl-5 space-y-2">
                 <li>Anyone interested in learning {course.category}</li>
-                <li>Students looking to gain practical skills in {course.category}</li>
+                <li>
+                  Students looking to gain practical skills in {course.category}
+                </li>
                 <li>Professionals wanting to upskill or change careers</li>
               </ul>
             </div>
@@ -321,8 +374,12 @@ const CourseDetailPage = () => {
                   />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold mb-2">{course.instructor}</h3>
-                  <p className="text-gray-500 mb-4">Expert in {course.category}</p>
+                  <h3 className="text-xl font-bold mb-2">
+                    {course.instructor}
+                  </h3>
+                  <p className="text-gray-500 mb-4">
+                    Expert in {course.category}
+                  </p>
                   <div className="flex flex-wrap gap-4 mb-4">
                     <div className="flex items-center">
                       <Star className="text-yellow-400 fill-yellow-400 h-5 w-5 mr-1" />
@@ -338,10 +395,18 @@ const CourseDetailPage = () => {
                     </div>
                   </div>
                   <p className="mb-4">
-                    {course.instructor} is a highly experienced educator with over 10 years of professional experience in {course.category}. They've helped thousands of students achieve their learning goals through practical, hands-on courses.
+                    {course.instructor} is a highly experienced educator with
+                    over 10 years of professional experience in{' '}
+                    {course.category}. They've helped thousands of students
+                    achieve their learning goals through practical, hands-on
+                    courses.
                   </p>
                   <p>
-                    Their teaching approach focuses on real-world applications, making complex concepts easy to understand for students of all levels. With a passion for teaching and a deep understanding of industry best practices, they're committed to helping you succeed in your learning journey.
+                    Their teaching approach focuses on real-world applications,
+                    making complex concepts easy to understand for students of
+                    all levels. With a passion for teaching and a deep
+                    understanding of industry best practices, they're committed
+                    to helping you succeed in your learning journey.
                   </p>
                 </div>
               </div>
@@ -363,8 +428,8 @@ const CourseDetailPage = () => {
                         size={20}
                         className={`${
                           i < Math.floor(course.rating)
-                            ? "text-yellow-400 fill-yellow-400"
-                            : "text-gray-300"
+                            ? 'text-yellow-400 fill-yellow-400'
+                            : 'text-gray-300'
                         }`}
                       />
                     ))}
@@ -381,12 +446,12 @@ const CourseDetailPage = () => {
                         star === 5
                           ? 70
                           : star === 4
-                          ? 20
-                          : star === 3
-                          ? 7
-                          : star === 2
-                          ? 2
-                          : 1;
+                            ? 20
+                            : star === 3
+                              ? 7
+                              : star === 2
+                                ? 2
+                                : 1;
                       return (
                         <div key={star} className="flex items-center">
                           <div className="w-1/6 flex items-center">
@@ -420,12 +485,12 @@ const CourseDetailPage = () => {
                   <div key={i} className="border-b pb-6 last:border-0">
                     <div className="flex items-start mb-4">
                       <img
-                        src={`https://ui-avatars.com/api/?name=User+${i+1}&size=40&background=random`}
-                        alt={`User ${i+1}`}
+                        src={`https://ui-avatars.com/api/?name=User+${i + 1}&size=40&background=random`}
+                        alt={`User ${i + 1}`}
                         className="rounded-full w-10 h-10 mr-3"
                       />
                       <div>
-                        <h4 className="font-medium">Student {i+1}</h4>
+                        <h4 className="font-medium">Student {i + 1}</h4>
                         <div className="flex items-center">
                           <div className="flex mr-2">
                             {Array.from({ length: 5 }).map((_, j) => (
@@ -434,8 +499,8 @@ const CourseDetailPage = () => {
                                 size={14}
                                 className={`${
                                   j < 5 - (i % 2)
-                                    ? "text-yellow-400 fill-yellow-400"
-                                    : "text-gray-300"
+                                    ? 'text-yellow-400 fill-yellow-400'
+                                    : 'text-gray-300'
                                 }`}
                               />
                             ))}
@@ -452,8 +517,8 @@ const CourseDetailPage = () => {
                       {i === 0
                         ? `This is an excellent course! The instructor explains complex concepts in a way that's easy to understand. I've learned so much and feel confident applying these skills in real-world scenarios.`
                         : i === 1
-                        ? `Great content and well-structured lessons. The practical examples really helped solidify my understanding. Highly recommend for anyone looking to learn ${course.category}.`
-                        : `The course exceeded my expectations. It's comprehensive, engaging, and the instructor is clearly knowledgeable. I've already started applying what I've learned to my projects.`}
+                          ? `Great content and well-structured lessons. The practical examples really helped solidify my understanding. Highly recommend for anyone looking to learn ${course.category}.`
+                          : `The course exceeded my expectations. It's comprehensive, engaging, and the instructor is clearly knowledgeable. I've already started applying what I've learned to my projects.`}
                     </p>
                   </div>
                 ))}
