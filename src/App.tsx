@@ -32,6 +32,7 @@ import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/Login';
 import CreateLessonPage from './pages/CreateLessonPage';
 import LessonDetailPage from './pages/LessonDetailPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,7 @@ const App = () => (
             />
 
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="/admin/courses" element={<AdminCoursesPage />} />
             <Route path="/admin/lessons" element={<AdminLessonsPage />} />
             <Route

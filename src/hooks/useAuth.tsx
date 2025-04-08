@@ -7,17 +7,67 @@ import {
 } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { authService } from '@/services/api/authService';
+import { Loader } from '@/components/ui/loader';
 
-interface User {
+type Role = 'STUDENT' | 'TEACHER' | 'ADMIN';
+
+interface BaseUser {
   id: number;
   name: string;
   email: string;
-  role: 'STUDENT' | 'TEACHER' | 'ADMIN';
+  role: Role;
   avatar: string | null;
-  bio?: string;
-  phone?: string;
-  address?: string;
+  bio: string | null;
+  phone: string | null;
+  address: string | null;
+  email_verified_at: string;
 }
+
+interface Course {
+  id: number;
+  title: string;
+  description: string;
+  image_url: string;
+  level: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+  duration: number;
+}
+
+interface Progress {
+  percentage: number;
+  completed_lessons: number;
+  total_lessons: number;
+}
+
+interface StudentEnrollment {
+  id: number;
+  course: Course;
+  enrolled_at: string;
+  completed_at: string | null;
+  status: string | null;
+  progress: Progress;
+}
+
+interface TeacherCourse extends Course {
+  status: 'PUBLISHED' | 'DRAFT';
+  price: string;
+  enrollments_count: number;
+  lessons_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface StudentUser extends BaseUser {
+  role: 'STUDENT';
+  my_enrollments: StudentEnrollment[];
+}
+
+interface TeacherUser extends BaseUser {
+  role: 'TEACHER';
+  my_courses: TeacherCourse[];
+  my_enrollments: [];
+}
+
+type User = StudentUser | TeacherUser;
 
 interface AuthContextType {
   user: User | null;
@@ -44,8 +94,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const getMe = async () => {
       const response = await authService.getCurrentUser();
-      if (!response && !response.user) return;
-      setUser(response.user as User);
+      if (!response && !response.data) return;
+      setUser(response.data as User);
       setIsLoading(false);
     };
     const savedToken = localStorage.getItem('token');
@@ -129,7 +179,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           description: errorMessage || 'Validation failed',
           variant: 'destructive',
         });
-
         throw new Error(errorMessage || 'Validation failed');
       } else {
         console.error('Error registering:', error);
@@ -176,7 +225,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {isLoading && <div>Loading...</div>}
+      {isLoading && <Loader fullPage />}
       {children}
     </AuthContext.Provider>
   );
