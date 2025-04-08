@@ -76,7 +76,7 @@ const AdminLayout = ({ children, title = 'Dashboard' }: AdminLayoutProps) => {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Dashboard">
-                      <a href="/dashboard">
+                      <a href="/admin/dashboard">
                         <LayoutDashboard />
                         <span>Dashboard</span>
                       </a>
