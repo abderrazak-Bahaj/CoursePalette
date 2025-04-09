@@ -133,17 +133,10 @@ const InstructorsPage = () => {
     });
   };
 
-  // Only render with AdminLayout if user is admin, fallback to normal view for others
-  const LayoutComponent = user?.isAdmin ? AdminLayout : 'div';
-  const layoutProps = user?.isAdmin ? { title: 'Manage Instructors' } : {};
-
   return (
-    <LayoutComponent {...layoutProps}>
+    <AdminLayout title={'Manage Instructors'}>
       <div className="container mx-auto px-4 py-8">
-        {!user?.isAdmin && (
-          <h1 className="text-3xl font-bold mb-6">Instructors</h1>
-        )}
-
+        <h1 className="text-3xl font-bold mb-6">Instructors</h1>
         <Card className="mb-8 shadow-md">
           <CardHeader className="pb-2">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -290,7 +283,7 @@ const InstructorsPage = () => {
           </CardContent>
         </Card>
       </div>
-    </LayoutComponent>
+    </AdminLayout>
   );
 };
 

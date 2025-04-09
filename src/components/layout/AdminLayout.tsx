@@ -8,6 +8,8 @@ import {
   BarChart3,
   Settings,
   LogOut,
+  Link,
+  UsersRound,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -57,8 +59,16 @@ const AdminLayout = ({ children, title = 'Dashboard' }: AdminLayoutProps) => {
     }
   };
 
+  const handelClickLink = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    to: string
+  ) => {
+    e.preventDefault();
+    navigate(to);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       <SidebarProvider>
         <div className="flex min-h-screen w-full">
           <Sidebar variant="inset">
@@ -76,7 +86,11 @@ const AdminLayout = ({ children, title = 'Dashboard' }: AdminLayoutProps) => {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Dashboard">
-                      <a href="/admin/dashboard">
+                      <a
+                        href="/admin/dashboard"
+                        onClick={(e) => handelClickLink(e, '/admin/dashboard')}
+                        className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                      >
                         <LayoutDashboard />
                         <span>Dashboard</span>
                       </a>
@@ -84,7 +98,11 @@ const AdminLayout = ({ children, title = 'Dashboard' }: AdminLayoutProps) => {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Courses">
-                      <a href="/admin/courses">
+                      <a
+                        href="/admin/courses"
+                        onClick={(e) => handelClickLink(e, '/admin/courses')}
+                        className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                      >
                         <FolderKanban />
                         <span>Courses</span>
                       </a>
@@ -92,15 +110,37 @@ const AdminLayout = ({ children, title = 'Dashboard' }: AdminLayoutProps) => {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Lessons">
-                      <a href="/admin/lessons">
+                      <a
+                        href="/admin/lessons"
+                        onClick={(e) => handelClickLink(e, '/admin/lessons')}
+                        className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                      >
                         <BookText />
                         <span>Lessons</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip="Instructors">
+                      <a
+                        href="/admin/instructors"
+                        onClick={(e) =>
+                          handelClickLink(e, '/admin/instructors')
+                        }
+                        className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                      >
+                        <UsersRound />
+                        <span>Instructors</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Students">
-                      <a href="/admin/students">
+                      <a
+                        href="/admin/students"
+                        onClick={(e) => handelClickLink(e, '/admin/students')}
+                        className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                      >
                         <Users />
                         <span>Students</span>
                       </a>
@@ -108,7 +148,11 @@ const AdminLayout = ({ children, title = 'Dashboard' }: AdminLayoutProps) => {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Reports">
-                      <a href="/admin/reports">
+                      <a
+                        href="/admin/reports"
+                        onClick={(e) => handelClickLink(e, '/admin/reports')}
+                        className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                      >
                         <BarChart3 />
                         <span>Reports</span>
                       </a>
@@ -122,7 +166,11 @@ const AdminLayout = ({ children, title = 'Dashboard' }: AdminLayoutProps) => {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Settings">
-                      <a href="/profile">
+                      <a
+                        href="/profile"
+                        onClick={(e) => handelClickLink(e, '/profile')}
+                        className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                      >
                         <Settings />
                         <span>Settings</span>
                       </a>

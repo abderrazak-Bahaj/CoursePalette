@@ -77,12 +77,6 @@ const Navbar = () => {
                 >
                   Blog
                 </Link>
-                <Link
-                  to="/instructors"
-                  className="text-gray-700 hover:text-course-blue transition-colors"
-                >
-                  Instructors
-                </Link>
               </div>
             )}
           </div>
@@ -110,15 +104,10 @@ const Navbar = () => {
           <div className="flex items-center">
             {isAuthenticated ? (
               <div className="flex items-center space-x-3">
-                {!isMobile && (
-                  <Link to="/dashboard">
-                    <Button variant="outline">My Learning</Button>
-                  </Link>
-                )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Avatar className="cursor-pointer">
-                      <AvatarImage src={user?.profileUrl} />
+                      <AvatarImage src={user?.avatar} />
                       <AvatarFallback className="bg-course-blue text-white">
                         {user?.name?.charAt(0) || 'U'}
                       </AvatarFallback>
@@ -129,7 +118,15 @@ const Navbar = () => {
                       <User className="mr-2 h-4 w-4" />
                       <span>Profile</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        navigate(
+                          user.role === 'STUDENT'
+                            ? '/dashboard'
+                            : '/admin/dashboard'
+                        )
+                      }
+                    >
                       <BookOpen className="mr-2 h-4 w-4" />
                       <span>My Learning</span>
                     </DropdownMenuItem>
@@ -137,7 +134,7 @@ const Navbar = () => {
                       <Award className="mr-2 h-4 w-4" />
                       <span>Certificates</span>
                     </DropdownMenuItem>
-                    {user?.isAdmin && (
+                    {!(user.role === 'STUDENT') && (
                       <>
                         <DropdownMenuItem
                           onClick={() => navigate('/admin/courses')}
@@ -145,11 +142,15 @@ const Navbar = () => {
                           <BookText className="mr-2 h-4 w-4" />
                           <span>Admin Dashboard</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate('/students')}>
+                        <DropdownMenuItem
+                          onClick={() => navigate('/admin/students')}
+                        >
                           <Users className="mr-2 h-4 w-4" />
                           <span>Students</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate('/reports')}>
+                        <DropdownMenuItem
+                          onClick={() => navigate('/admin/reports')}
+                        >
                           <PieChart className="mr-2 h-4 w-4" />
                           <span>Reports</span>
                         </DropdownMenuItem>
@@ -275,7 +276,7 @@ const Navbar = () => {
                     <User size={20} className="mr-2" />
                     Profile
                   </Link>
-                  {user?.isAdmin && (
+                  {user?.role !== 'STUDENT' && (
                     <>
                       <Link
                         to="/admin/courses"
