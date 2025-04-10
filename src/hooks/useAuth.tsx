@@ -8,80 +8,7 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { authService } from '@/services/api/authService';
 import { Loader } from '@/components/ui/loader';
-
-type Role = 'STUDENT' | 'TEACHER' | 'ADMIN';
-
-interface BaseUser {
-  id: number;
-  name: string;
-  email: string;
-  role: Role;
-  avatar: string | null;
-  bio: string | null;
-  phone: string | null;
-  address: string | null;
-  email_verified_at: string;
-}
-
-interface Course {
-  id: number;
-  title: string;
-  description: string;
-  image_url: string;
-  level: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
-  duration: number;
-}
-
-interface Progress {
-  percentage: number;
-  completed_lessons: number;
-  total_lessons: number;
-}
-
-interface StudentEnrollment {
-  id: number;
-  course: Course;
-  enrolled_at: string;
-  completed_at: string | null;
-  status: string | null;
-  progress: Progress;
-}
-
-interface TeacherCourse extends Course {
-  status: 'PUBLISHED' | 'DRAFT';
-  price: string;
-  enrollments_count: number;
-  lessons_count: number;
-  created_at: string;
-  updated_at: string;
-}
-
-interface StudentUser extends BaseUser {
-  role: 'STUDENT';
-  my_enrollments: StudentEnrollment[];
-}
-
-interface TeacherUser extends BaseUser {
-  role: 'TEACHER';
-  my_courses: TeacherCourse[];
-  my_enrollments: [];
-}
-
-type User = StudentUser | TeacherUser;
-
-interface AuthContextType {
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<User | null>;
-  register: (
-    name: string,
-    email: string,
-    password: string
-  ) => Promise<User | null>;
-  logout: () => void;
-}
+import { AuthContextType, User } from '@/types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -115,7 +42,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!response?.user) {
         throw new Error('Login failed: No user returned');
       }
-
       const user = response.user as User;
       setUser(user);
       setToken(response.token);

@@ -3,7 +3,17 @@ import { Card, CardContent } from '@/components/ui/card';
 import { userEnrolledCourses } from '@/data/mockData';
 import { mockCertificates } from '@/data/mockData';
 
-const DashboardStats = () => {
+interface DashboardStatsProps {
+  enrolledCourses: string;
+  certificatesEarned: string;
+  learningHours: string;
+}
+
+const DashboardStats: React.FC<DashboardStatsProps> = ({
+  enrolledCourses,
+  certificatesEarned,
+  learningHours,
+}) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
       <Card>
@@ -14,9 +24,7 @@ const DashboardStats = () => {
             </div>
             <div>
               <div className="text-sm text-gray-500">Enrolled Courses</div>
-              <div className="text-2xl font-bold">
-                {userEnrolledCourses.length}
-              </div>
+              <div className="text-2xl font-bold">{enrolledCourses}</div>
             </div>
           </div>
         </CardContent>
@@ -29,9 +37,7 @@ const DashboardStats = () => {
             </div>
             <div>
               <div className="text-sm text-gray-500">Certificates</div>
-              <div className="text-2xl font-bold">
-                {mockCertificates.length}
-              </div>
+              <div className="text-2xl font-bold">{certificatesEarned}</div>
             </div>
           </div>
         </CardContent>
@@ -44,7 +50,7 @@ const DashboardStats = () => {
             </div>
             <div>
               <div className="text-sm text-gray-500">Learning Hours</div>
-              <div className="text-2xl font-bold">24.5</div>
+              <div className="text-2xl font-bold">{learningHours}</div>
             </div>
           </div>
         </CardContent>

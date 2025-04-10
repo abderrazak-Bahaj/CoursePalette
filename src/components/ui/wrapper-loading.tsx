@@ -1,16 +1,39 @@
-import { ReactNode } from 'react';
-import { Loader } from './loader';
+import React from 'react';
+import { Loader2 } from 'lucide-react';
+import { SkeletonLoader } from './skeleton-loader';
 
 interface WrapperLoadingProps {
-  children: ReactNode;
+  children: React.ReactNode;
   isLoading: boolean;
+  useSkeletonLoader?: boolean;
+  skeletonVariant?: 'card' | 'list' | 'grid' | 'text' | 'custom';
+  skeletonCount?: number;
 }
 
-const WrapperLoading = ({ children, isLoading }: WrapperLoadingProps) => {
+const WrapperLoading = ({
+  children,
+  isLoading,
+  useSkeletonLoader = true,
+  skeletonVariant = 'card',
+  skeletonCount = 1,
+}: WrapperLoadingProps) => {
+  if (!isLoading) return children;
+
+  if (useSkeletonLoader) {
+    return (
+      <SkeletonLoader
+        isLoading={isLoading}
+        variant={skeletonVariant}
+        count={skeletonCount}
+      >
+        {children}
+      </SkeletonLoader>
+    );
+  }
+
   return (
-    <div className="relative">
-      {isLoading && <Loader fullPage />}
-      {children}
+    <div className="flex justify-center items-center h-screen">
+      <Loader2 className="w-10 h-10 animate-spin" />
     </div>
   );
 };

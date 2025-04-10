@@ -45,7 +45,7 @@ const CategorySection = () => {
             {mappedCategories?.map((category, index) => (
               <Link
                 key={category.id}
-                to={`/categories/${category.id}`}
+                to={`/courses?category_id=${category.id}&sort_by=created_at&sort_order=desc`}
                 className="block"
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}

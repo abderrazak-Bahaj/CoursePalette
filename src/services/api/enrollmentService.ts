@@ -12,7 +12,7 @@ export const enrollmentService = {
   },
 
   getMyEnrollments: () => {
-    return get('/enrollments/me');
+    return get('/my-enrollments');
   },
 
   enrollInCourse: (
