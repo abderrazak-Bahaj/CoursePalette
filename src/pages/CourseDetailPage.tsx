@@ -6,8 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import CourseCard from '@/components/course/CourseCard';
-import { useQuery } from '@tanstack/react-query';
-import { courseService } from '@/services/api';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { courseService, enrollmentService } from '@/services/api';
 import WrapperLoading from '@/components/ui/wrapper-loading';
 import { CourseHeader } from '@/components/course/CourseHeader';
 import { CourseCurriculum } from '@/components/course/CourseCurriculum';
@@ -19,10 +19,30 @@ const CourseDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
+  const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
     queryKey: ['course', id],
     queryFn: async () => await courseService.getCourse(id),
+  });
+
+  const enrollMutation = useMutation({
+    mutationFn: () => enrollmentService.enrollInCourse(id as string),
+    onSuccess: () => {
+      toast({
+        title: 'Enrollment Successful',
+        description: `You have successfully enrolled in "${course?.title}"`,
+      });
+      queryClient.invalidateQueries({ queryKey: ['course', id] });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Enrollment Failed',
+        description:
+          'There was an error enrolling in this course. Please try again.',
+        variant: 'destructive',
+      });
+    },
   });
 
   const course = data?.course;
@@ -37,8 +57,7 @@ const CourseDetailPage = () => {
       });
       return;
     }
-
-    // encl
+    enrollMutation.mutate();
     toast({
       title: 'Enrollment Successful',
       description: `You have successfully enrolled in "${course?.title}"`,

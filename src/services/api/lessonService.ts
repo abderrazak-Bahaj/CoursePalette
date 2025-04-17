@@ -36,6 +36,10 @@ export const lessonService = {
     return del(`/courses/${courseId}/lessons/${lessonId}`);
   },
 
+  completeLesson: (courseId: string, lessonId: string) => {
+    return post(`/courses/${courseId}/lessons/${lessonId}/complete`);
+  },
+
   reorderLessons: (courseId: string, data: ReorderLessonsData) => {
     return post(`/courses/${courseId}/lessons/reorder`, data);
   },

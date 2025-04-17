@@ -12,7 +12,7 @@ import { Play, Check, Lock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { Lesson } from '@/types/course';
 import { courseService, lessonService } from '@/services/api';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import WrapperLoading from '@/components/ui/wrapper-loading';
 import VideoPlayer from '@/components/ui/video-player';
 import useGroupedLessons from '@/hooks/use-grouped-lessons';
@@ -27,6 +27,7 @@ const LessonPage = () => {
     courseId: string;
     lessonId?: string;
   }>();
+  const queryClient = useQueryClient();
 
   const { toast } = useToast();
 
@@ -40,6 +41,26 @@ const LessonPage = () => {
     queryFn: async () => await lessonService.getLesson(courseId, lessonId),
   });
 
+  const completeLessonMutation = useMutation({
+    mutationFn: () => lessonService.completeLesson(courseId, lessonId),
+    onSuccess: () => {
+      toast({
+        title: 'Lesson Completed',
+        description: `You have successfully completed "${lesson?.title}"`,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['learn-lesson', courseId, lessonId],
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Lesson Completion Failed',
+        description:
+          'There was an error completing this lesson. Please try again.',
+        variant: 'destructive',
+      });
+    },
+  });
   const course = courseData?.course;
   const lesson = data?.lesson;
 
@@ -48,8 +69,6 @@ const LessonPage = () => {
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
 
   const sections = useGroupedLessons(course?.lessons || []);
-
-  console.log(sections);
 
   if (!(course?.lessons?.length > 0) && !isLoading && !courseLoading) {
     return (
@@ -94,36 +113,8 @@ const LessonPage = () => {
   const progressPercentage =
     (completedLessons.length / (course?.lessons?.length || 0)) * 100;
 
-  const markAsCompleted = () => {
-    if (!completedLessons.includes(currentLessonId)) {
-      const newCompletedLessons = [...completedLessons, currentLessonId];
-      setCompletedLessons(newCompletedLessons);
-
-      toast({
-        title: 'Lesson Completed',
-        description: 'Your progress has been updated.',
-      });
-
-      // If there's a next lesson, suggest navigating to it
-      if (nextLesson) {
-        toast({
-          title: 'Next Lesson',
-          description: 'Continue to the next lesson to keep learning.',
-          action: (
-            <Button asChild variant="outline" size="sm">
-              <Link to={`/courses/${courseId}/learn/${nextLesson.id}`}>
-                Continue
-              </Link>
-            </Button>
-          ),
-        });
-      } else {
-        toast({
-          title: 'Course Completed',
-          description: 'Congratulations on completing the course!',
-        });
-      }
-    }
+  const markAsCompleted = async () => {
+    await completeLessonMutation.mutateAsync();
   };
 
   // Helper function to check if a lesson is completed
