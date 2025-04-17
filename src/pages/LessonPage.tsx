@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -10,11 +10,17 @@ import {
 } from '@/components/ui/accordion';
 import { Play, Check, Lock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import { mockCourses } from '@/data/mockData';
 import { Lesson } from '@/types/course';
-import { lessonService } from '@/services/api';
+import { courseService, lessonService } from '@/services/api';
 import { useQuery } from '@tanstack/react-query';
 import WrapperLoading from '@/components/ui/wrapper-loading';
+import VideoPlayer from '@/components/ui/video-player';
+import useGroupedLessons from '@/hooks/use-grouped-lessons';
+
+interface Section {
+  title: string;
+  lessons: Lesson[];
+}
 
 const LessonPage = () => {
   const { courseId, lessonId } = useParams<{
@@ -24,23 +30,28 @@ const LessonPage = () => {
 
   const { toast } = useToast();
 
+  const { data: courseData, isLoading: courseLoading } = useQuery({
+    queryKey: ['course'],
+    queryFn: async () => await courseService.getCourse(courseId),
+  });
+
   const { data, isLoading } = useQuery({
-    queryKey: ['learn-lesson'],
+    queryKey: ['learn-lesson', courseId, lessonId],
     queryFn: async () => await lessonService.getLesson(courseId, lessonId),
   });
 
+  const course = courseData?.course;
   const lesson = data?.lesson;
-
-  console.log('lesson', lesson);
 
   const currentLessonId = lesson?.id;
 
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
 
-  // Find the course by ID
-  const course = mockCourses.find((course) => course.id === courseId);
+  const sections = useGroupedLessons(course?.lessons || []);
 
-  if (!course || !course.lessons || course.lessons.length === 0) {
+  console.log(sections);
+
+  if (!(course?.lessons?.length > 0) && !isLoading && !courseLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -56,7 +67,7 @@ const LessonPage = () => {
     );
   }
 
-  if (!lesson && !isLoading) {
+  if (!lesson && !isLoading && !courseLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -70,20 +81,18 @@ const LessonPage = () => {
     );
   }
 
-  // Calculate the current lesson index and determine next/previous lessons
-  const currentIndex = course.lessons.findIndex(
+  const currentIndex = course?.lessons?.findIndex(
     (lesson) => lesson.id === currentLessonId
   );
   const previousLesson =
-    currentIndex > 0 ? course.lessons[currentIndex - 1] : null;
+    currentIndex > 0 ? course?.lessons?.[currentIndex - 1] : null;
   const nextLesson =
-    currentIndex < course.lessons.length - 1
-      ? course.lessons[currentIndex + 1]
+    currentIndex < (course?.lessons?.length || 0) - 1
+      ? course?.lessons?.[currentIndex + 1]
       : null;
 
-  // Calculate progress percentage
   const progressPercentage =
-    (completedLessons.length / course.lessons.length) * 100;
+    (completedLessons.length / (course?.lessons?.length || 0)) * 100;
 
   const markAsCompleted = () => {
     if (!completedLessons.includes(currentLessonId)) {
@@ -123,7 +132,7 @@ const LessonPage = () => {
   };
 
   return (
-    <WrapperLoading isLoading={isLoading}>
+    <WrapperLoading isLoading={isLoading || courseLoading}>
       <div className="flex flex-col h-screen">
         {/* Top navigation bar */}
         <div className="bg-white border-b px-4 py-2 flex items-center justify-between">
@@ -134,7 +143,7 @@ const LessonPage = () => {
             <ChevronLeft className="h-5 w-5 mr-1" />
             <span>Back to Course</span>
           </Link>
-          <h1 className="text-lg font-medium line-clamp-1">{course.title}</h1>
+          <h1 className="text-lg font-medium line-clamp-1">{course?.title}</h1>
           <div className="w-24">
             <Progress value={progressPercentage} className="h-2" />
           </div>
@@ -150,47 +159,10 @@ const LessonPage = () => {
                 <p className="text-gray-500">{lesson?.duration_readable}</p>
               </div>
 
-              {/* Video player placeholder */}
-              <div className="relative aspect-video bg-gray-900 mb-8 rounded-lg overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 h-16 w-16"
-                  >
-                    <Play className="h-8 w-8 text-white" fill="white" />
-                  </Button>
-                </div>
-              </div>
+              <VideoPlayer url={lesson?.video_url || ''} />
 
               {/* Lesson content */}
-              <div className="prose max-w-none mb-8">
-                <h3>Lesson Notes</h3>
-                <p>
-                  This is where the lesson content would appear. In a real
-                  application, this would include detailed explanations, code
-                  examples, images, and other educational materials relevant to
-                  this specific lesson.
-                </p>
-                <p>
-                  The content would be structured to help students understand
-                  the concepts being taught and provide practical examples to
-                  reinforce learning.
-                </p>
-                <h4>Key Points</h4>
-                <ul>
-                  <li>Important concept #1 related to this lesson</li>
-                  <li>Important concept #2 related to this lesson</li>
-                  <li>Important concept #3 related to this lesson</li>
-                </ul>
-                <h4>Example</h4>
-                <pre>
-                  <code>
-                    // Example code or demonstration // This would be specific
-                    to the course subject
-                  </code>
-                </pre>
-              </div>
+              <div className="prose max-w-none mb-8">{lesson?.content}</div>
 
               {/* Next/Previous navigation */}
               <div className="flex justify-between border-t pt-6">
@@ -241,32 +213,31 @@ const LessonPage = () => {
             </div>
           </div>
 
-          {/* Sidebar with course curriculum */}
+          {/* Sidebar with dynamic course curriculum */}
           <div className="md:w-80 border-l flex-shrink-0 overflow-y-auto bg-gray-50">
             <div className="p-4">
-              <h3 className="font-bold mb-4">Course Curriculum</h3>
+              <h3 className="font-bold mb-4">{course?.title}</h3>
               <Accordion
                 type="multiple"
-                defaultValue={['section-1']}
+                defaultValue={sections.map((_, idx) => `section-${idx}`)}
                 className="w-full"
               >
-                <AccordionItem value="section-1">
-                  <AccordionTrigger>
-                    <div className="text-left">
-                      <div className="font-semibold">
-                        Section 1: Introduction
+                {sections.map((section, idx) => (
+                  <AccordionItem
+                    key={`section-${idx}`}
+                    value={`section-${idx}`}
+                  >
+                    <AccordionTrigger>
+                      <div className="text-left">
+                        <div className="font-semibold">{section.title}</div>
+                        <div className="text-sm text-gray-500">
+                          {section.lessons.length} lessons
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-500">
-                        {course.lessons?.filter((_, i) => i < 2).length || 0}{' '}
-                        lessons
-                      </div>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <ul className="space-y-2">
-                      {course.lessons
-                        ?.filter((_, i) => i < 2)
-                        .map((lesson) => (
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="space-y-2">
+                        {section.lessons.map((lesson) => (
                           <LessonItem
                             key={lesson.id}
                             lesson={lesson}
@@ -275,38 +246,10 @@ const LessonPage = () => {
                             isCompleted={isLessonCompleted(lesson.id)}
                           />
                         ))}
-                    </ul>
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="section-2">
-                  <AccordionTrigger>
-                    <div className="text-left">
-                      <div className="font-semibold">
-                        Section 2: Getting Started
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {course.lessons?.filter((_, i) => i >= 2).length || 0}{' '}
-                        lessons
-                      </div>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <ul className="space-y-2">
-                      {course.lessons
-                        ?.filter((_, i) => i >= 2)
-                        .map((lesson) => (
-                          <LessonItem
-                            key={lesson.id}
-                            lesson={lesson}
-                            courseId={courseId}
-                            isActive={lesson.id === currentLessonId}
-                            isCompleted={isLessonCompleted(lesson.id)}
-                          />
-                        ))}
-                    </ul>
-                  </AccordionContent>
-                </AccordionItem>
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
               </Accordion>
             </div>
           </div>
@@ -322,6 +265,7 @@ interface LessonItemProps {
   courseId: string;
   isActive: boolean;
   isCompleted: boolean;
+  duration_readable: string;
 }
 
 const LessonItem = ({
@@ -353,7 +297,9 @@ const LessonItem = ({
         </div>
         <div className="flex-1">
           <div className="text-sm font-medium line-clamp-1">{lesson.title}</div>
-          <div className="text-xs text-gray-500">{lesson.duration}</div>
+          <div className="text-xs text-gray-500">
+            {lesson.duration_readable}
+          </div>
         </div>
       </Link>
     </li>

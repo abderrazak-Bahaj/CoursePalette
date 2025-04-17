@@ -19,7 +19,6 @@ const CourseDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
-  const [isEnrolled, setIsEnrolled] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ['course', id],
@@ -39,7 +38,7 @@ const CourseDetailPage = () => {
       return;
     }
 
-    setIsEnrolled(true);
+    // encl
     toast({
       title: 'Enrollment Successful',
       description: `You have successfully enrolled in "${course?.title}"`,
@@ -63,7 +62,7 @@ const CourseDetailPage = () => {
           <>
             <CourseHeader
               course={course}
-              isEnrolled={isEnrolled}
+              isEnrolled={course?.is_enrolled || false}
               onEnroll={handleEnroll}
             />
 
@@ -77,7 +76,7 @@ const CourseDetailPage = () => {
                 </TabsList>
 
                 <TabsContent value="curriculum">
-                  <CourseCurriculum lessons={course.lessons || []} />
+                  <CourseCurriculum lessons={course?.lessons || []} />
                 </TabsContent>
 
                 <TabsContent value="overview">

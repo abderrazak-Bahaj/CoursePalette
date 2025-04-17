@@ -5,13 +5,11 @@ import { Play, Calendar, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface CourseProgressCardProps {
-  enrollment: any; // Using any for simplicity in this demo
+  enrollment: any;
 }
 
 const CourseProgressCard = ({ enrollment }: CourseProgressCardProps) => {
   const course = enrollment?.course;
-  console.log('enrollment', enrollment);
-
   return (
     <Card className="overflow-hidden">
       <div className="flex flex-col md:flex-row">
@@ -44,7 +42,7 @@ const CourseProgressCard = ({ enrollment }: CourseProgressCardProps) => {
               </div>
               <Button asChild>
                 <Link
-                  to={`/courses/${course?.id}/learn/${enrollment?.last_Lesson?.id}`}
+                  to={`/courses/${enrollment?.last_Lesson?.course_id}/learn/${enrollment?.last_Lesson?.lesson_id}`}
                 >
                   Continue
                   <ArrowRight className="h-4 w-4 ml-1" />
