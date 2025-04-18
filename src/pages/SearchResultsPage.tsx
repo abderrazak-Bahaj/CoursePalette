@@ -1,60 +1,76 @@
 import { useEffect, useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
-import CourseList from '@/components/course/CourseList';
+import CourseCard from '@/components/course/CourseCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
-import { mockCourses } from '@/data/mockData';
+import { courseService } from '@/services/api';
+import { useQuery } from '@tanstack/react-query';
+import { useDebounce } from '@/hooks/useDebounce';
+import WrapperLoading from '@/components/ui/wrapper-loading';
+import { MetaPagination } from '@/components/ui/pagination';
 import { Course } from '@/types/course';
 
 const SearchResultsPage = () => {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const initialQuery = queryParams.get('q') || '';
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialQuery = searchParams.get('q') || '';
 
   const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [searchResults, setSearchResults] = useState<Course[]>([]);
+  const debouncedSearchTerm = useDebounce(searchQuery, 500);
+  const [page, setPage] = useState(parseInt(searchParams.get('page') || '1'));
 
-  // Function to handle search
-  const handleSearch = (query: string) => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      return;
-    }
-
-    const lowerCaseQuery = query.toLowerCase();
-    const results = mockCourses.filter(
-      (course) =>
-        course.title.toLowerCase().includes(lowerCaseQuery) ||
-        course.instructor.toLowerCase().includes(lowerCaseQuery) ||
-        course.category.toLowerCase().includes(lowerCaseQuery) ||
-        course.description?.toLowerCase().includes(lowerCaseQuery) ||
-        course.skills?.some((skill) =>
-          skill.toLowerCase().includes(lowerCaseQuery)
-        )
-    );
-
-    setSearchResults(results);
+  // Build query parameters for API request
+  const queryParams = {
+    search: debouncedSearchTerm || undefined,
+    per_page: '12',
+    page: page.toString(),
   };
+
+  // Fetch courses from API using React Query
+  const {
+    data: coursesData = {
+      courses: [],
+      meta: { total: 0, page: 1, last_page: 1, per_page: 12 },
+    },
+    isLoading,
+  } = useQuery({
+    queryKey: ['searchCourses', queryParams],
+    queryFn: async () => await courseService.getAllCourses(queryParams),
+  });
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    handleSearch(searchQuery);
-    // Update URL with query parameter
-    const url = new URL(window.location.href);
-    url.searchParams.set('q', searchQuery);
-    window.history.pushState({}, '', url.toString());
+    updateUrlParams();
   };
 
-  // Load search results when query parameter changes
+  // Update URL parameters
+  const updateUrlParams = () => {
+    const newParams = new URLSearchParams();
+    if (searchQuery) newParams.set('q', searchQuery);
+    if (page !== 1) newParams.set('page', page.toString());
+    setSearchParams(newParams);
+  };
+
+  // Update URL when search term or page changes
   useEffect(() => {
-    if (initialQuery) {
-      setSearchQuery(initialQuery);
-      handleSearch(initialQuery);
+    if (debouncedSearchTerm) {
+      setPage(1);
+      updateUrlParams();
     }
-  }, [initialQuery]);
+  }, [debouncedSearchTerm]);
+
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      updateUrlParams();
+    }
+  }, [page]);
+
+  // Handle page change
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
 
   return (
     <MainLayout>
@@ -83,54 +99,67 @@ const SearchResultsPage = () => {
             </div>
           </form>
 
-          {initialQuery ? (
+          {coursesData.courses.length ? (
             <>
               <div className="mb-6">
                 <h2 className="text-xl font-semibold mb-2">
-                  {searchResults.length === 0
-                    ? 'No results found'
-                    : `Showing ${searchResults.length} results for "${initialQuery}"`}
+                  {isLoading
+                    ? 'Searching...'
+                    : coursesData.courses.length === 0
+                      ? 'No results found'
+                      : `Showing ${coursesData.meta.total} results for "${debouncedSearchTerm}"`}
                 </h2>
-                {searchResults.length === 0 && (
+                {!isLoading && coursesData.courses.length === 0 && (
                   <p className="text-gray-600">
                     Try different keywords or browse our categories below
                   </p>
                 )}
               </div>
 
-              {searchResults.length > 0 && (
-                <CourseList
-                  courses={searchResults}
-                  title=""
-                  showFilters={true}
-                />
-              )}
+              <WrapperLoading isLoading={isLoading}>
+                {coursesData.courses.length > 0 && (
+                  <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+                      {coursesData.courses.map((course) => (
+                        <CourseCard key={course.id} {...course} />
+                      ))}
+                    </div>
 
-              {searchResults.length === 0 && (
-                <div className="mt-12">
-                  <h3 className="text-xl font-semibold mb-4">
-                    Popular Categories
-                  </h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    {[
-                      'Web Development',
-                      'Data Science',
-                      'Business',
-                      'Design',
-                      'Marketing',
-                      'Photography',
-                    ].map((category) => (
-                      <Link
-                        key={category}
-                        to={`/categories/${category.toLowerCase().replace(' ', '-')}`}
-                        className="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition-shadow"
-                      >
-                        {category}
-                      </Link>
-                    ))}
+                    {coursesData.meta.last_page > 1 && (
+                      <MetaPagination
+                        meta={coursesData.meta}
+                        onPageChange={handlePageChange}
+                      />
+                    )}
+                  </>
+                )}
+
+                {/*   {!isLoading && coursesData.courses.length === 0 && (
+                  <div className="mt-12">
+                    <h3 className="text-xl font-semibold mb-4">
+                      Popular Categories
+                    </h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                      {[
+                        'Web Development',
+                        'Data Science',
+                        'Business',
+                        'Design',
+                        'Marketing',
+                        'Photography',
+                      ].map((category) => (
+                        <Link
+                          key={category}
+                          to={`/categories/${category.toLowerCase().replace(' ', '-')}`}
+                          className="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition-shadow"
+                        >
+                          {category}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )} */}
+              </WrapperLoading>
             </>
           ) : (
             <div className="text-center py-8">

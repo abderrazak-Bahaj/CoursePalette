@@ -75,7 +75,9 @@ export const CourseHeader = ({
             {isEnrolled ? (
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild size="lg" className="bg-course-blue">
-                  <Link to={`/courses/${course.id}/learn`}>
+                  <Link
+                    to={`/courses/${course.id}/learn/${course.last_Lesson}`}
+                  >
                     Continue Learning
                   </Link>
                 </Button>
@@ -121,9 +123,10 @@ export const CourseHeader = ({
                   </div>
                 </div>
                 <Button
-                  className="w-full mb-3 bg-course-blue"
+                  className={`w-full mb-3 ${isEnrolled ? 'bg-gray-400' : 'bg-course-blue'}`}
                   size="lg"
                   onClick={onEnroll}
+                  disabled={isEnrolled}
                 >
                   {isEnrolled ? 'Already Enrolled' : 'Enroll Now'}
                 </Button>

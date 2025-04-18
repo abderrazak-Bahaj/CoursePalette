@@ -5,6 +5,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
+import useGroupedLessons from '@/hooks/use-grouped-lessons';
 import { Play, Lock } from 'lucide-react';
 
 interface Lesson {
@@ -32,22 +33,7 @@ const formatDuration = (minutes: number): string => {
 };
 
 export const CourseCurriculum = ({ lessons }: CourseCurriculumProps) => {
-  // Group lessons into sections based on order
-  const sections = lessons.reduce(
-    (acc, lesson) => {
-      const sectionIndex = Math.ceil(lesson.order / 2) - 1;
-      if (!acc[sectionIndex]) {
-        acc[sectionIndex] = {
-          title: `Section ${sectionIndex + 1}`,
-          lessons: [],
-        };
-      }
-      acc[sectionIndex].lessons.push(lesson);
-      return acc;
-    },
-    [] as Array<{ title: string; lessons: Lesson[] }>
-  );
-
+  const sections = useGroupedLessons(lessons || []);
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h2 className="text-2xl font-bold mb-6">Course Content</h2>
