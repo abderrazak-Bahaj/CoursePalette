@@ -80,6 +80,10 @@ const App = () => (
               path="/certificates/:id"
               element={<CertificateDetailPage />}
             />
+            <Route
+              path="/courses/:courseId/certificate"
+              element={<CertificateDetailPage />}
+            />
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/search" element={<SearchResultsPage />} />
             <Route path="/profile" element={<ProfilePage />} />

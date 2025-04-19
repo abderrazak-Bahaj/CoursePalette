@@ -1,40 +1,13 @@
-import { get, post } from './apiClient';
-
-interface CertificateData {
-  user_id?: string;
-  title: string;
-  description?: string;
-  template?: File;
-  issued_at?: string;
-}
+import { get } from './apiClient';
 
 export const certificateService = {
-  getCourseCertificates: (courseId: string) => {
-    return get(`/courses/${courseId}/certificates`);
+  getCertificates: () => {
+    return get(`/certificates`);
   },
-
-  getCertificate: (courseId: string, certificateId: string) => {
-    return get(`/courses/${courseId}/certificates/${certificateId}`);
+  getCertificate: (courseId: string) => {
+    return get(`/courses/${courseId}/certificate`);
   },
-
-  createCertificate: (courseId: string, data: CertificateData) => {
-    // Use FormData for file uploads
-    const formData = new FormData();
-
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined) {
-        formData.append(key, value);
-      }
-    });
-
-    return post(`/courses/${courseId}/certificates`, formData);
-  },
-
-  generateCertificate: (courseId: string, certificateId: string) => {
-    return post(`/courses/${courseId}/certificates/${certificateId}/generate`);
-  },
-
-  downloadCertificate: (courseId: string, certificateId: string) => {
-    return get(`/courses/${courseId}/certificates/${certificateId}/download`);
+  checkCertificateByNumber: (certificateNumber: string) => {
+    return get(`/certificates/check?certificate_number=${certificateNumber}`);
   },
 };
