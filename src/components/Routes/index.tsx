@@ -23,7 +23,6 @@ import LessonPage from '@/pages/LessonPage';
 import ProfilePage from '@/pages/ProfilePage';
 import CertificatesPage from '@/pages/CertificatesPage';
 import CertificateDetailPage from '@/pages/CertificateDetailPage';
-import DownloadableCertificate from '@/pages/DownloadableCertificate';
 import InstructorsPage from '@/pages/InstructorsPage';
 import AdminCoursesPage from '@/pages/AdminCoursesPage';
 import AdminLessonsPage from '@/pages/AdminLessonsPage';
@@ -229,14 +228,7 @@ const AppRoutes = () => (
       />
 
       {/* Teacher & Admin Routes */}
-      <Route
-        path="/instructors"
-        element={
-          <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-            <InstructorsPage />
-          </RouteWrapper>
-        }
-      />
+
       <Route
         path="/admin/courses"
         element={
@@ -285,13 +277,22 @@ const AppRoutes = () => (
           </RouteWrapper>
         }
       />
-
-      {/* Admin-only Routes */}
       <Route
         path="/admin/dashboard"
         element={
-          <RouteWrapper accessType="ADMIN">
+          <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
             <AdminDashboardPage />
+          </RouteWrapper>
+        }
+      />
+
+      {/* Admin-only Routes */}
+
+      <Route
+        path="/admin/instructors"
+        element={
+          <RouteWrapper accessType={'ADMIN'}>
+            <InstructorsPage />
           </RouteWrapper>
         }
       />

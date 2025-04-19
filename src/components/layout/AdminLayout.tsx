@@ -8,7 +8,6 @@ import {
   BarChart3,
   Settings,
   LogOut,
-  Link,
   UsersRound,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -36,11 +35,10 @@ interface AdminLayoutProps {
   title?: string;
 }
 
-const AdminLayout = ({ children, title = 'Dashboard' }: AdminLayoutProps) => {
+const AdminLayout = ({ children, title }: AdminLayoutProps) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  //const title = useGetTitle()
 
   const handleLogout = async () => {
     try {
@@ -59,13 +57,34 @@ const AdminLayout = ({ children, title = 'Dashboard' }: AdminLayoutProps) => {
     }
   };
 
-  const handelClickLink = (
+  const handleClickLink = (
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     to: string
   ) => {
     e.preventDefault();
     navigate(to);
   };
+
+  const baseLinks = [
+    { to: '/admin/dashboard', label: 'Dashboard', icon: <LayoutDashboard /> },
+    { to: '/admin/courses', label: 'Courses', icon: <FolderKanban /> },
+    { to: '/admin/lessons', label: 'Lessons', icon: <BookText /> },
+  ];
+
+  const adminLinks = [
+    { to: '/admin/instructors', label: 'Instructors', icon: <UsersRound /> },
+    { to: '/admin/students', label: 'Students', icon: <Users /> },
+    { to: '/admin/reports', label: 'Reports', icon: <BarChart3 /> },
+  ];
+
+  const mainLinks = [
+    ...baseLinks,
+    ...(user?.role === 'ADMIN' ? adminLinks : []),
+  ];
+
+  const accountLinks = [
+    { to: '/profile', label: 'Settings', icon: <Settings /> },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -84,98 +103,40 @@ const AdminLayout = ({ children, title = 'Dashboard' }: AdminLayoutProps) => {
               <SidebarGroup>
                 <SidebarGroupLabel>Main Navigation</SidebarGroupLabel>
                 <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Dashboard">
-                      <a
-                        href="/admin/dashboard"
-                        onClick={(e) => handelClickLink(e, '/admin/dashboard')}
-                        className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
-                      >
-                        <LayoutDashboard />
-                        <span>Dashboard</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Courses">
-                      <a
-                        href="/admin/courses"
-                        onClick={(e) => handelClickLink(e, '/admin/courses')}
-                        className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
-                      >
-                        <FolderKanban />
-                        <span>Courses</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Lessons">
-                      <a
-                        href="/admin/lessons"
-                        onClick={(e) => handelClickLink(e, '/admin/lessons')}
-                        className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
-                      >
-                        <BookText />
-                        <span>Lessons</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Instructors">
-                      <a
-                        href="/admin/instructors"
-                        onClick={(e) =>
-                          handelClickLink(e, '/admin/instructors')
-                        }
-                        className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
-                      >
-                        <UsersRound />
-                        <span>Instructors</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Students">
-                      <a
-                        href="/admin/students"
-                        onClick={(e) => handelClickLink(e, '/admin/students')}
-                        className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
-                      >
-                        <Users />
-                        <span>Students</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Reports">
-                      <a
-                        href="/admin/reports"
-                        onClick={(e) => handelClickLink(e, '/admin/reports')}
-                        className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
-                      >
-                        <BarChart3 />
-                        <span>Reports</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  {mainLinks.map(({ to, label, icon }) => (
+                    <SidebarMenuItem key={to}>
+                      <SidebarMenuButton asChild tooltip={label}>
+                        <a
+                          href={to}
+                          onClick={(e) => handleClickLink(e, to)}
+                          className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                        >
+                          {icon}
+                          <span>{label}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
                 </SidebarMenu>
               </SidebarGroup>
 
               <SidebarGroup>
                 <SidebarGroupLabel>Account</SidebarGroupLabel>
                 <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Settings">
-                      <a
-                        href="/profile"
-                        onClick={(e) => handelClickLink(e, '/profile')}
-                        className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
-                      >
-                        <Settings />
-                        <span>Settings</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  {accountLinks.map(({ to, label, icon }) => (
+                    <SidebarMenuItem key={to}>
+                      <SidebarMenuButton asChild tooltip={label}>
+                        <a
+                          href={to}
+                          onClick={(e) => handleClickLink(e, to)}
+                          className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                        >
+                          {icon}
+                          <span>{label}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
                   <SidebarMenuItem>
                     <SidebarMenuButton onClick={handleLogout} tooltip="Logout">
                       <LogOut />
@@ -185,15 +146,15 @@ const AdminLayout = ({ children, title = 'Dashboard' }: AdminLayoutProps) => {
                 </SidebarMenu>
               </SidebarGroup>
             </SidebarContent>
+
             <SidebarFooter>
               <div className="p-4 text-xs text-muted-foreground">
                 <p>Logged in as: {user?.name}</p>
-                <p className="mt-1">Role: Administrator</p>
+                <p className="mt-1">Role: {user?.role}</p>
               </div>
             </SidebarFooter>
           </Sidebar>
           <SidebarInset className="flex flex-col">
-            <Navbar />
             <div className="flex-1 px-4 py-6 md:px-6 md:py-8">
               <div className="mb-6">
                 <div className="flex items-center justify-between">
@@ -203,7 +164,6 @@ const AdminLayout = ({ children, title = 'Dashboard' }: AdminLayoutProps) => {
               </div>
               <main>{children}</main>
             </div>
-            <Footer />
           </SidebarInset>
         </div>
       </SidebarProvider>

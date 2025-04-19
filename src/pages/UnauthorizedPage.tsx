@@ -2,13 +2,14 @@
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import AdminLayout from '@/components/layout/AdminLayout';
+import MainLayout from '@/components/layout/MainLayout';
 
 const UnauthorizedPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const goToDashboard = () => {
-    // Redirect to appropriate dashboard based on user role
-    if (user?.role === 'ADMIN') {
+    if (user?.role === 'ADMIN' || user?.role === 'TEACHER') {
       navigate('/admin/dashboard');
     } else {
       navigate('/dashboard');
@@ -28,7 +29,7 @@ const UnauthorizedPage = () => {
     }
   };
 
-  return (
+  const content = (
     <div className="flex flex-col items-center justify-center min-h-screen px-4">
       <div className="text-red-600 mb-6">
         <svg
@@ -52,13 +53,19 @@ const UnauthorizedPage = () => {
         Please contact an administrator if you believe this is an error.
       </p>
       <div className="flex gap-4">
-        <Button onClick={() => navigate('/')}>Go to Home</Button>
+        {!(user?.role === 'ADMIN' || user?.role === 'TEACHER') && (
+          <Button onClick={() => navigate('/')}>Go to Home</Button>
+        )}
         <Button onClick={goToDashboard} variant="outline">
           Go to Dashboard
         </Button>
       </div>
     </div>
   );
+  if (user?.role === 'ADMIN' || user?.role === 'TEACHER') {
+    return <AdminLayout>{content}</AdminLayout>;
+  }
+  return <MainLayout>{content}</MainLayout>;
 };
 
 export default UnauthorizedPage;
