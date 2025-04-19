@@ -32,7 +32,10 @@ const formatDuration = (minutes: number): string => {
   return `${hours}h ${mins}m`;
 };
 
-export const CourseCurriculum = ({ lessons }: CourseCurriculumProps) => {
+export const CourseCurriculum = ({
+  lessons,
+  isPreview,
+}: CourseCurriculumProps) => {
   const sections = useGroupedLessons(lessons || []);
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
@@ -70,7 +73,7 @@ export const CourseCurriculum = ({ lessons }: CourseCurriculumProps) => {
                     className="flex items-center justify-between"
                   >
                     <div className="flex items-center">
-                      {lesson.isPreview ? (
+                      {isPreview ? (
                         <Play className="h-5 w-5 mr-3 text-course-blue" />
                       ) : (
                         <Lock className="h-5 w-5 mr-3 text-gray-400" />

@@ -95,7 +95,10 @@ const CourseDetailPage = () => {
                 </TabsList>
 
                 <TabsContent value="curriculum">
-                  <CourseCurriculum lessons={course?.lessons || []} />
+                  <CourseCurriculum
+                    lessons={course?.lessons || []}
+                    isPreview={!course?.is_enrolled}
+                  />
                 </TabsContent>
 
                 <TabsContent value="overview">

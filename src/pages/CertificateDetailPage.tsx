@@ -6,9 +6,15 @@ import { Award, Download, Share2, ChevronLeft, Printer } from 'lucide-react';
 import { certificateService } from '@/services/api';
 import { useQuery } from '@tanstack/react-query';
 import WrapperLoading from '@/components/ui/wrapper-loading';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { useRef } from 'react';
+import DisplayCertificate from '@/components/certificate/DisplayCertificate';
+import HideCertificate from '@/components/certificate/HideCertificate';
 
 const CertificateDetailPage = () => {
   const { courseId } = useParams<{ courseId: string }>();
+  const certificateRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ['certificate', courseId],
@@ -16,6 +22,67 @@ const CertificateDetailPage = () => {
   });
 
   const certificate = data?.certificate;
+
+  const handleDownload = async () => {
+    if (!certificateRef.current || !certificate) return;
+
+    try {
+      // Set specific dimensions for the certificate (A4 Landscape)
+      const certificateWidth = 842; // A4 width in points (11.7 inches)
+      const certificateHeight = 595; // A4 height in points (8.3 inches)
+
+      // Create a temporary container for better rendering
+      const tempContainer = document.createElement('div');
+      tempContainer.style.position = 'absolute';
+      tempContainer.style.left = '-9999px';
+      tempContainer.style.top = '-9999px';
+      document.body.appendChild(tempContainer);
+
+      // Clone the certificate for PDF generation
+      const certificateClone = certificateRef.current.cloneNode(
+        true
+      ) as HTMLElement;
+      certificateClone.style.width = `${certificateWidth}pt`;
+      certificateClone.style.height = `${certificateHeight}pt`;
+      certificateClone.style.backgroundColor = 'white';
+      tempContainer.appendChild(certificateClone);
+
+      const canvas = await html2canvas(certificateClone, {
+        scale: 3,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        logging: false,
+        onclone: (document, element) => {
+          document.fonts.ready.then(() => {
+            console.log('Fonts loaded');
+          });
+        },
+      });
+
+      // Clean up temporary container
+      document.body.removeChild(tempContainer);
+
+      // Create PDF with A4 dimensions
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'pt',
+        format: 'a4',
+      });
+
+      // Add the canvas as an image
+      const imgData = canvas.toDataURL('image/png', 1.0);
+      pdf.addImage(imgData, 'PNG', 0, 0, certificateWidth, certificateHeight);
+
+      // Download the PDF
+      pdf.save(`${certificate.certificate_number}.pdf`);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    }
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
 
   if (!certificate && !isLoading) {
     return (
@@ -32,10 +99,6 @@ const CertificateDetailPage = () => {
       </MainLayout>
     );
   }
-
-  const handlePrint = () => {
-    window.print();
-  };
 
   return (
     <MainLayout>
@@ -61,58 +124,18 @@ const CertificateDetailPage = () => {
                     </h1>
                     <Award className="h-6 w-6 text-course-blue" />
                   </div>
-
-                  {/* Certificate display */}
-                  <div className="border-4 border-gray-300 p-8 mb-6 bg-white print:p-4 print:border-0">
-                    <div className="text-center">
-                      <div className="text-gray-400 text-sm mb-2">
-                        COURSEPALETTE
-                      </div>
-                      <div className="text-3xl font-bold mb-1 text-course-blue">
-                        CERTIFICATE OF COMPLETION
-                      </div>
-                      <div className="mx-auto w-32 h-1 bg-course-blue mb-8"></div>
-
-                      <div className="mb-2 text-lg">
-                        This is to certify that
-                      </div>
-                      <div className="text-3xl font-serif mb-2">
-                        {certificate?.user.name}
-                      </div>
-                      <div className="mb-6 text-lg">
-                        has successfully completed the online course
-                      </div>
-
-                      <div className="text-2xl font-bold mb-6">
-                        {certificate?.course.title}
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-8 text-center mb-8">
-                        <div>
-                          <div className="font-bold mb-1">Issue Date</div>
-                          <div>
-                            {new Date(
-                              certificate?.issue_date
-                            ).toLocaleDateString()}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="font-bold mb-1">Certificate ID</div>
-                          <div>{certificate?.certificate_number}</div>
-                        </div>
-                      </div>
-
-                      <div className="flex justify-center">
-                        <div className="border-t-2 border-gray-300 pt-4 w-48">
-                          <div className="font-bold">Course Instructor</div>
-                          <div>{certificate?.instructor.name}</div>
-                        </div>
-                      </div>
-                    </div>
+                  <DisplayCertificate certificate={certificate} />
+                  <div className="hidden">
+                    <HideCertificate
+                      certificate={certificate}
+                      ref={certificateRef}
+                    />
                   </div>
-
-                  <div className="flex space-x-4 print:hidden">
-                    <Button className="flex-1 bg-course-blue">
+                  <div className="flex space-x-4 print:hidden mt-20">
+                    <Button
+                      className="flex-1 bg-course-blue"
+                      onClick={handleDownload}
+                    >
                       <Download className="h-4 w-4 mr-2" />
                       Download Certificate
                     </Button>
@@ -128,7 +151,7 @@ const CertificateDetailPage = () => {
                 </Card>
               </div>
 
-              <div className="lg:w-1/3 print:hidden">
+              <div className="lg:w-1/3 ">
                 <Card className="p-6 mb-6">
                   <h2 className="text-xl font-bold mb-4">
                     Certificate Details
@@ -204,34 +227,34 @@ const CertificateDetailPage = () => {
 
         <style>
           {`
-            @media print {
-              body * {
-                visibility: hidden;
-              }
-              .print\\:block, .print\\:block *,
-              .print\\:w-full, .print\\:w-full *,
-              .print\\:shadow-none, .print\\:shadow-none *,
-              .print\\:border-0, .print\\:border-0 *,
-              .print\\:p-4, .print\\:p-4 *,
-              .print\\:bg-white, .print\\:bg-white *,
-              .print\\:py-0, .print\\:py-0 * {
-                visibility: visible;
-              }
-              .print\\:hidden {
-                display: none !important;
-              }
-              main {
-                background: white;
-                height: 100%;
-                width: 100%;
-                position: fixed;
-                top: 0;
-                left: 0;
-                margin: 0;
-                padding: 30px;
-              }
+          @media print {
+            body * {
+              visibility: hidden;
             }
-          `}
+            .print\\:block, .print\\:block *,
+            .print\\:w-full, .print\\:w-full *,
+            .print\\:shadow-none, .print\\:shadow-none *,
+            .print\\:border-0, .print\\:border-0 *,
+            .print\\:p-4, .print\\:p-4 *,
+            .print\\:bg-white, .print\\:bg-white *,
+            .print\\:py-0, .print\\:py-0 * {
+              visibility: visible;
+            }
+            .print\\:hidden {
+              display: none !important;
+            }
+            main {
+              background: white;
+              height: 100%;
+              width: 100%;
+              position: fixed;
+              top: 0;
+              left: 0;
+              margin: 0;
+              padding: 30px;
+            }
+          }
+        `}
         </style>
       </WrapperLoading>
     </MainLayout>

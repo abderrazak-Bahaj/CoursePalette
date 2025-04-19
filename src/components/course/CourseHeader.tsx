@@ -81,15 +81,6 @@ export const CourseHeader = ({
                     Continue Learning
                   </Link>
                 </Button>
-                <div className="flex-1 flex items-center">
-                  <div className="w-full">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Your progress</span>
-                      <span>0%</span>
-                    </div>
-                    <Progress value={0} className="h-2" />
-                  </div>
-                </div>
               </div>
             ) : (
               <Button size="lg" className="bg-course-blue" onClick={onEnroll}>

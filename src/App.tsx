@@ -13,6 +13,8 @@ import AdminCoursesPage from './pages/AdminCoursesPage';
 import AdminLessonsPage from './pages/AdminLessonsPage';
 import CertificatesPage from './pages/CertificatesPage';
 import CertificateDetailPage from './pages/CertificateDetailPage';
+import DownloadableCertificate from './pages/DownloadableCertificate';
+import CheckCertificatePage from './pages/CheckCertificatePage';
 import CategoriesPage from './pages/CategoriesPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 import ProfilePage from './pages/ProfilePage';
@@ -77,12 +79,20 @@ const App = () => (
             <Route path="/admin/instructors" element={<InstructorsPage />} />
             <Route path="/certificates" element={<CertificatesPage />} />
             <Route
+              path="/check-certificate"
+              element={<CheckCertificatePage />}
+            />
+            <Route
               path="/certificates/:id"
               element={<CertificateDetailPage />}
             />
             <Route
               path="/courses/:courseId/certificate"
               element={<CertificateDetailPage />}
+            />
+            <Route
+              path="/courses/:courseId/certificate/download"
+              element={<DownloadableCertificate />}
             />
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/search" element={<SearchResultsPage />} />
