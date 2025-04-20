@@ -20,11 +20,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const getMe = async () => {
-      const response = await authService.getCurrentUser();
-      if (!response && !response.data) return;
-      setUser(response.data as User);
-      setIsLoading(false);
+      try {
+        const response = await authService.getCurrentUser();
+        if (!response || !response.data) {
+          throw new Error('No user data received');
+        }
+        setUser(response.data as User);
+      } catch (error: any) {
+        // If we get a 401, clear the auth state
+        if (error.response?.status === 401) {
+          setUser(null);
+          setToken(null);
+          localStorage.removeItem('token');
+        }
+      } finally {
+        setIsLoading(false);
+      }
     };
+
     const savedToken = localStorage.getItem('token');
     if (savedToken) {
       setToken(savedToken);

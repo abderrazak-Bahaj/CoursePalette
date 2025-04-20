@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="bg-gray-100 pt-12 pb-8 mt-20">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <h3 className="text-lg font-semibold mb-4">CoursePalette</h3>
             <p className="text-gray-600 mb-4">
@@ -77,48 +77,10 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/certificates"
+                  to="/check-certificate"
                   className="text-gray-600 hover:text-course-blue"
                 >
-                  Certificates
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/instructors"
-                  className="text-gray-600 hover:text-course-blue"
-                >
-                  Instructors
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Community</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  to="/learners"
-                  className="text-gray-600 hover:text-course-blue"
-                >
-                  Learners
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/partners"
-                  className="text-gray-600 hover:text-course-blue"
-                >
-                  Partners
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/developers"
-                  className="text-gray-600 hover:text-course-blue"
-                >
-                  Developers
+                  Check Certificate
                 </Link>
               </li>
               <li>

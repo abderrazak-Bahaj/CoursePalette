@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,11 +12,52 @@ import {
 } from '@/components/ui/select';
 import { PlusCircle, Search } from 'lucide-react';
 import AdminCourseList from '@/components/admin/AdminCourseList';
+import CourseModal from '@/components/admin/CourseModal';
+import { courseService, CourseParams } from '@/services/api/courseService';
+import { useAuth } from '@/hooks/useAuth';
+import { categoryService } from '@/services/api/categoryService';
+import { CategoriesResponse } from '@/types/category';
 
 const AdminCoursesPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const { user } = useAuth();
+
+  const isAdmin = user?.role === 'ADMIN';
+
+  const params: CourseParams = {
+    page,
+    per_page: 12,
+    sort_by: 'created_at',
+    sort_order: 'desc',
+    search: searchQuery || undefined,
+    category: categoryFilter !== 'all' ? categoryFilter : undefined,
+    status: statusFilter !== 'all' ? statusFilter : undefined,
+  };
+
+  const {
+    data: coursesResponse,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['admin-courses', params],
+    queryFn: async () =>
+      isAdmin
+        ? await courseService.getAdminCources(params)
+        : await courseService.getMyCourses(params),
+  });
+
+  // Fetch categories with proper typing
+  const { data: categoriesResponse } = useQuery<CategoriesResponse>({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const response = await categoryService.getAllCategories();
+      return response?.categories || [];
+    },
+  });
 
   return (
     <AdminLayout title="Course Management">
@@ -38,10 +79,11 @@ const AdminCoursesPage = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
-              <SelectItem value="programming">Programming</SelectItem>
-              <SelectItem value="design">Design</SelectItem>
-              <SelectItem value="business">Business</SelectItem>
-              <SelectItem value="marketing">Marketing</SelectItem>
+              {categoriesResponse?.map((category) => (
+                <SelectItem key={category.id} value={category.id.toString()}>
+                  {category.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -50,21 +92,31 @@ const AdminCoursesPage = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
+              <SelectItem value="PUBLISHED">Published</SelectItem>
+              <SelectItem value="DRAFT">Draft</SelectItem>
+              <SelectItem value="ARCHIVED">Archived</SelectItem>
             </SelectContent>
           </Select>
         </div>
-        <Button asChild>
-          <Link to="/admin/courses/new">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Course
-          </Link>
+        <Button onClick={() => setIsModalOpen(true)}>
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Add Course
         </Button>
       </div>
-
-      <AdminCourseList />
+      <CourseModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        course={null}
+        categories={categoriesResponse}
+      />
+      <AdminCourseList
+        courses={coursesResponse?.courses || []}
+        isLoading={isLoading}
+        pagination={coursesResponse?.meta}
+        onPageChange={setPage}
+        error={error?.message}
+        categories={categoriesResponse}
+      />
     </AdminLayout>
   );
 };

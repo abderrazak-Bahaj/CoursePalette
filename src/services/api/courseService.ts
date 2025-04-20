@@ -2,14 +2,15 @@ import { get, post, put, del } from './apiClient';
 
 export interface CourseData {
   title: string;
-  description?: string;
-  content?: string;
-  category_id?: string;
-  price?: number;
-  level?: string;
-  thumbnail?: File;
-  status?: string;
-  instructor_id?: string;
+  description: string;
+  category_id: string;
+  price: number;
+  level: string;
+  status: string;
+  language: string;
+  duration: number;
+  skills: string[];
+  image?: File;
 }
 
 export const courseService = {
@@ -21,29 +22,19 @@ export const courseService = {
     return get(`/courses/${id}`);
   },
 
-  createCourse: (data: CourseData) => {
-    // Use FormData for file uploads
-    const formData = new FormData();
+  getMyCourses: (params?: Record<string, string>) => {
+    return get(`/my-courses`, { params });
+  },
 
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined) {
-        formData.append(key, value);
-      }
-    });
+  getAdminCources: (params?: Record<string, string>) => {
+    return get(`/admin/courses`, { params });
+  },
 
+  createCourse: (formData: FormData) => {
     return post('/courses', formData);
   },
 
-  updateCourse: (id: string, data: CourseData) => {
-    // Use FormData for file uploads
-    const formData = new FormData();
-
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined) {
-        formData.append(key, value);
-      }
-    });
-
+  updateCourse: (id: string, formData: FormData) => {
     return put(`/courses/${id}`, formData);
   },
 

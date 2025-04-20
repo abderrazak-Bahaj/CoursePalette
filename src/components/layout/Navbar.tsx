@@ -77,6 +77,12 @@ const Navbar = () => {
                 >
                   Blog
                 </Link>
+                <Link
+                  to="/check-certificate"
+                  className="text-gray-700 hover:text-course-blue transition-colors"
+                >
+                  Check Certificate
+                </Link>
               </div>
             )}
           </div>

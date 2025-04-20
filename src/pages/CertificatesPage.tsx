@@ -2,10 +2,49 @@ import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { mockCertificates } from '@/data/mockData';
-import { Award, Download, Share2 } from 'lucide-react';
+import { Award, Download, Share2, Loader2 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { certificateService } from '@/services/api/certificateService';
+import { format } from 'date-fns';
 
 const CertificatesPage = () => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['certificates'],
+    queryFn: () => certificateService.getCertificates(),
+  });
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex justify-center items-center h-64">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <MainLayout>
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center py-12 bg-white rounded-lg shadow-sm">
+            <h2 className="text-2xl font-bold mb-2 text-red-600">
+              Error Loading Certificates
+            </h2>
+            <p className="text-gray-500 mb-6">
+              There was an error loading your certificates. Please try again
+              later.
+            </p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  const certificates = data?.certificates || [];
+
   return (
     <MainLayout>
       <div className="bg-gray-50 py-8">
@@ -22,7 +61,7 @@ const CertificatesPage = () => {
             </div>
           </div>
 
-          {mockCertificates.length === 0 ? (
+          {certificates.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-lg shadow-sm">
               <Award className="h-16 w-16 mx-auto text-gray-300 mb-4" />
               <h2 className="text-2xl font-bold mb-2">No Certificates Yet</h2>
@@ -35,7 +74,7 @@ const CertificatesPage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {mockCertificates.map((certificate) => (
+              {certificates.map((certificate) => (
                 <CertificateCard
                   key={certificate.id}
                   certificate={certificate}
@@ -51,37 +90,58 @@ const CertificatesPage = () => {
 
 interface CertificateCardProps {
   certificate: {
-    id: string;
-    title: string;
-    issueDate: string;
-    courseId: string;
-    courseName: string;
-    image: string;
+    id: number;
+    certificate_number: string;
+    issue_date: string;
+    metadata: {
+      completion_date: string;
+      grade: string;
+    };
+    course: {
+      id: number;
+      title: string;
+      level: string;
+    };
+    user: {
+      name: string;
+    };
   };
 }
 
 const CertificateCard = ({ certificate }: CertificateCardProps) => {
+  const formatDate = (dateString: string) => {
+    try {
+      return format(new Date(dateString), 'MMMM d, yyyy');
+    } catch (error) {
+      return dateString;
+    }
+  };
+
   return (
     <Card className="overflow-hidden course-card-shadow">
       <div className="bg-course-navy text-white p-4 flex items-center justify-between">
-        <h3 className="font-semibold line-clamp-1">{certificate.title}</h3>
+        <h3 className="font-semibold line-clamp-1">
+          {certificate.course.title}
+        </h3>
         <Award className="h-5 w-5" />
       </div>
       <CardContent className="p-0">
         <div className="p-4 border-b">
-          <div className="aspect-[16/9] mb-4 relative">
+          <div className="aspect-[16/12] mb-4 relative">
             {/* Certificate preview */}
             <div className="absolute inset-0 bg-gray-100 rounded flex items-center justify-center">
               <div className="text-center p-4 border-4 border-gray-300 w-full h-full flex flex-col items-center justify-center">
                 <div className="text-lg font-bold mb-2">CERTIFICATE</div>
                 <div className="text-md mb-1">This certifies that</div>
-                <div className="text-xl font-bold mb-1">John Doe</div>
+                <div className="text-xl font-bold mb-1">
+                  {certificate.user.name}
+                </div>
                 <div className="text-md mb-3">successfully completed</div>
                 <div className="text-lg font-semibold mb-1">
-                  {certificate.courseName}
+                  {certificate.course.title}
                 </div>
                 <div className="text-sm text-gray-500">
-                  Issued on {certificate.issueDate}
+                  Issued on {formatDate(certificate.issue_date)}
                 </div>
               </div>
             </div>
@@ -90,21 +150,23 @@ const CertificateCard = ({ certificate }: CertificateCardProps) => {
           <div className="mb-4">
             <div className="text-sm text-gray-500 mb-1">Course</div>
             <Link
-              to={`/courses/${certificate.courseId}`}
+              to={`/courses/${certificate.course.id}`}
               className="font-medium hover:text-course-blue transition-colors line-clamp-2"
             >
-              {certificate.courseName}
+              {certificate.course.title}
             </Link>
           </div>
 
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm text-gray-500 mb-1">Issue Date</div>
-              <div className="text-sm">{certificate.issueDate}</div>
+              <div className="text-sm">
+                {formatDate(certificate.issue_date)}
+              </div>
             </div>
             <div>
               <div className="text-sm text-gray-500 mb-1">Credential ID</div>
-              <div className="text-sm">CERT-{certificate.id}</div>
+              <div className="text-sm">{certificate.certificate_number}</div>
             </div>
           </div>
         </div>
@@ -116,9 +178,11 @@ const CertificateCard = ({ certificate }: CertificateCardProps) => {
             className="mr-2 flex-1"
             onClick={(e) => e.stopPropagation()}
           >
-            <Link to={`/certificates/${certificate.id}`}>View</Link>
+            <Link to={`/courses/${certificate.course.id}/certificate`}>
+              View
+            </Link>
           </Button>
-          <Button
+          {/*  <Button
             variant="outline"
             size="icon"
             className="mr-2"
@@ -140,7 +204,7 @@ const CertificateCard = ({ certificate }: CertificateCardProps) => {
             }}
           >
             <Share2 className="h-4 w-4" />
-          </Button>
+          </Button> */}
         </div>
       </CardContent>
     </Card>

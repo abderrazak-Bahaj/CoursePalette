@@ -27,6 +27,7 @@ export interface Lesson {
   content?: string;
   description?: string;
   order?: number;
+  is_completed?: boolean;
 }
 
 export interface Category {

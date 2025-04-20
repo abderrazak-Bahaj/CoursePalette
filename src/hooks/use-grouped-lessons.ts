@@ -36,7 +36,6 @@ const useGroupedLessons = (lessons: Lesson[]): GroupedSection[] => {
       }
       grouped[sectionId].lessons.push(lesson);
     }
-
     // Sort lessons within each section
     Object.values(grouped).forEach((section) => {
       section.lessons.sort((a, b) => a.order - b.order);
