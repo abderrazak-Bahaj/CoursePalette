@@ -134,8 +134,6 @@ const CourseModal = ({
   console.log('course', course);
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [content, setContent] = useState(course?.content || '');
-  const isEditing = !!course;
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<z.infer<typeof courseSchema>>({
@@ -168,11 +166,9 @@ const CourseModal = ({
         duration: course.duration,
         image: undefined,
       });
-      setContent(course.content || '');
     }
   }, [course]);
 
-  console.log('form', form.getValues());
   const createMutation = useMutation({
     mutationFn: (data: FormData) => courseService.createCourse(data),
     onSuccess: () => {
@@ -285,7 +281,6 @@ const CourseModal = ({
 
   const handleClose = () => {
     form.reset();
-    setContent('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
