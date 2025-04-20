@@ -178,7 +178,12 @@ const LessonPage = () => {
                 <VideoPlayer url={lesson?.video_url || ''} />
 
                 {/* Lesson content */}
-                <div className="prose max-w-none mb-8">{lesson?.content}</div>
+                <div
+                  className="prose max-w-none mb-8"
+                  dangerouslySetInnerHTML={{
+                    __html: lesson?.content || '',
+                  }}
+                />
 
                 {/* Next/Previous navigation */}
                 <div className="flex justify-between border-t pt-6">

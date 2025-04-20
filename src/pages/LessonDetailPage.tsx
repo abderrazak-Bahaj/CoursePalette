@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Lesson } from '@/types/course';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,11 +14,14 @@ import {
   CheckCircle,
   Clock,
   Video,
+  ListOrdered,
+  FileText,
+  BookOpen,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import AdminLayout from '@/components/layout/AdminLayout';
 import LessonModal from '@/components/admin/LessonModal';
-import { mockCourses } from '@/data/mockData';
+import { lessonService } from '@/services/api/lessonService';
 
 const LessonDetailPage = () => {
   const { courseId, lessonId } = useParams<{
@@ -29,13 +32,22 @@ const LessonDetailPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Find course and lesson from mockData
-  const course = courseId ? mockCourses.find((c) => c.id === courseId) : null;
-  const lesson = course?.lessons?.find((l) => l.id === lessonId);
+  const {
+    data: lessonData,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['lesson', courseId, lessonId],
+    queryFn: () => lessonService.getLesson(courseId!, lessonId!),
+    enabled: !!courseId && !!lessonId,
+  });
+
+  const lesson = lessonData?.lesson;
 
   // If missing IDs
   if (!courseId || !lessonId) {
-    navigate('/admin/lessons');
+    navigate('/admin/courses');
     toast({
       title: 'Error',
       description: 'Missing course or lesson ID',
@@ -44,21 +56,28 @@ const LessonDetailPage = () => {
     return null;
   }
 
-  const isLoading = false;
-
-  const [lessonState, setLessonState] = useState({
-    completed: lesson?.completed || false,
-  });
-
-  const handleStatusToggle = () => {
-    setLessonState((prev) => ({ ...prev, completed: !prev.completed }));
-
-    toast({
-      title: 'Success',
-      description: lessonState.completed
-        ? 'Lesson unpublished successfully'
-        : 'Lesson published successfully',
-    });
+  const handleStatusToggle = async () => {
+    try {
+      if (lesson.status === 'PUBLISHED') {
+        await lessonService.unpublishLesson(courseId, lessonId);
+      } else {
+        await lessonService.publishLesson(courseId, lessonId);
+      }
+      refetch();
+      toast({
+        title: 'Success',
+        description:
+          lesson.status === 'PUBLISHED'
+            ? 'Lesson unpublished successfully'
+            : 'Lesson published successfully',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to update lesson status',
+        variant: 'destructive',
+      });
+    }
   };
 
   if (isLoading) {
@@ -80,7 +99,7 @@ const LessonDetailPage = () => {
     );
   }
 
-  if (!course || !lesson) {
+  if (error || !lesson) {
     return (
       <AdminLayout title="Lesson Details">
         <div className="flex items-center space-x-4">
@@ -94,9 +113,9 @@ const LessonDetailPage = () => {
             <p className="text-destructive mb-4">
               Failed to load lesson details
             </p>
-            <Button onClick={() => navigate('/admin/lessons')}>
+            <Button onClick={() => navigate(`/admin/lessons`)}>
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Return to Lessons
+              Return to Course
             </Button>
           </CardContent>
         </Card>
@@ -104,37 +123,24 @@ const LessonDetailPage = () => {
     );
   }
 
-  // Merge lesson data with state
-  const lessonWithState = {
-    ...lesson,
-    completed: lessonState.completed,
-    content: lesson.content || '<p>This is sample lesson content.</p>',
-    description: lesson.description || 'This is a sample lesson description.',
-  };
-
   return (
     <AdminLayout title="Lesson Details">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex items-center space-x-4">
-          <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
-            <ChevronLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
-          <h1 className="text-2xl font-bold">{lessonWithState.title}</h1>
-          <Badge variant={lessonWithState.completed ? 'default' : 'outline'}>
-            {lessonWithState.completed ? 'Published' : 'Draft'}
+          <h1 className="text-2xl font-bold">{lesson.title}</h1>
+          <Badge
+            variant={lesson.status === 'PUBLISHED' ? 'default' : 'outline'}
+          >
+            {lesson.status === 'PUBLISHED' ? 'Published' : 'Draft'}
           </Badge>
-          {lessonWithState.isPreview && (
-            <Badge className="bg-blue-500">Preview</Badge>
-          )}
         </div>
 
         <div className="flex space-x-2">
           <Button
-            variant={lessonWithState.completed ? 'outline' : 'default'}
+            variant={lesson.status === 'PUBLISHED' ? 'outline' : 'default'}
             onClick={handleStatusToggle}
           >
-            {lessonWithState.completed ? 'Unpublish' : 'Publish'}
+            {lesson.status === 'PUBLISHED' ? 'Unpublish' : 'Publish'}
           </Button>
           <Button onClick={() => setIsModalOpen(true)}>
             <Edit className="mr-2 h-4 w-4" />
@@ -153,27 +159,25 @@ const LessonDetailPage = () => {
               <Tabs defaultValue="content">
                 <TabsList>
                   <TabsTrigger value="content">Content</TabsTrigger>
-                  <TabsTrigger value="preview">Preview</TabsTrigger>
+                  <TabsTrigger value="preview">Video</TabsTrigger>
                 </TabsList>
                 <TabsContent value="content" className="mt-4">
                   <div className="prose max-w-none">
                     <div
                       dangerouslySetInnerHTML={{
-                        __html:
-                          lessonWithState.content || 'No content available',
+                        __html: lesson.content || 'No content available',
                       }}
                     />
                   </div>
                 </TabsContent>
                 <TabsContent value="preview" className="mt-4">
-                  {lessonWithState.videoUrl ? (
+                  {lesson.video_url ? (
                     <div className="aspect-video">
-                      <iframe
-                        src={lessonWithState.videoUrl}
+                      <video
+                        src={lesson.video_url}
                         className="w-full h-full border rounded-md"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      ></iframe>
+                        controls
+                      />
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center border rounded-md p-12 bg-muted/20">
@@ -199,7 +203,17 @@ const LessonDetailPage = () => {
                 </h3>
                 <div className="flex items-center">
                   <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
-                  <span>{lessonWithState.duration}</span>
+                  <span>{lesson.duration_readable}</span>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground mb-1">
+                  Section
+                </h3>
+                <div className="flex items-center">
+                  <BookOpen className="h-4 w-4 mr-2 text-muted-foreground" />
+                  <span>Section {lesson.section}</span>
                 </div>
               </div>
 
@@ -207,14 +221,10 @@ const LessonDetailPage = () => {
                 <h3 className="text-sm font-medium text-muted-foreground mb-1">
                   Order
                 </h3>
-                <span>{lessonWithState.order || 'Not set'}</span>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground mb-1">
-                  Description
-                </h3>
-                <p className="text-sm">{lessonWithState.description}</p>
+                <div className="flex items-center">
+                  <ListOrdered className="h-4 w-4 mr-2 text-muted-foreground" />
+                  <span>{lesson.order || 'Not set'}</span>
+                </div>
               </div>
 
               <Separator />
@@ -224,7 +234,7 @@ const LessonDetailPage = () => {
                   Status
                 </h3>
                 <div className="flex items-center">
-                  {lessonWithState.completed ? (
+                  {lesson.status === 'PUBLISHED' ? (
                     <>
                       <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
                       <span>Published</span>
@@ -240,14 +250,52 @@ const LessonDetailPage = () => {
 
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground mb-1">
-                  Visibility
+                  Created
                 </h3>
-                <span>
-                  {lessonWithState.isPreview
-                    ? 'Free Preview'
-                    : 'Premium Content'}
-                </span>
+                <div className="flex items-center">
+                  <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
+                  <span>
+                    {new Date(lesson.created_at).toLocaleDateString()}
+                  </span>
+                </div>
               </div>
+
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground mb-1">
+                  Last Updated
+                </h3>
+                <div className="flex items-center">
+                  <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
+                  <span>
+                    {new Date(lesson.updated_at).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+
+              {lesson.resources && lesson.resources.length > 0 && (
+                <>
+                  <Separator />
+                  <div>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-1">
+                      Resources
+                    </h3>
+                    <ul className="text-sm space-y-1">
+                      {lesson.resources.map((resource: any, index: number) => (
+                        <li key={index}>
+                          <a
+                            href={resource.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 hover:underline"
+                          >
+                            {resource.title}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -256,9 +304,12 @@ const LessonDetailPage = () => {
       {courseId && (
         <LessonModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            refetch();
+          }}
           courseId={courseId}
-          lesson={lessonWithState as Lesson}
+          lesson={lesson}
         />
       )}
     </AdminLayout>

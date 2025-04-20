@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search, PlusCircle } from 'lucide-react';
+import { Search, PlusCircle, Plus } from 'lucide-react';
 import LessonsList from '@/components/admin/LessonsList';
 import LessonModal from '@/components/admin/LessonModal';
 import { courseService } from '@/services/api/courseService';
@@ -21,10 +21,12 @@ const AdminLessonsPage = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data: courses = [], isLoading: isLoadingCourses } = useQuery({
+  const { data: coursesResponse = [], isLoading: isLoadingCourses } = useQuery({
     queryKey: ['courses'],
-    queryFn: () => courseService.getCourses().then((res) => res.data || []),
+    queryFn: async () => await courseService.getMyCourses(),
   });
+
+  const courses = coursesResponse?.courses || [];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,56 +38,46 @@ const AdminLessonsPage = () => {
     });
   };
 
+  const handleAddNew = () => {
+    navigate(`/admin/courses/${selectedCourseId}/lessons/create`);
+  };
+
   return (
     <AdminLayout title="Lesson Management">
       <div className="mb-6">
-        <form
-          onSubmit={handleSearch}
-          className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2"
-        >
-          <div className="relative flex-grow">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search lessons..."
-              className="w-full rounded-md pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <p className="text-muted-foreground">
+              Manage and organize your course lessons
+            </p>
           </div>
-          <Select value={selectedCourseId} onValueChange={setSelectedCourseId}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Course" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Courses</SelectItem>
-              {courses.map((course) => (
-                <SelectItem key={course.id} value={course.id}>
-                  {course.title}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button type="submit">Search</Button>
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            disabled={!selectedCourseId}
-          >
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Lesson
-          </Button>
-        </form>
+
+          <div className="flex items-center gap-2">
+            <Select
+              value={selectedCourseId}
+              onValueChange={setSelectedCourseId}
+              placeholder="Select Course"
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select Course" />
+              </SelectTrigger>
+              <SelectContent>
+                {courses?.map((course) => (
+                  <SelectItem key={course.id} value={course.id.toString()}>
+                    {course.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              onClick={() => setIsModalOpen(true)}
+              disabled={!selectedCourseId}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add New Lesson
+            </Button>
+          </div>
+        </div>
       </div>
 
       {!selectedCourseId ? (
@@ -95,31 +87,12 @@ const AdminLessonsPage = () => {
             Please select a course from the dropdown to view and manage its
             lessons.
           </p>
-          <Select value={selectedCourseId} onValueChange={setSelectedCourseId}>
-            <SelectTrigger className="w-[300px] mx-auto">
-              <SelectValue placeholder="Select a course to continue" />
-            </SelectTrigger>
-            <SelectContent>
-              {isLoadingCourses ? (
-                <SelectItem value="loading" disabled>
-                  Loading courses...
-                </SelectItem>
-              ) : courses.length === 0 ? (
-                <SelectItem value="none" disabled>
-                  No courses available
-                </SelectItem>
-              ) : (
-                courses.map((course) => (
-                  <SelectItem key={course.id} value={course.id}>
-                    {course.title}
-                  </SelectItem>
-                ))
-              )}
-            </SelectContent>
-          </Select>
         </div>
       ) : (
-        <LessonsList courseId={selectedCourseId} />
+        <LessonsList
+          courseId={selectedCourseId}
+          onAddNew={() => setIsModalOpen(true)}
+        />
       )}
 
       {selectedCourseId && (

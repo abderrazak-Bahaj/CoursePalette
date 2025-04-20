@@ -29,7 +29,7 @@ export const lessonService = {
   },
 
   updateLesson: (courseId: string, lessonId: string, data: LessonData) => {
-    return put(`/courses/${courseId}/lessons/${lessonId}`, data);
+    return post(`/courses/${courseId}/lessons/${lessonId}`, data);
   },
 
   deleteLesson: (courseId: string, lessonId: string) => {
