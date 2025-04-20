@@ -43,6 +43,15 @@ import { format } from 'date-fns';
 import { CalendarIcon, Logs } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
+import { SkillsInput } from '@/components/ui/skills-input';
+import { ImageUpload } from '@/components/ui/image-upload';
+
+// Add CategoriesResponse interface
+interface CategoriesResponse {
+  data: Category[];
+  success: boolean;
+  message: string;
+}
 
 // Update the course schema to match backend types
 const courseSchema = z.object({
@@ -57,7 +66,7 @@ const courseSchema = z.object({
   level: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED'], {
     required_error: 'Level is required',
   }),
-  skills: z.union([z.string(), z.array(z.string())]).optional(),
+  skills: z.array(z.string()).default([]),
   language: z.string().min(1, { message: 'Language is required' }),
   duration: z.coerce
     .number()
@@ -470,31 +479,6 @@ const CourseModal = ({
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="image"
-                render={({ field: { onChange, value, ...field } }) => (
-                  <FormItem>
-                    <FormLabel>Course Image</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        ref={fileInputRef}
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            onChange(file);
-                          }
-                        }}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
 
             <FormField
@@ -502,23 +486,36 @@ const CourseModal = ({
               name="skills"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Skills (comma separated)</FormLabel>
+                  <FormLabel>Skills</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="skill1, skill2, skill3"
-                      {...field}
-                      value={
-                        typeof field.value === 'string'
-                          ? field.value
-                          : field.value?.join(', ') || ''
-                      }
-                      onChange={(e) => {
-                        const skills = e.target.value
-                          ?.split(',')
-                          ?.map((skill) => skill.trim())
-                          ?.filter(Boolean);
-                        field.onChange(skills);
-                      }}
+                    <SkillsInput
+                      value={field.value}
+                      onChange={(skills) => field.onChange(skills)}
+                      placeholder="Type a skill and press space or comma"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field: { onChange, value, ...field } }) => (
+                <FormItem>
+                  <FormLabel>Course Image</FormLabel>
+                  <FormControl>
+                    <ImageUpload
+                      value={value}
+                      onChange={onChange}
+                      accept={[
+                        'image/jpeg',
+                        'image/png',
+                        'image/gif',
+                        'image/webp',
+                      ]}
+                      maxSize={5 * 1024 * 1024} // 5MB
                     />
                   </FormControl>
                   <FormMessage />
