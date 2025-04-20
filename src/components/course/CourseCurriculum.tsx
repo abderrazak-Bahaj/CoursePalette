@@ -18,6 +18,7 @@ interface Lesson {
 
 interface CourseCurriculumProps {
   lessons: Lesson[];
+  isPreview?: boolean;
 }
 
 const formatDuration = (minutes: number): string => {

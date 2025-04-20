@@ -32,9 +32,28 @@ import {
 } from '@/components/ui/alert-dialog';
 import { courseService } from '@/services/api/courseService';
 import CourseModal from './CourseModal';
-import { Course } from '@/types/course';
+import { Course, PaginationMeta } from '@/services/api/courseService';
+import { Skeleton } from '@/components/ui/skeleton';
+import { formatCurrency } from '@/lib/utils';
+import { Pagination } from '@/components/ui/custom-pagination';
+import { CategoriesResponse } from '@/types/category';
+interface AdminCourseListProps {
+  courses: Course[];
+  categories: CategoriesResponse;
+  isLoading: boolean;
+  pagination?: PaginationMeta;
+  onPageChange: (page: number) => void;
+  error?: string;
+}
 
-const AdminCourseList = () => {
+const AdminCourseList = ({
+  courses,
+  categories,
+  isLoading,
+  pagination,
+  onPageChange,
+  error,
+}: AdminCourseListProps) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,19 +62,10 @@ const AdminCourseList = () => {
   );
   const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
 
-  const {
-    data: courses = [],
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['courses'],
-    queryFn: () => courseService.getCourses().then((res) => res.data || []),
-  });
-
   const deleteMutation = useMutation({
     mutationFn: (courseId: string) => courseService.deleteCourse(courseId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['courses'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-courses'] });
       toast({
         title: 'Course Deleted',
         description: 'Course has been deleted successfully.',
@@ -86,14 +96,27 @@ const AdminCourseList = () => {
     setIsModalOpen(true);
   };
 
-  const getStatusBadge = (level: string) => {
-    switch (level.toLowerCase()) {
-      case 'beginner':
-        return <Badge className="bg-green-500">Beginner</Badge>;
-      case 'intermediate':
-        return <Badge className="bg-blue-500">Intermediate</Badge>;
-      case 'advanced':
-        return <Badge className="bg-purple-500">Advanced</Badge>;
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'PUBLISHED':
+        return <Badge variant="success">{status}</Badge>;
+      case 'DRAFT':
+        return <Badge variant="warning">{status}</Badge>;
+      case 'ARCHIVED':
+        return <Badge variant="destructive">{status}</Badge>;
+      default:
+        return <Badge>{status}</Badge>;
+    }
+  };
+
+  const getLevelBadge = (level: string) => {
+    switch (level) {
+      case 'BEGINNER':
+        return <Badge className="bg-green-500">{level}</Badge>;
+      case 'INTERMEDIATE':
+        return <Badge className="bg-blue-500">{level}</Badge>;
+      case 'ADVANCED':
+        return <Badge className="bg-purple-500">{level}</Badge>;
       default:
         return <Badge>{level}</Badge>;
     }
@@ -101,11 +124,11 @@ const AdminCourseList = () => {
 
   if (isLoading) {
     return (
-      <Card>
-        <CardContent className="p-6 text-center">
-          <div className="animate-pulse">Loading courses...</div>
-        </CardContent>
-      </Card>
+      <div className="space-y-4">
+        {[...Array(5)].map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full" />
+        ))}
+      </div>
     );
   }
 
@@ -123,13 +146,6 @@ const AdminCourseList = () => {
 
   return (
     <>
-      <div className="flex justify-end mb-4">
-        <Button onClick={handleAddNew}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add New Course
-        </Button>
-      </div>
-
       <Card>
         <CardContent className="p-0">
           {courses.length === 0 ? (
@@ -144,10 +160,10 @@ const AdminCourseList = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Title</TableHead>
-                  <TableHead>Instructor</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Level</TableHead>
                   <TableHead>Price</TableHead>
+                  <TableHead>Duration</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -158,18 +174,13 @@ const AdminCourseList = () => {
                     <TableCell className="font-medium">
                       {course.title}
                     </TableCell>
-                    <TableCell>{course.instructor}</TableCell>
-                    <TableCell>{course.category}</TableCell>
-                    <TableCell>{getStatusBadge(course.level)}</TableCell>
-                    <TableCell>${course.price.toFixed(2)}</TableCell>
+                    <TableCell>{course.category.name}</TableCell>
+                    <TableCell>{getLevelBadge(course.level)}</TableCell>
                     <TableCell>
-                      <Badge
-                        variant="outline"
-                        className="bg-green-100 text-green-800"
-                      >
-                        Published
-                      </Badge>
+                      {formatCurrency(parseFloat(course.price))}
                     </TableCell>
+                    <TableCell>{course.duration_readable}</TableCell>
+                    <TableCell>{getStatusBadge(course.status)}</TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -212,10 +223,19 @@ const AdminCourseList = () => {
         </CardContent>
       </Card>
 
+      {pagination && (
+        <Pagination
+          currentPage={pagination.current_page}
+          totalPages={pagination.last_page}
+          onPageChange={onPageChange}
+        />
+      )}
+
       <CourseModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         course={selectedCourse}
+        categories={categories}
       />
 
       <AlertDialog
@@ -234,7 +254,9 @@ const AdminCourseList = () => {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="bg-red-600 hover:bg-red-700 text-white"
-              onClick={() => courseToDelete && handleDelete(courseToDelete.id)}
+              onClick={() =>
+                courseToDelete && handleDelete(courseToDelete.id.toString())
+              }
             >
               Delete
             </AlertDialogAction>

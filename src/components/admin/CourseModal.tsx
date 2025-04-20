@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useRef, useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Dialog,
   DialogContent,
@@ -31,66 +31,173 @@ import { z } from 'zod';
 import { TipTapEditor } from '@/components/ui/tiptap-editor';
 import { useToast } from '@/hooks/use-toast';
 import { courseService, CourseData } from '@/services/api/courseService';
-import { Course } from '@/types/course';
+import { categoryService } from '@/services/api/categoryService';
+import { Category } from '@/types/category';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { CalendarIcon, Logs } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import dayjs from 'dayjs';
 
+// Update the course schema to match backend types
 const courseSchema = z.object({
-  title: z.string().min(5, { message: 'Title must be at least 5 characters' }),
-  description: z
-    .string()
-    .min(10, { message: 'Description must be at least 10 characters' }),
-  category_id: z.string().min(1, { message: 'Please select a category' }),
-  price: z.coerce.number().min(0, { message: 'Price cannot be negative' }),
-  level: z.string().min(1, { message: 'Please select a level' }),
-  instructor_id: z.string().optional(),
-  status: z.string().optional(),
+  title: z.string().min(1, { message: 'Title is required' }),
+  description: z.string().min(1, { message: 'Description is required' }),
+  category_id: z.string().min(1, { message: 'Category is required' }),
+  price: z.coerce.number().min(0, { message: 'Price must be greater than 0' }),
+  image: z.any().optional(),
+  status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED'], {
+    required_error: 'Status is required',
+  }),
+  level: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED'], {
+    required_error: 'Level is required',
+  }),
+  skills: z.union([z.string(), z.array(z.string())]).optional(),
+  language: z.string().min(1, { message: 'Language is required' }),
+  duration: z.coerce
+    .number()
+    .min(1, { message: 'Duration must be at least 1' }),
 });
+
+// Update Course interface to include content
+interface Course {
+  id: number;
+  title: string;
+  description: string;
+  category_id: number;
+  price: string;
+  image_url: string | null;
+  duration: number;
+  level: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+  duration_readable: string;
+  skills: string[];
+  language: string;
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+  created_at: string;
+  content?: string;
+  category: {
+    id: number;
+    name: string;
+    slug: string;
+    description: string;
+    parent_id: number | null;
+    icon: string;
+    order: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+    is_active: boolean;
+    has_children: boolean;
+  };
+  last_Lesson: any | null;
+  has_available_spots: boolean;
+  is_active: boolean;
+  is_enrolled: boolean;
+  is_completed: boolean;
+}
 
 type CourseModalProps = {
   isOpen: boolean;
   onClose: () => void;
   course?: Course;
+  categories?: CategoriesResponse;
 };
 
-const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
+interface ValidationError {
+  success: boolean;
+  message: string;
+  data: {
+    [key: string]: string[];
+  };
+}
+
+const CourseModal = ({
+  isOpen,
+  onClose,
+  course,
+  categories,
+}: CourseModalProps) => {
+  console.log('course', course);
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [content, setContent] = useState(course?.description || '');
+  const [content, setContent] = useState(course?.content || '');
   const isEditing = !!course;
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<z.infer<typeof courseSchema>>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
-      title: course?.title || '',
-      description: course?.description || '',
-      category_id: course?.category || '',
-      price: course?.price || 0,
-      level: course?.level || '',
-      status: 'draft',
+      title: '',
+      description: '',
+      category_id: '',
+      price: 0,
+      status: 'DRAFT',
+      level: 'BEGINNER',
+      skills: [],
+      language: 'English',
+      duration: 1,
+      image: undefined,
     },
   });
 
+  useEffect(() => {
+    if (course) {
+      form.reset({
+        title: course.title,
+        description: course.description,
+        category_id: course.category_id.toString(),
+        price: parseFloat(course.price),
+        status: course.status,
+        level: course.level,
+        skills: course.skills,
+        language: course.language,
+        duration: course.duration,
+        image: undefined,
+      });
+      setContent(course.content || '');
+    }
+  }, [course]);
+
+  console.log('form', form.getValues());
   const createMutation = useMutation({
-    mutationFn: (data: CourseData) => courseService.createCourse(data),
+    mutationFn: (data: FormData) => courseService.createCourse(data),
     onSuccess: () => {
       toast({
         title: 'Success',
         description: 'Course created successfully',
       });
-      queryClient.invalidateQueries({ queryKey: ['courses'] });
+      queryClient.invalidateQueries({
+        queryKey: ['my-courses', 'admin-courses'],
+      });
       handleClose();
     },
-    onError: (error) => {
-      toast({
-        title: 'Error',
-        description: 'Failed to create course',
-        variant: 'destructive',
-      });
+    onError: (error: any) => {
+      if (error.response?.data?.data) {
+        const validationErrors = error.response.data as ValidationError;
+        Object.entries(validationErrors.data).forEach(([field, messages]) => {
+          form.setError(field as any, {
+            type: 'manual',
+            message: messages[0],
+          });
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Failed to create course',
+          variant: 'destructive',
+        });
+      }
       console.error(error);
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CourseData }) =>
+    mutationFn: ({ id, data }: { id: string; data: FormData }) =>
       courseService.updateCourse(id, data),
     onSuccess: () => {
       toast({
@@ -100,32 +207,79 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
       queryClient.invalidateQueries({ queryKey: ['courses'] });
       handleClose();
     },
-    onError: (error) => {
-      toast({
-        title: 'Error',
-        description: 'Failed to update course',
-        variant: 'destructive',
-      });
+    onError: (error: any) => {
+      if (error.response?.data?.data) {
+        const validationErrors = error.response.data as ValidationError;
+        Object.entries(validationErrors.data).forEach(([field, messages]) => {
+          form.setError(field as any, {
+            type: 'manual',
+            message: messages[0],
+          });
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Failed to update course',
+          variant: 'destructive',
+        });
+      }
       console.error(error);
     },
   });
 
-  const handleSubmit = (values: z.infer<typeof courseSchema>) => {
-    const courseData: CourseData = {
-      ...values,
-      content,
-    };
+  const handleSubmit = async (values: z.infer<typeof courseSchema>) => {
+    try {
+      const formData = new FormData();
 
-    if (isEditing && course) {
-      updateMutation.mutate({ id: course.id, data: courseData });
-    } else {
-      createMutation.mutate(courseData);
+      // Handle skills array
+      const skillsArray = Array.isArray(values.skills)
+        ? values.skills
+        : typeof values.skills === 'string'
+          ? values.skills
+              .split(',')
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : [];
+
+      // Append all required fields
+      formData.append('title', values.title);
+      formData.append('description', values.description);
+      formData.append('category_id', values.category_id);
+      formData.append('price', values.price.toString());
+      formData.append('status', values.status);
+      formData.append('level', values.level);
+      formData.append('language', values.language);
+      formData.append('duration', values.duration.toString());
+
+      // Handle skills array - append each skill individually
+      skillsArray.forEach((skill, index) => {
+        formData.append(`skills[${index}]`, skill);
+      });
+
+      // Handle optional image field
+      if (values.image instanceof File) {
+        formData.append('image', values.image);
+      }
+
+      if (isEditing && course) {
+        await updateMutation.mutateAsync({
+          id: course.id.toString(),
+          data: formData,
+        });
+      } else {
+        await createMutation.mutateAsync(formData);
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
     }
   };
 
   const handleClose = () => {
     form.reset();
     setContent('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
     onClose();
   };
 
@@ -164,10 +318,10 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Short Description</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Enter a brief description"
+                      placeholder="Enter course description"
                       {...field}
                       rows={3}
                     />
@@ -176,15 +330,6 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
                 </FormItem>
               )}
             />
-
-            <div className="space-y-2">
-              <FormLabel>Detailed Content</FormLabel>
-              <TipTapEditor
-                content={content}
-                onChange={setContent}
-                placeholder="Write detailed course content here..."
-              />
-            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
@@ -203,15 +348,14 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Web Development">
-                          Web Development
-                        </SelectItem>
-                        <SelectItem value="Data Science">
-                          Data Science
-                        </SelectItem>
-                        <SelectItem value="Design">Design</SelectItem>
-                        <SelectItem value="Business">Business</SelectItem>
-                        <SelectItem value="Marketing">Marketing</SelectItem>
+                        {categories?.map((category) => (
+                          <SelectItem
+                            key={category.id}
+                            value={category.id.toString()}
+                          >
+                            {category.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -235,11 +379,11 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Beginner">Beginner</SelectItem>
-                        <SelectItem value="Intermediate">
+                        <SelectItem value="BEGINNER">Beginner</SelectItem>
+                        <SelectItem value="INTERMEDIATE">
                           Intermediate
                         </SelectItem>
-                        <SelectItem value="Advanced">Advanced</SelectItem>
+                        <SelectItem value="ADVANCED">Advanced</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -254,7 +398,33 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
                   <FormItem>
                     <FormLabel>Price ($)</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="0.00"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="duration"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Duration (minutes)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min="1"
+                        step="1"
+                        placeholder="120"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -277,16 +447,84 @@ const CourseModal = ({ isOpen, onClose, course }: CourseModalProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="draft">Draft</SelectItem>
-                        <SelectItem value="published">Published</SelectItem>
-                        <SelectItem value="archived">Archived</SelectItem>
+                        <SelectItem value="DRAFT">Draft</SelectItem>
+                        <SelectItem value="PUBLISHED">Published</SelectItem>
+                        <SelectItem value="ARCHIVED">Archived</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="language"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Language</FormLabel>
+                    <FormControl>
+                      <Input placeholder="English" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field: { onChange, value, ...field } }) => (
+                  <FormItem>
+                    <FormLabel>Course Image</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        ref={fileInputRef}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            onChange(file);
+                          }
+                        }}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
+
+            <FormField
+              control={form.control}
+              name="skills"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Skills (comma separated)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="skill1, skill2, skill3"
+                      {...field}
+                      value={
+                        typeof field.value === 'string'
+                          ? field.value
+                          : field.value?.join(', ') || ''
+                      }
+                      onChange={(e) => {
+                        const skills = e.target.value
+                          ?.split(',')
+                          ?.map((skill) => skill.trim())
+                          ?.filter(Boolean);
+                        field.onChange(skills);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={handleClose}>

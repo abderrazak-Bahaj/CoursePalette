@@ -46,7 +46,7 @@ const CourseDetailPage = () => {
   });
 
   const course = data?.course;
-  const skills = JSON.parse(course?.skills || '[]');
+  const skills = course?.skills || [];
 
   const handleEnroll = () => {
     if (!isAuthenticated) {
@@ -58,10 +58,6 @@ const CourseDetailPage = () => {
       return;
     }
     enrollMutation.mutate();
-    toast({
-      title: 'Enrollment Successful',
-      description: `You have successfully enrolled in "${course?.title}"`,
-    });
   };
 
   return (
