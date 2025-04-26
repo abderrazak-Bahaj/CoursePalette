@@ -152,6 +152,8 @@ const CourseModal = ({
     },
   });
 
+  const isEditing = !!course;
+
   useEffect(() => {
     if (course) {
       form.reset({

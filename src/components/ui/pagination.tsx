@@ -220,95 +220,98 @@ interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  showPageNumbers?: boolean;
+  pageNumbersToShow?: number;
 }
 
-export const Pagination = ({
+export function Pagination({
   currentPage,
   totalPages,
   onPageChange,
-}: PaginationProps) => {
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-  const maxVisiblePages = 5;
-  let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-  let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+  showPageNumbers = true,
+  pageNumbersToShow = 5,
+}: PaginationProps) {
+  // Generate page numbers to display
+  const generatePageNumbers = () => {
+    const pages = [];
+    let startPage = Math.max(
+      1,
+      currentPage - Math.floor(pageNumbersToShow / 2)
+    );
+    let endPage = Math.min(totalPages, startPage + pageNumbersToShow - 1);
 
-  if (endPage - startPage + 1 < maxVisiblePages) {
-    startPage = Math.max(1, endPage - maxVisiblePages + 1);
-  }
+    // Adjust start page if we're near the end
+    if (endPage - startPage + 1 < pageNumbersToShow) {
+      startPage = Math.max(1, endPage - pageNumbersToShow + 1);
+    }
 
-  const visiblePages = pages.slice(startPage - 1, endPage);
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  };
+
+  const pageNumbers = showPageNumbers ? generatePageNumbers() : [];
 
   return (
-    <div className="flex items-center justify-center space-x-2 py-4">
+    <div className="flex items-center justify-center space-x-2">
       <Button
         variant="outline"
-        size="sm"
+        size="icon"
         onClick={() => onPageChange(1)}
         disabled={currentPage === 1}
+        title="First page"
       >
         <ChevronsLeft className="h-4 w-4" />
       </Button>
       <Button
         variant="outline"
-        size="sm"
+        size="icon"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
+        title="Previous page"
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
 
-      {startPage > 1 && (
-        <>
-          <Button variant="outline" size="sm" onClick={() => onPageChange(1)}>
-            1
-          </Button>
-          {startPage > 2 && <span className="px-2">...</span>}
-        </>
-      )}
-
-      {visiblePages.map((page) => (
-        <Button
-          key={page}
-          variant={currentPage === page ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => onPageChange(page)}
-        >
-          {page}
-        </Button>
-      ))}
-
-      {endPage < totalPages && (
-        <>
-          {endPage < totalPages - 1 && <span className="px-2">...</span>}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(totalPages)}
-          >
-            {totalPages}
-          </Button>
-        </>
+      {showPageNumbers && (
+        <div className="flex items-center space-x-1">
+          {pageNumbers.map((page) => (
+            <Button
+              key={page}
+              variant={currentPage === page ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => onPageChange(page)}
+              className="h-8 w-8 p-0"
+            >
+              {page}
+            </Button>
+          ))}
+        </div>
       )}
 
       <Button
         variant="outline"
-        size="sm"
+        size="icon"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
+        title="Next page"
       >
         <ChevronRight className="h-4 w-4" />
       </Button>
       <Button
         variant="outline"
-        size="sm"
+        size="icon"
         onClick={() => onPageChange(totalPages)}
         disabled={currentPage === totalPages}
+        title="Last page"
       >
         <ChevronsRight className="h-4 w-4" />
       </Button>
     </div>
   );
-};
+}
 
 export {
   MetaPagination,

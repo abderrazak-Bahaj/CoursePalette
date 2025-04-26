@@ -9,8 +9,9 @@ import {
   Settings,
   LogOut,
   UsersRound,
+  User,
+  Lock,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -27,8 +28,6 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
 } from '@/components/ui/sidebar';
-import Navbar from './Navbar';
-import Footer from './Footer';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -83,7 +82,8 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
   ];
 
   const accountLinks = [
-    { to: '/profile', label: 'Settings', icon: <Settings /> },
+    { to: '/admin/profile', label: 'Profile', icon: <User /> },
+    { to: '/admin/security', label: 'Security', icon: <Lock /> },
   ];
 
   return (
@@ -121,9 +121,9 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
               </SidebarGroup>
 
               <SidebarGroup>
-                <SidebarGroupLabel>Account</SidebarGroupLabel>
+                <SidebarGroupLabel> Account Settings</SidebarGroupLabel>
                 <SidebarMenu>
-                  {accountLinks.map(({ to, label, icon }) => (
+                  {accountLinks.map(({ to, label, icon, children }) => (
                     <SidebarMenuItem key={to}>
                       <SidebarMenuButton asChild tooltip={label}>
                         <a

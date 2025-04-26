@@ -23,7 +23,6 @@ import LessonPage from '@/pages/LessonPage';
 import ProfilePage from '@/pages/ProfilePage';
 import CertificatesPage from '@/pages/CertificatesPage';
 import CertificateDetailPage from '@/pages/CertificateDetailPage';
-import InstructorsPage from '@/pages/InstructorsPage';
 import AdminCoursesPage from '@/pages/AdminCoursesPage';
 import AdminLessonsPage from '@/pages/AdminLessonsPage';
 import CreateLessonPage from '@/pages/CreateLessonPage';
@@ -31,6 +30,10 @@ import LessonDetailPage from '@/pages/LessonDetailPage';
 import StudentsPage from '@/pages/StudentsPage';
 import ReportsPage from '@/pages/ReportsPage';
 import AdminDashboardPage from '@/pages/AdminDashboardPage';
+import AdminProfilePage from '@/pages/AdminProfilePage';
+import AdminSecurity from '@/pages/AdminSecurity';
+import AdminStudentsPage from '@/pages/AdminStudentsPage';
+import AdminInstructorsPage from '@/pages/AdminInstructorsPage';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -230,6 +233,24 @@ const AppRoutes = () => (
       {/* Teacher & Admin Routes */}
 
       <Route
+        path="/admin/profile"
+        element={
+          <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
+            <AdminProfilePage />
+          </RouteWrapper>
+        }
+      />
+
+      <Route
+        path="/admin/security"
+        element={
+          <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
+            <AdminSecurity />
+          </RouteWrapper>
+        }
+      />
+
+      <Route
         path="/admin/courses"
         element={
           <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
@@ -237,6 +258,7 @@ const AppRoutes = () => (
           </RouteWrapper>
         }
       />
+
       <Route
         path="/admin/lessons"
         element={
@@ -292,7 +314,7 @@ const AppRoutes = () => (
         path="/admin/instructors"
         element={
           <RouteWrapper accessType={'ADMIN'}>
-            <InstructorsPage />
+            <AdminInstructorsPage />
           </RouteWrapper>
         }
       />
@@ -300,7 +322,7 @@ const AppRoutes = () => (
         path="/admin/students"
         element={
           <RouteWrapper accessType="ADMIN">
-            <StudentsPage />
+            <AdminStudentsPage />
           </RouteWrapper>
         }
       />

@@ -4,9 +4,17 @@ import { User } from '@/types/user';
 export interface UserData {
   name: string;
   email: string;
-  role?: 'admin' | 'teacher' | 'student';
+  bio?: string;
+  phone?: string;
+  role?: 'ADMIN' | 'TEACHER' | 'STUDENT';
   password?: string;
   profileUrl?: string;
+}
+
+interface UserServiceParams {
+  search?: string;
+  page?: number;
+  per_page?: number;
 }
 
 export const userService = {
@@ -16,6 +24,36 @@ export const userService = {
 
   getUser: (id: string) => {
     return get(`/users/${id}`);
+  },
+
+  getTeachers: async (params: UserServiceParams = {}) => {
+    // Convert numerical values to strings for API compatibility
+    const convertedParams: Record<string, string> = {};
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined) {
+        convertedParams[key] = String(value);
+      }
+    });
+    return get('/teachers', { params: convertedParams });
+  },
+
+  getStudents: async (params: UserServiceParams = {}) => {
+    // Convert numerical values to strings for API compatibility
+    const convertedParams: Record<string, string> = {};
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined) {
+        convertedParams[key] = String(value);
+      }
+    });
+    return get('/students', { params: convertedParams });
+  },
+
+  createUserByAdmin: (data: UserData) => {
+    return post('/admin/users/create', data);
+  },
+
+  createStudent: (data: UserData) => {
+    return post('/students', data);
   },
 
   createUser: (data: UserData) => {
@@ -50,11 +88,11 @@ export const userService = {
     return get('/users/me');
   },
 
-  getStudents: (params?: Record<string, string>) => {
-    return get('/users', { params: { role: 'student', ...params } });
+  getProfile: async () => {
+    return get('/api/user/profile');
   },
 
-  getTeachers: (params?: Record<string, string>) => {
-    return get('/users', { params: { role: 'teacher', ...params } });
+  updateProfile: async (data: any) => {
+    return put('/api/user/profile', data);
   },
 };
