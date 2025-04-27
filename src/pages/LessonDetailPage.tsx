@@ -22,6 +22,7 @@ import { useToast } from '@/hooks/use-toast';
 import AdminLayout from '@/components/layout/AdminLayout';
 import LessonModal from '@/components/admin/LessonModal';
 import { lessonService } from '@/services/api/lessonService';
+import { useAuth } from '@/hooks/useAuth';
 
 const LessonDetailPage = () => {
   const { courseId, lessonId } = useParams<{
@@ -31,7 +32,7 @@ const LessonDetailPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-
+  const { isTeacher } = useAuth();
   const {
     data: lessonData,
     isLoading,
@@ -135,18 +136,23 @@ const LessonDetailPage = () => {
           </Badge>
         </div>
 
-        <div className="flex space-x-2">
-          <Button
-            variant={lesson.status === 'PUBLISHED' ? 'outline' : 'default'}
-            onClick={handleStatusToggle}
-          >
-            {lesson.status === 'PUBLISHED' ? 'Unpublish' : 'Publish'}
-          </Button>
-          <Button onClick={() => setIsModalOpen(true)}>
-            <Edit className="mr-2 h-4 w-4" />
-            Edit Lesson
-          </Button>
-        </div>
+        {isTeacher && (
+          <>
+            {' '}
+            <div className="flex space-x-2">
+              <Button
+                variant={lesson.status === 'PUBLISHED' ? 'outline' : 'default'}
+                onClick={handleStatusToggle}
+              >
+                {lesson.status === 'PUBLISHED' ? 'Unpublish' : 'Publish'}
+              </Button>
+              <Button onClick={() => setIsModalOpen(true)}>
+                <Edit className="mr-2 h-4 w-4" />
+                Edit Lesson
+              </Button>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">

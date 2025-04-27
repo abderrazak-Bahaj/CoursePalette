@@ -74,8 +74,8 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
     { to: '/admin/instructors', label: 'Instructors', icon: <UsersRound /> },
     { to: '/admin/students', label: 'Students', icon: <Users /> },
     { to: '/admin/categories', label: 'Categories', icon: <FolderKanban /> },
-    { to: '/admin/reports', label: 'Reports', icon: <BarChart3 /> },
-  ];
+/*     { to: '/admin/reports', label: 'Reports', icon: <BarChart3 /> },
+ */  ];
 
   const mainLinks = [
     ...baseLinks,
@@ -84,7 +84,6 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
 
   const accountLinks = [
     { to: '/admin/profile', label: 'Profile', icon: <User /> },
-    { to: '/admin/security', label: 'Security', icon: <Lock /> },
   ];
 
   return (

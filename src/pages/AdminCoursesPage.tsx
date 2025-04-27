@@ -24,9 +24,7 @@ const AdminCoursesPage = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [page, setPage] = useState(1);
-  const { user } = useAuth();
-
-  const isAdmin = user?.role === 'ADMIN';
+  const { isAdmin, isTeacher} = useAuth();
 
   const params: CourseParams = {
     page,
@@ -62,8 +60,8 @@ const AdminCoursesPage = () => {
   return (
     <AdminLayout title="Course Management">
       <div className="mb-6 flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-        <div className="flex items-center space-x-2">
-          <div className="relative">
+        <div className="flex items-center space-x-2 w-full">
+          <div className="relative flex-1">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
@@ -73,6 +71,7 @@ const AdminCoursesPage = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
+          <div className="flex items-center gap-2">
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Category" />
@@ -98,10 +97,11 @@ const AdminCoursesPage = () => {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={() => setIsModalOpen(true)}>
+        {isTeacher && <Button onClick={() => setIsModalOpen(true)}>
           <PlusCircle className="mr-2 h-4 w-4" />
           Add Course
-        </Button>
+        </Button>}
+          </div>
       </div>
       <CourseModal
         isOpen={isModalOpen}

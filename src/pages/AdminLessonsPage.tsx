@@ -14,12 +14,14 @@ import { Search, PlusCircle, Plus } from 'lucide-react';
 import LessonsList from '@/components/admin/LessonsList';
 import LessonModal from '@/components/admin/LessonModal';
 import { courseService } from '@/services/api/courseService';
+import { useAuth } from '@/hooks/useAuth';
 
 const AdminLessonsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCourseId, setSelectedCourseId] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isTeacher } = useAuth();
 
   const { data: coursesResponse = [], isLoading: isLoadingCourses } = useQuery({
     queryKey: ['courses'],
@@ -28,19 +30,7 @@ const AdminLessonsPage = () => {
 
   const courses = coursesResponse?.courses || [];
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // This would ideally trigger a new API request with the search parameters
-    console.log('Search parameters:', {
-      searchQuery,
-      selectedCourseId,
-      statusFilter,
-    });
-  };
 
-  const handleAddNew = () => {
-    navigate(`/admin/courses/${selectedCourseId}/lessons/create`);
-  };
 
   return (
     <AdminLayout title="Lesson Management">
@@ -69,13 +59,13 @@ const AdminLessonsPage = () => {
                 ))}
               </SelectContent>
             </Select>
-            <Button
+            {isTeacher && <Button
               onClick={() => setIsModalOpen(true)}
               disabled={!selectedCourseId}
             >
               <Plus className="mr-2 h-4 w-4" />
               Add New Lesson
-            </Button>
+            </Button>}
           </div>
         </div>
       </div>

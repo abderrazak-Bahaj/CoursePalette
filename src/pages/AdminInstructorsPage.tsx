@@ -436,23 +436,9 @@ const InstructorsPage = () => {
   return (
     <AdminLayout title="Manage Instructors">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Instructors</h1>
-
         <Card className="mb-8 shadow-md">
-          <CardHeader className="pb-2">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <CardTitle>Manage Instructors</CardTitle>
-              <Button
-                className="flex items-center gap-2"
-                onClick={() => setIsCreateModalOpen(true)}
-              >
-                <UserPlus size={16} /> Add Instructor
-              </Button>
-            </div>
-          </CardHeader>
-
           <CardContent>
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="flex flex-col md:flex-row pt-8 gap-4 mb-6">
               <div className="relative flex-1">
                 <Search
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -460,7 +446,7 @@ const InstructorsPage = () => {
                 />
                 <Input
                   placeholder="Search instructors..."
-                  className="pl-10"
+                  className="pl-10 md:w-[300px]"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -474,13 +460,19 @@ const InstructorsPage = () => {
                 >
                   <Download size={16} /> Export
                 </Button>
+                <Button
+                className="flex items-center gap-2"
+                onClick={() => setIsCreateModalOpen(true)}
+              >
+                <UserPlus size={16} /> Add Instructor
+              </Button>
               </div>
             </div>
 
             <div className="overflow-x-auto rounded-md border">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-muted/50">
+                  <TableRow >
                     <TableHead>Instructor</TableHead>
                     <TableHead>Specialization</TableHead>
                     <TableHead>Total Courses</TableHead>

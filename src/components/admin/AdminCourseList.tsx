@@ -37,6 +37,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { formatCurrency } from '@/lib/utils';
 import { Pagination } from '@/components/ui/custom-pagination';
 import { CategoriesResponse } from '@/types/category';
+import { useAuth } from '@/hooks/useAuth';
 interface AdminCourseListProps {
   courses: Course[];
   categories: CategoriesResponse;
@@ -56,6 +57,8 @@ const AdminCourseList = ({
 }: AdminCourseListProps) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { isTeacher } = useAuth();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | undefined>(
     undefined
@@ -198,13 +201,15 @@ const AdminCourseList = ({
                               <span>View</span>
                             </Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleEdit(course)}
-                            className="flex items-center"
-                          >
-                            <Edit className="mr-2 h-4 w-4" />
-                            <span>Edit</span>
-                          </DropdownMenuItem>
+                          {isTeacher && (
+                            <DropdownMenuItem
+                              onClick={() => handleEdit(course)}
+                              className="flex items-center"
+                            >
+                              <Edit className="mr-2 h-4 w-4" />
+                              <span>Edit</span>
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem
                             onClick={() => setCourseToDelete(course)}
                             className="flex items-center text-red-600"

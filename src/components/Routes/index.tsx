@@ -246,15 +246,6 @@ const AppRoutes = () => (
       />
 
       <Route
-        path="/admin/security"
-        element={
-          <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-            <AdminSecurity />
-          </RouteWrapper>
-        }
-      />
-
-      <Route
         path="/admin/courses"
         element={
           <RouteWrapper accessType={['TEACHER', 'ADMIN']}>

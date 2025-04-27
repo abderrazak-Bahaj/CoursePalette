@@ -389,22 +389,9 @@ const AdminStudentsPage = () => {
   return (
     <AdminLayout title={'Manage Students'}>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Students</h1>
-        <Card className="mb-8 shadow-md">
-          <CardHeader className="pb-2">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <CardTitle>Manage Students</CardTitle>
-              <Button
-                className="flex items-center gap-2"
-                onClick={() => setIsCreateModalOpen(true)}
-              >
-                <UserPlus size={16} />
-                <span>Add Student</span>
-              </Button>
-            </div>
-          </CardHeader>
+        <Card className="mb-8 shadow-md">    
           <CardContent>
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="flex flex-col md:flex-row pt-8 gap-4 mb-6">
               <div className="relative flex-1">
                 <Search
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -412,7 +399,7 @@ const AdminStudentsPage = () => {
                 />
                 <Input
                   placeholder="Search students..."
-                  className="pl-10 w-full"
+                  className="pl-10 md:w-[300px]"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -427,13 +414,21 @@ const AdminStudentsPage = () => {
                   <Download size={16} />
                   <span>Export</span>
                 </Button>
+
+                <Button
+                className="flex items-center gap-2"
+                onClick={() => setIsCreateModalOpen(true)}
+              >
+                <UserPlus size={16} />
+                <span>Add Student</span>
+              </Button>
               </div>
             </div>
 
             <div className="overflow-x-auto rounded-md border">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-muted/50">
+                  <TableRow >
                     <TableHead>Student</TableHead>
                     <TableHead>Courses Enrolled</TableHead>
                     <TableHead>Progress</TableHead>

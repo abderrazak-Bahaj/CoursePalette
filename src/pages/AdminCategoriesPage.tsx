@@ -191,33 +191,26 @@ const AdminCategoriesPage = () => {
       category.description.toLowerCase().includes(searchQuery.toLowerCase())
   ) || [];
 
-  const getStatusColor = (status: string) => {
+  const getVariant = (status: string) => {
     switch (status) {
-      case 'ACTIVE':
-        return 'bg-green-100 text-green-800';
+      case 'info':
+        return 'info';
       case 'INACTIVE':
-        return 'bg-gray-100 text-gray-800';
+        return 'warning';
       case 'DRAFT':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'destructive';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'default';
     }
   };
 
   return (
-    <AdminLayout title="Categories">
+    <AdminLayout title="Manage Categories">
       <div className="container mx-auto px-4 py-8">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Category Management</CardTitle>
-            <Button onClick={() => setCategoryModalOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Category
-            </Button>
-          </CardHeader>
           <CardContent>
-            <div className="mb-6">
-              <div className="relative">
+            <div className="flex flex-col md:flex-row pt-8 gap-4 mb-6">
+              <div className="relative flex-1">
                 <Search
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                   size={18}
@@ -226,9 +219,13 @@ const AdminCategoriesPage = () => {
                   placeholder="Search categories..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 md:w-[300px]"
                 />
               </div>
+              <Button onClick={() => setCategoryModalOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Category
+            </Button>
             </div>
 
             <div className="rounded-md border">
@@ -278,7 +275,7 @@ const AdminCategoriesPage = () => {
                         <TableCell>{category.order}</TableCell>
                         <TableCell>
                           <Badge
-                            className={`${getStatusColor(category.status)}`}
+                            variant={getVariant(category.status)}
                           >
                             {category.status}
                           </Badge>

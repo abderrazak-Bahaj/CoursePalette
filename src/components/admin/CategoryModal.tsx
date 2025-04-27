@@ -125,7 +125,6 @@ const CategoryModal = ({
       ...values,
       order: Number(values.order),
     };
-    
     onSubmit(formattedValues);
   };
 

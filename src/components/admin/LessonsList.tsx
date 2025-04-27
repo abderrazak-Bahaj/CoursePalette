@@ -42,6 +42,7 @@ import { lessonService } from '@/services/api/lessonService';
 import { useToast } from '@/hooks/use-toast';
 import { Lesson } from '@/types/course';
 import LessonModal from './LessonModal';
+import { useAuth } from '@/hooks/useAuth';
 
 interface LessonsListProps {
   courseId: string;
@@ -52,6 +53,8 @@ const LessonsList = ({ courseId, onAddNew }: LessonsListProps) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { isTeacher } = useAuth();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>(
     undefined
@@ -281,13 +284,17 @@ const LessonsList = ({ courseId, onAddNew }: LessonsListProps) => {
                                   <Eye className="mr-2 h-4 w-4" />
                                   <span>View</span>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() => handleEdit(lesson)}
-                                  className="flex items-center"
-                                >
-                                  <Edit className="mr-2 h-4 w-4" />
-                                  <span>Edit</span>
-                                </DropdownMenuItem>
+                                {isTeacher && (
+                                  <>
+                                    <DropdownMenuItem
+                                      onClick={() => handleEdit(lesson)}
+                                      className="flex items-center"
+                                    >
+                                      <Edit className="mr-2 h-4 w-4" />
+                                      <span>Edit</span>
+                                    </DropdownMenuItem>
+                                  </>
+                                )}
                                 <DropdownMenuItem
                                   onClick={() => setLessonToDelete(lesson)}
                                   className="flex items-center text-red-600"
