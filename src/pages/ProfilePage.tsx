@@ -5,453 +5,749 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { Upload, User, Bell, Lock, FileText } from 'lucide-react';
+import {
+  Upload,
+  Calendar,
+  GraduationCap,
+  Pencil,
+  Eye,
+  Loader2,
+  User,
+  MapPin,
+  Phone,
+  AtSign,
+  X,
+  FileText,
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import SecuritySettings from '@/components/profile/SecuritySettings';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Separator } from '@/components/ui/separator';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { useMutation } from '@tanstack/react-query';
+import { userService } from '@/services/api/userService';
+import AvatarProfile from '@/components/profile/AvatarProfile';
+
+type StudentData = {
+  student_id?: string;
+  enrollment_status?: string;
+  education_level?: string;
+  major?: string;
+  interests?: string[];
+  date_of_birth?: string;
+  learning_preferences?: string[];
+  gpa?: string;
+};
+
+interface UserWithStudent {
+  id?: string;
+  name?: string;
+  email?: string;
+  bio?: string;
+  role?: string;
+  avatar?: string;
+  phone?: string;
+  address?: string;
+  status?: string;
+  student?: StudentData;
+}
+
+const formSchema = z.object({
+  name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
+  email: z.string().email({ message: 'Invalid email address' }),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  bio: z.string().optional(),
+  student: z
+    .object({
+      student_id: z.string().optional(),
+      enrollment_status: z.string().optional(),
+      education_level: z.string().optional(),
+      major: z.string().optional(),
+      date_of_birth: z.string().optional(),
+      interests: z.array(z.string()).optional(),
+      learning_preferences: z.array(z.string()).optional(),
+    })
+    .optional(),
+});
+
+type FormData = z.infer<typeof formSchema>;
+
+// Custom form field with icon component
+const IconFormField = ({
+  name,
+  label,
+  icon: Icon,
+  type = 'text',
+  isTextarea = false,
+  hint,
+  readOnly = false,
+  control,
+  ...props
+}: {
+  name: any;
+  label: string;
+  icon: React.ComponentType<any>;
+  type?: string;
+  isTextarea?: boolean;
+  hint?: string;
+  readOnly?: boolean;
+  control: any;
+}) => (
+  <FormField
+    {...props}
+    control={control}
+    name={name}
+    render={({ field }) => (
+      <FormItem>
+        <div className="flex items-center gap-2 mb-1">
+          <Icon className="h-4 w-4 text-gray-500" />
+          <FormLabel className="mb-0">{label}</FormLabel>
+        </div>
+        <FormControl>
+          <div className="pl-6">
+            {isTextarea ? (
+              <Textarea {...field} rows={4} readOnly={readOnly} />
+            ) : (
+              <Input {...field} type={type} readOnly={readOnly} />
+            )}
+          </div>
+        </FormControl>
+        {hint && <p className="text-sm text-gray-500 mt-1 pl-6">{hint}</p>}
+        <FormMessage className="pl-6" />
+      </FormItem>
+    )}
+  />
+);
+
+// Enhanced View mode field component with icons
+const ViewModeField = ({
+  label,
+  value,
+  icon: Icon,
+}: {
+  label: string;
+  value?: string | number | null;
+  icon: React.ComponentType<any>;
+}) => (
+  <div className="mb-4">
+    <div className="flex items-center gap-2 mb-1">
+      <Icon className="h-4 w-4 text-gray-500" />
+      <h4 className="text-sm font-medium text-gray-500">{label}</h4>
+    </div>
+    <p className="text-base pl-6">{value || '-'}</p>
+  </div>
+);
 
 const ProfilePage = () => {
-  const { user } = useAuth();
+  const { user, refreshUserData } = useAuth();
+  const typedUser = user as UserWithStudent;
   const { toast } = useToast();
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [interests, setInterests] = useState<string[]>(
+    typedUser?.student?.interests || []
+  );
+  const [interestInput, setInterestInput] = useState('');
+  const [learningPreferences, setLearningPreferences] = useState<string[]>(
+    typedUser?.student?.learning_preferences || []
+  );
+  const [preferenceInput, setPreferenceInput] = useState('');
 
-  const [isUpdating, setIsUpdating] = useState(false);
-
-  // Form fields
-  const [formData, setFormData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    bio: 'Learning enthusiast passionate about web development and data science.',
-    location: 'San Francisco, CA',
-    website: 'https://johndoe.com',
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: typedUser?.name || '',
+      email: typedUser?.email || '',
+      phone: typedUser?.phone || '',
+      address: typedUser?.address || '',
+      bio: typedUser?.bio || '',
+      student: {
+        student_id: typedUser?.student?.student_id || '',
+        enrollment_status: typedUser?.student?.enrollment_status || 'ACTIVE',
+        education_level: typedUser?.student?.education_level || '',
+        major: typedUser?.student?.major || '',
+        date_of_birth: typedUser?.student?.date_of_birth
+          ? new Date(typedUser.student.date_of_birth)
+              .toISOString()
+              .split('T')[0]
+          : '',
+      },
+    },
   });
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  const addInterest = () => {
+    if (interestInput.trim() && !interests.includes(interestInput.trim())) {
+      setInterests([...interests, interestInput.trim()]);
+      setInterestInput('');
+    }
   };
 
-  const handleSaveProfile = () => {
-    setIsUpdating(true);
+  const removeInterest = (interest: string) => {
+    setInterests(interests.filter((i) => i !== interest));
+  };
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsUpdating(false);
+  const addPreference = () => {
+    if (
+      preferenceInput.trim() &&
+      !learningPreferences.includes(preferenceInput.trim())
+    ) {
+      setLearningPreferences([...learningPreferences, preferenceInput.trim()]);
+      setPreferenceInput('');
+    }
+  };
+
+  const removePreference = (preference: string) => {
+    setLearningPreferences(learningPreferences.filter((p) => p !== preference));
+  };
+
+  // Update profile mutation
+  const { mutate: updateProfile, isPending: isUpdating } = useMutation({
+    mutationFn: (data: FormData) => {
+      // Prepare data with the interests and preferences arrays
+      const formData = {
+        ...data,
+        student: {
+          ...data.student,
+          interests,
+          learning_preferences: learningPreferences,
+        },
+      };
+
+      return userService.updateProfile(formData);
+    },
+    onSuccess: () => {
       toast({
         title: 'Profile Updated',
         description: 'Your profile has been updated successfully',
       });
-    }, 1000);
+      refreshUserData();
+      // Switch back to view mode after successful update
+      setIsEditMode(false);
+    },
+    onError: (error) => {
+      console.error('Error updating profile:', error);
+      toast({
+        title: 'Update Failed',
+        description: 'There was a problem updating your profile',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const toggleEditMode = () => {
+    if (isEditMode) {
+      // If canceling edit mode, reset form to original values
+      form.reset({
+        name: typedUser?.name || '',
+        email: typedUser?.email || '',
+        phone: typedUser?.phone || '',
+        address: typedUser?.address || '',
+        bio: typedUser?.bio || '',
+        student: {
+          student_id: typedUser?.student?.student_id || '',
+          enrollment_status: typedUser?.student?.enrollment_status || 'ACTIVE',
+          education_level: typedUser?.student?.education_level || '',
+          major: typedUser?.student?.major || '',
+          date_of_birth: typedUser?.student?.date_of_birth
+            ? new Date(typedUser.student.date_of_birth)
+                .toISOString()
+                .split('T')[0]
+            : '',
+        },
+      });
+
+      // Reset arrays to original values
+      setInterests(typedUser?.student?.interests || []);
+      setLearningPreferences(typedUser?.student?.learning_preferences || []);
+    }
+    setIsEditMode(!isEditMode);
   };
 
   return (
     <MainLayout>
-      <div className="bg-gray-50 py-8">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold mb-8">Profile Settings</h1>
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">My Profile</h1>
+        </div>
 
-            <Tabs defaultValue="general">
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="md:w-64 space-y-2">
-                  <TabsList className="flex flex-col h-auto bg-transparent p-0 w-full">
-                    <TabsTrigger
-                      value="general"
-                      className="justify-start px-4 py-2 w-full"
-                    >
-                      <User className="h-5 w-5 mr-2" />
-                      General
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="notifications"
-                      className="justify-start px-4 py-2 w-full"
-                    >
-                      <Bell className="h-5 w-5 mr-2" />
-                      Notifications
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="security"
-                      className="justify-start px-4 py-2 w-full"
-                    >
-                      <Lock className="h-5 w-5 mr-2" />
-                      Security
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="privacy"
-                      className="justify-start px-4 py-2 w-full"
-                    >
-                      <FileText className="h-5 w-5 mr-2" />
-                      Privacy
-                    </TabsTrigger>
-                  </TabsList>
+        <Tabs defaultValue="profile" className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="security">Security</TabsTrigger>
+            {/*             <TabsTrigger value="preferences">Preferences</TabsTrigger>
+             */}{' '}
+          </TabsList>
+
+          <TabsContent value="profile" className="space-y-6">
+            <AvatarProfile />
+
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold">Profile Information</h2>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-500">
+                    {isEditMode ? 'Edit Mode' : 'View Mode'}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={toggleEditMode}
+                    disabled={isUpdating}
+                  >
+                    {isEditMode ? (
+                      <>
+                        <X className="h-4 w-4 mr-2" />
+                        Cancel
+                      </>
+                    ) : (
+                      <>
+                        <Pencil className="h-4 w-4 mr-2" />
+                        Edit Profile
+                      </>
+                    )}
+                  </Button>
                 </div>
+              </div>
 
-                <div className="flex-1">
-                  <TabsContent value="general" className="m-0">
+              {isEditMode ? (
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit((data) => updateProfile(data))}
+                    className="space-y-6"
+                  >
                     <Card>
-                      <CardHeader>
-                        <CardTitle>Profile Information</CardTitle>
-                      </CardHeader>
-                      <CardContent>
+                      <CardContent className="pt-6">
                         <div className="space-y-6">
-                          <div className="flex flex-col md:flex-row md:items-center gap-6">
-                            <div className="flex-shrink-0">
-                              <Avatar className="h-24 w-24">
-                                <AvatarImage src={user?.profileUrl} />
-                                <AvatarFallback className="bg-course-blue text-white text-lg">
-                                  {user?.name?.charAt(0) || 'U'}
-                                </AvatarFallback>
-                              </Avatar>
-                            </div>
-                            <div>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="mb-2"
-                              >
-                                <Upload className="h-4 w-4 mr-2" />
-                                Upload new image
-                              </Button>
-                              <p className="text-sm text-gray-500">
-                                JPG, GIF or PNG. Max size 2MB.
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <Label htmlFor="name">Full Name</Label>
-                              <Input
-                                id="name"
+                          <div>
+                            <h3 className="text-lg font-medium mb-4">
+                              Personal Information
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <IconFormField
                                 name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
+                                label="Full Name"
+                                icon={User}
+                                control={form.control}
                               />
-                            </div>
-                            <div>
-                              <Label htmlFor="email">Email</Label>
-                              <Input
-                                id="email"
+                              <IconFormField
                                 name="email"
+                                label="Email"
+                                icon={AtSign}
                                 type="email"
-                                value={formData.email}
-                                onChange={handleInputChange}
+                                control={form.control}
+                              />
+                              <IconFormField
+                                name="phone"
+                                label="Phone Number"
+                                icon={Phone}
+                                control={form.control}
+                              />
+                              <IconFormField
+                                name="address"
+                                label="Address"
+                                icon={MapPin}
+                                control={form.control}
+                              />
+                            </div>
+
+                            <div className="mt-4">
+                              <IconFormField
+                                name="bio"
+                                label="Bio"
+                                icon={FileText}
+                                isTextarea={true}
+                                control={form.control}
+                                hint="Share a brief description about yourself, your learning goals, and interests."
                               />
                             </div>
                           </div>
+
+                          <Separator />
 
                           <div>
-                            <Label htmlFor="bio">Bio</Label>
-                            <Textarea
-                              id="bio"
-                              name="bio"
-                              value={formData.bio}
-                              onChange={handleInputChange}
-                              rows={4}
-                            />
-                            <p className="text-sm text-gray-500 mt-1">
-                              Tell us a little about yourself.
-                            </p>
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <Label htmlFor="location">Location</Label>
-                              <Input
-                                id="location"
-                                name="location"
-                                value={formData.location}
-                                onChange={handleInputChange}
+                            <h3 className="text-lg font-medium mb-4">
+                              Academic Information
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <IconFormField
+                                name="student.student_id"
+                                label="Student ID"
+                                icon={User}
+                                readOnly={true}
+                                disabled={true}
+                                control={form.control}
+                                hint="Student ID cannot be changed"
+                              />
+                              <IconFormField
+                                name="student.enrollment_status"
+                                label="Enrollment Status"
+                                icon={User}
+                                disabled={true}
+                                readOnly={true}
+                                control={form.control}
+                                hint="Contact administration to change status"
+                              />
+                              <IconFormField
+                                name="student.education_level"
+                                label="Education Level"
+                                icon={GraduationCap}
+                                control={form.control}
+                              />
+                              <IconFormField
+                                name="student.major"
+                                label="Major"
+                                icon={GraduationCap}
+                                control={form.control}
+                              />
+                              <IconFormField
+                                name="student.date_of_birth"
+                                label="Date of Birth"
+                                icon={Calendar}
+                                type="date"
+                                control={form.control}
                               />
                             </div>
-                            <div>
-                              <Label htmlFor="website">Website</Label>
-                              <Input
-                                id="website"
-                                name="website"
-                                value={formData.website}
-                                onChange={handleInputChange}
-                              />
-                            </div>
-                          </div>
 
-                          <div className="flex justify-end">
-                            <Button
-                              onClick={handleSaveProfile}
-                              disabled={isUpdating}
-                            >
-                              {isUpdating ? 'Saving...' : 'Save Changes'}
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="notifications" className="m-0">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Notification Settings</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-6">
-                          <div className="space-y-4">
-                            <h3 className="font-medium">Email Notifications</h3>
-                            <div className="space-y-3">
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <p className="font-medium">Course Updates</p>
-                                  <p className="text-sm text-gray-500">
-                                    Get notified when your enrolled courses are
-                                    updated
-                                  </p>
-                                </div>
-                                <Switch defaultChecked />
+                            <div className="mt-4">
+                              <Label className="flex items-center gap-2">
+                                <User className="h-4 w-4 text-gray-500" />
+                                Interests
+                              </Label>
+                              <div className="flex flex-wrap gap-2 mb-2 pl-6">
+                                {interests.map((interest, index) => (
+                                  <Badge
+                                    key={index}
+                                    variant="secondary"
+                                    className="gap-1"
+                                  >
+                                    {interest}
+                                    <button
+                                      type="button"
+                                      className="ml-1 text-gray-500 hover:text-gray-700"
+                                      onClick={() => removeInterest(interest)}
+                                    >
+                                      ×
+                                    </button>
+                                  </Badge>
+                                ))}
                               </div>
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <p className="font-medium">New Lessons</p>
-                                  <p className="text-sm text-gray-500">
-                                    Get notified when new lessons are added to
-                                    your courses
-                                  </p>
-                                </div>
-                                <Switch defaultChecked />
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <p className="font-medium">Promotions</p>
-                                  <p className="text-sm text-gray-500">
-                                    Receive promotional offers and discounts
-                                  </p>
-                                </div>
-                                <Switch />
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="space-y-4">
-                            <h3 className="font-medium">
-                              Platform Notifications
-                            </h3>
-                            <div className="space-y-3">
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <p className="font-medium">
-                                    Certificate Earned
-                                  </p>
-                                  <p className="text-sm text-gray-500">
-                                    Get notified when you earn a new certificate
-                                  </p>
-                                </div>
-                                <Switch defaultChecked />
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <p className="font-medium">
-                                    Course Reminders
-                                  </p>
-                                  <p className="text-sm text-gray-500">
-                                    Reminders to continue your learning
-                                  </p>
-                                </div>
-                                <Switch defaultChecked />
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex justify-end">
-                            <Button>Save Preferences</Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="security" className="m-0">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Security Settings</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-6">
-                          <div>
-                            <h3 className="font-medium mb-4">
-                              Change Password
-                            </h3>
-                            <div className="space-y-4">
-                              <div>
-                                <Label htmlFor="currentPassword">
-                                  Current Password
-                                </Label>
+                              <div className="flex space-x-2 pl-6">
                                 <Input
-                                  id="currentPassword"
-                                  type="password"
-                                  placeholder="Enter your current password"
+                                  placeholder="Add an interest"
+                                  value={interestInput}
+                                  onChange={(e) =>
+                                    setInterestInput(e.target.value)
+                                  }
+                                  onKeyDown={(e) =>
+                                    e.key === 'Enter' &&
+                                    (e.preventDefault(), addInterest())
+                                  }
                                 />
+                                <Button
+                                  type="button"
+                                  onClick={addInterest}
+                                  size="sm"
+                                >
+                                  Add
+                                </Button>
                               </div>
-                              <div>
-                                <Label htmlFor="newPassword">
-                                  New Password
-                                </Label>
+                            </div>
+
+                            <div className="mt-4">
+                              <Label className="flex items-center gap-2">
+                                <GraduationCap className="h-4 w-4 text-gray-500" />
+                                Learning Preferences
+                              </Label>
+                              <div className="flex flex-wrap gap-2 mb-2 pl-6">
+                                {learningPreferences.map(
+                                  (preference, index) => (
+                                    <Badge
+                                      key={index}
+                                      variant="secondary"
+                                      className="gap-1"
+                                    >
+                                      {preference}
+                                      <button
+                                        type="button"
+                                        className="ml-1 text-gray-500 hover:text-gray-700"
+                                        onClick={() =>
+                                          removePreference(preference)
+                                        }
+                                      >
+                                        ×
+                                      </button>
+                                    </Badge>
+                                  )
+                                )}
+                              </div>
+                              <div className="flex space-x-2 pl-6">
                                 <Input
-                                  id="newPassword"
-                                  type="password"
-                                  placeholder="Enter your new password"
+                                  placeholder="Add a learning preference"
+                                  value={preferenceInput}
+                                  onChange={(e) =>
+                                    setPreferenceInput(e.target.value)
+                                  }
+                                  onKeyDown={(e) =>
+                                    e.key === 'Enter' &&
+                                    (e.preventDefault(), addPreference())
+                                  }
                                 />
-                              </div>
-                              <div>
-                                <Label htmlFor="confirmPassword">
-                                  Confirm New Password
-                                </Label>
-                                <Input
-                                  id="confirmPassword"
-                                  type="password"
-                                  placeholder="Confirm your new password"
-                                />
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="space-y-4">
-                            <h3 className="font-medium mb-2">
-                              Two-Factor Authentication
-                            </h3>
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="text-sm text-gray-500">
-                                  Add an extra layer of security to your account
-                                </p>
-                              </div>
-                              <Button variant="outline">Set Up</Button>
-                            </div>
-                          </div>
-
-                          <div className="space-y-4">
-                            <h3 className="font-medium mb-2">Sessions</h3>
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="text-sm text-gray-500">
-                                  Manage your active sessions and sign out from
-                                  other devices
-                                </p>
-                              </div>
-                              <Button variant="outline">Manage Sessions</Button>
-                            </div>
-                          </div>
-
-                          <div className="flex justify-end">
-                            <Button>Update Security</Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="privacy" className="m-0">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Privacy Settings</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-6">
-                          <div className="space-y-4">
-                            <h3 className="font-medium">Profile Visibility</h3>
-                            <div className="space-y-3">
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <p className="font-medium">Public Profile</p>
-                                  <p className="text-sm text-gray-500">
-                                    Allow others to view your profile
-                                    information
-                                  </p>
-                                </div>
-                                <Switch defaultChecked />
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <p className="font-medium">Show Courses</p>
-                                  <p className="text-sm text-gray-500">
-                                    Show your enrolled courses on your profile
-                                  </p>
-                                </div>
-                                <Switch defaultChecked />
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <p className="font-medium">
-                                    Show Certificates
-                                  </p>
-                                  <p className="text-sm text-gray-500">
-                                    Make your earned certificates visible to
-                                    others
-                                  </p>
-                                </div>
-                                <Switch defaultChecked />
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="space-y-4">
-                            <h3 className="font-medium">Data Usage</h3>
-                            <div className="space-y-3">
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <p className="font-medium">Learning Data</p>
-                                  <p className="text-sm text-gray-500">
-                                    Allow us to analyze your learning patterns
-                                    to improve recommendations
-                                  </p>
-                                </div>
-                                <Switch defaultChecked />
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <p className="font-medium">
-                                    Cookie Preferences
-                                  </p>
-                                  <p className="text-sm text-gray-500">
-                                    Manage how we use cookies to enhance your
-                                    experience
-                                  </p>
-                                </div>
-                                <Button variant="outline" size="sm">
-                                  Manage Cookies
+                                <Button
+                                  type="button"
+                                  onClick={addPreference}
+                                  size="sm"
+                                >
+                                  Add
                                 </Button>
                               </div>
                             </div>
                           </div>
-
-                          <div>
-                            <h3 className="font-medium mb-2">Account Data</h3>
-                            <div className="space-y-2">
-                              <Button variant="outline" size="sm">
-                                Download My Data
-                              </Button>
-                              <p className="text-sm text-gray-500">
-                                Get a copy of all your personal data
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="flex justify-end">
-                            <Button>Save Privacy Settings</Button>
-                          </div>
                         </div>
                       </CardContent>
                     </Card>
-                  </TabsContent>
+
+                    <div className="flex justify-end">
+                      <Button type="submit" disabled={isUpdating}>
+                        {isUpdating && (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        )}
+                        {isUpdating ? 'Saving...' : 'Save Changes'}
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              ) : (
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="space-y-6">
+                      <div>
+                        <h3 className="text-lg font-medium mb-4">
+                          Personal Information
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <ViewModeField
+                            label="Full Name"
+                            value={typedUser?.name}
+                            icon={User}
+                          />
+                          <ViewModeField
+                            label="Email"
+                            value={typedUser?.email}
+                            icon={AtSign}
+                          />
+                          <ViewModeField
+                            label="Phone"
+                            value={typedUser?.phone}
+                            icon={Phone}
+                          />
+                          <ViewModeField
+                            label="Address"
+                            value={typedUser?.address}
+                            icon={MapPin}
+                          />
+                        </div>
+
+                        <ViewModeField
+                          label="Bio"
+                          value={typedUser?.bio}
+                          icon={FileText}
+                        />
+                      </div>
+
+                      <Separator />
+
+                      <div>
+                        <h3 className="text-lg font-medium mb-4">
+                          Academic Information
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <ViewModeField
+                            label="Student ID"
+                            value={typedUser?.student?.student_id}
+                            icon={User}
+                          />
+                          <div className="mb-4">
+                            <div className="flex items-center gap-2 mb-1">
+                              <User className="h-4 w-4 text-gray-500" />
+                              <h4 className="text-sm font-medium text-gray-500">
+                                Enrollment Status
+                              </h4>
+                            </div>
+                            <div className="pl-6">
+                              <Badge
+                                variant={
+                                  typedUser?.student?.enrollment_status ===
+                                  'ACTIVE'
+                                    ? 'success'
+                                    : 'secondary'
+                                }
+                              >
+                                {typedUser?.student?.enrollment_status ||
+                                  'Not available'}
+                              </Badge>
+                            </div>
+                          </div>
+                          <ViewModeField
+                            label="Education Level"
+                            value={typedUser?.student?.education_level}
+                            icon={GraduationCap}
+                          />
+                          <ViewModeField
+                            label="Major"
+                            value={typedUser?.student?.major}
+                            icon={GraduationCap}
+                          />
+                          <div className="mb-4">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Calendar className="h-4 w-4 text-gray-500" />
+                              <h4 className="text-sm font-medium text-gray-500">
+                                Date of Birth
+                              </h4>
+                            </div>
+                            <p className="text-base pl-6">
+                              {typedUser?.student?.date_of_birth
+                                ? new Date(
+                                    typedUser.student.date_of_birth
+                                  ).toLocaleDateString()
+                                : '-'}
+                            </p>
+                          </div>
+                          <ViewModeField
+                            label="GPA"
+                            value={typedUser?.student?.gpa}
+                            icon={GraduationCap}
+                          />
+
+                          <div className="md:col-span-2">
+                            <div className="flex items-center gap-2 mb-1">
+                              <User className="h-4 w-4 text-gray-500" />
+                              <h4 className="text-sm font-medium text-gray-500">
+                                Interests
+                              </h4>
+                            </div>
+                            <div className="flex flex-wrap gap-2 pl-6">
+                              {typedUser?.student?.interests &&
+                              typedUser.student.interests.length > 0 ? (
+                                typedUser.student.interests.map(
+                                  (interest, index) => (
+                                    <Badge key={index} variant="outline">
+                                      {interest}
+                                    </Badge>
+                                  )
+                                )
+                              ) : (
+                                <span className="text-gray-500">
+                                  No interests specified
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="md:col-span-2">
+                            <div className="flex items-center gap-2 mb-1">
+                              <GraduationCap className="h-4 w-4 text-gray-500" />
+                              <h4 className="text-sm font-medium text-gray-500">
+                                Learning Preferences
+                              </h4>
+                            </div>
+                            <div className="flex flex-wrap gap-2 pl-6">
+                              {typedUser?.student?.learning_preferences &&
+                              typedUser.student.learning_preferences.length >
+                                0 ? (
+                                typedUser.student.learning_preferences.map(
+                                  (preference, index) => (
+                                    <Badge key={index} variant="outline">
+                                      {preference}
+                                    </Badge>
+                                  )
+                                )
+                              ) : (
+                                <span className="text-gray-500">
+                                  No learning preferences specified
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="security">
+            <SecuritySettings />
+          </TabsContent>
+
+          {/*  <TabsContent value="preferences">
+            <Card>
+              <CardHeader>
+                <CardTitle>Learning Preferences</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium">Email Notifications</h3>
+                      <p className="text-sm text-gray-500">Receive notifications about course updates</p>
+                    </div>
+                    <Switch defaultChecked />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium">Course Recommendations</h3>
+                      <p className="text-sm text-gray-500">Receive personalized course recommendations</p>
+                    </div>
+                    <Switch defaultChecked />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium">Learning Reminders</h3>
+                      <p className="text-sm text-gray-500">Receive reminders to continue your learning</p>
+                    </div>
+                    <Switch defaultChecked />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium">New Features</h3>
+                      <p className="text-sm text-gray-500">Be notified about new platform features</p>
+                    </div>
+                    <Switch />
+                  </div>
+                  
+                  <div className="pt-4">
+                    <Button>Save Preferences</Button>
+                  </div>
                 </div>
-              </div>
-            </Tabs>
-          </div>
-        </div>
+              </CardContent>
+            </Card>
+          </TabsContent> */}
+        </Tabs>
       </div>
     </MainLayout>
   );
