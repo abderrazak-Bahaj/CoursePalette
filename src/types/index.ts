@@ -10,6 +10,19 @@ export interface User {
   phone: string | null;
   address: string | null;
   email_verified_at: string;
+  profileUrl?: string;
+  teacher?: {
+    specialization: string;
+    qualification: string;
+    expertise: string;
+    education: Array<{degree: string, institution: string, year: number}>;
+    certifications: Array<{name: string, year: number}>;
+    years_of_experience: number;
+  };
+  admin?: {
+    department: string;
+    position: string;
+  };
 }
 
 export interface Course {
@@ -62,6 +75,9 @@ export interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isAdmin: boolean;
+  isTeacher: boolean;
+  isStudent: boolean;
   login: (email: string, password: string) => Promise<User | null>;
   register: (
     name: string,
@@ -69,4 +85,5 @@ export interface AuthContextType {
     password: string
   ) => Promise<User | null>;
   logout: () => void;
+  refreshUserData: () => Promise<any>;
 }

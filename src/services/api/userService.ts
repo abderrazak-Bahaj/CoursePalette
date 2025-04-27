@@ -48,10 +48,27 @@ export const userService = {
     return get('/students', { params: convertedParams });
   },
 
+  updateProfile: (data: any) => {
+    return put('/profile/update', data);
+  },
+  updateProfileAvatar: (formData: FormData) => {
+    return post('/profile/avatar', formData);
+  },
+  updatePassword: (data: any) => {
+    return put('/profile/password', data);
+  },
+  updateStatusByAdmin: (user_id: string, data: { status: 'ACTIVE' |'INACTIVE'| 'SUSPENDED' }) => {
+    return put(`/admin/users/${user_id}/status`, data);
+  },
+  updatePasswordByAdmin: (user_id: string, data: any) => {
+    return put(`/admin/users/${user_id}/password`, data);
+  },
+  deleteUser: (id: string) => {
+    return del(`/users/${id}`);
+  },
   createUserByAdmin: (data: UserData) => {
     return post('/admin/users/create', data);
   },
-
   createStudent: (data: UserData) => {
     return post('/students', data);
   },
@@ -80,19 +97,9 @@ export const userService = {
     return put(`/users/${id}`, formData);
   },
 
-  deleteUser: (id: string) => {
-    return del(`/users/${id}`);
-  },
+ 
 
   getCurrentUser: () => {
     return get('/users/me');
-  },
-
-  getProfile: async () => {
-    return get('/api/user/profile');
-  },
-
-  updateProfile: async (data: any) => {
-    return put('/api/user/profile', data);
   },
 };

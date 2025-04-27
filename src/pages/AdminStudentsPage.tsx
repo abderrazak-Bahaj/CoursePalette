@@ -1,15 +1,31 @@
-import AdminLayout from '@/components/layout/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
+  AdminLayout,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Input,
+  Button,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
+  Pagination,
+  Progress,
+} from '@/components';
 import {
   Search,
   Download,
@@ -21,24 +37,18 @@ import {
   BookOpen,
   CheckCircle,
   Clock,
+  MoreHorizontal,
+  ShieldAlert,
+  KeyRound,
 } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { userService } from '@/services/api/userService';
-import { useQuery } from '@tanstack/react-query';
-import { Pagination } from '@/components/ui/pagination';
 import { useDebounce } from '@/hooks/useDebounce';
+import { userService } from '@/services/api/userService';
+import { UserStatusModal } from '@/components/admin/UserStatusModal';
+import { UserPasswordModal } from '@/components/admin/UserPasswordModal';
+import { DeleteUserModal } from '@/components/admin/DeleteUserModal';
 import StudentModal from '@/components/admin/StudentModal';
-import { Progress } from '@/components/ui/progress';
 
 interface Enrollment {
   id: number;
@@ -63,7 +73,7 @@ interface Course {
 }
 
 interface Student {
-  id: number;
+  id: number | string;
   name: string;
   email: string;
   role: string;
@@ -72,7 +82,15 @@ interface Student {
   phone: string | null;
   address: string | null;
   email_verified_at: string;
+  status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
   my_enrollments: Enrollment[];
+  student?: {
+    student_id?: string;
+    enrollment_status?: string;
+    education_level?: string;
+    major?: string;
+  };
+  last_login_at?: string;
 }
 
 interface StudentsResponse {
@@ -90,9 +108,27 @@ const AdminStudentsPage = () => {
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [currentPage, setCurrentPage] = useState(1);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  
+  // Modal states for user actions
+  const [statusModalState, setStatusModalState] = useState({
+    isOpen: false,
+    student: null as Student | null,
+  });
+
+  const [passwordModalState, setPasswordModalState] = useState({
+    isOpen: false,
+    student: null as Student | null,
+  });
+
+  const [deleteModalState, setDeleteModalState] = useState({
+    isOpen: false,
+    student: null as Student | null,
+  });
 
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery<StudentsResponse>({
     queryKey: ['students', debouncedSearchQuery, currentPage],
@@ -103,32 +139,112 @@ const AdminStudentsPage = () => {
       }),
   });
 
+  // Define mutations
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ userId, status }: { userId: string, status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' }) =>
+      userService.updateStatusByAdmin(userId, { status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['students'] });
+      toast({
+        title: 'Status updated',
+        description: 'Student status has been updated successfully',
+      });
+      setStatusModalState({ isOpen: false, student: null });
+    },
+    onError: () => {
+      toast({
+        title: 'Error',
+        description: 'Failed to update student status.',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const updatePasswordMutation = useMutation({
+    mutationFn: ({ userId, password }: { userId: string, password: string }) =>
+      userService.updatePasswordByAdmin(userId, { 
+        password, 
+        password_confirmation: password 
+      }),
+    onSuccess: () => {
+      toast({
+        title: 'Password reset',
+        description: 'Student password has been reset successfully',
+      });
+      setPasswordModalState({ isOpen: false, student: null });
+    },
+    onError: () => {
+      toast({
+        title: 'Error',
+        description: 'Failed to reset student password.',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: (userId: string) => userService.deleteUser(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['students'] });
+      toast({
+        title: 'User deleted',
+        description: 'Student has been deleted successfully',
+      });
+      setDeleteModalState({ isOpen: false, student: null });
+    },
+    onError: () => {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete student.',
+        variant: 'destructive',
+      });
+    },
+  });
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  const handleAction = (action: string, id: number, name: string) => {
-    toast({
-      title: `${action} student`,
-      description: `You ${action.toLowerCase()}ed student ${name}`,
-    });
+  // Handler functions for user actions
+  const handleUpdateStatus = (status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED') => {
+    if (statusModalState.student) {
+      updateStatusMutation.mutate({
+        userId: String(statusModalState.student.id),
+        status,
+      });
+    }
+  };
+
+  const handleUpdatePassword = (password: string) => {
+    if (passwordModalState.student) {
+      updatePasswordMutation.mutate({
+        userId: String(passwordModalState.student.id),
+        password,
+      });
+    }
+  };
+
+  const handleDeleteUser = () => {
+    if (deleteModalState.student) {
+      deleteUserMutation.mutate(String(deleteModalState.student.id));
+    }
   };
 
   const calculateAverageProgress = (enrollments: Enrollment[]) => {
-    if (!enrollments || enrollments.length === 0) return 0;
+    if (!enrollments || enrollments?.length === 0) return 0;
 
-    const totalPercentage = enrollments.reduce(
-      (sum, enrollment) => sum + enrollment.progress.percentage,
+    const totalPercentage = enrollments?.reduce(
+      (sum, enrollment) => sum + enrollment?.progress?.percentage,
       0
     );
 
-    return Math.round(totalPercentage / enrollments.length);
+    return Math.round(totalPercentage / enrollments?.length);
   };
 
   const countCompletedCourses = (enrollments: Enrollment[]) => {
-    return enrollments.filter(
+    return enrollments?.filter(
       (enrollment) =>
-        enrollment.progress.percentage === 100 || enrollment.completed_at
+        enrollment?.progress?.percentage === 100 || enrollment?.completed_at
     ).length;
   };
 
@@ -146,7 +262,7 @@ const AdminStudentsPage = () => {
       'Enrollment Date',
     ];
 
-    const csvContent = data.students.map((student) => {
+    const csvContent = data.students?.map((student) => {
       const coursesEnrolled = student.my_enrollments.length;
       const completedCourses = countCompletedCourses(student.my_enrollments);
       const averageProgress = calculateAverageProgress(student.my_enrollments);
@@ -198,6 +314,51 @@ const AdminStudentsPage = () => {
         return 'bg-gray-100 text-gray-800';
     }
   };
+
+  const getStatusColor = (status?: string) => {
+    switch (status) {
+      case 'ACTIVE':
+        return 'bg-green-100 text-green-800';
+      case 'SUSPENDED':
+        return 'bg-red-100 text-red-800';
+      case 'INACTIVE':
+        return 'bg-gray-100 text-gray-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  // Define dropdown actions
+  const actions = [
+    {
+      name: 'View',
+      icon: <EyeIcon className="mr-2 h-4 w-4" />,
+      onClick: (student: Student) => {
+        navigate(`/admin/students/${student.id}`);
+      },
+    },
+    {
+      name: 'Change Status',
+      icon: <ShieldAlert className="mr-2 h-4 w-4" />,
+      onClick: (student: Student) => {
+        setStatusModalState({ isOpen: true, student });
+      },
+    },
+    {
+      name: 'Reset Password',
+      icon: <KeyRound className="mr-2 h-4 w-4" />,
+      onClick: (student: Student) => {
+        setPasswordModalState({ isOpen: true, student });
+      },
+    },
+    {
+      name: 'Delete',
+      icon: <Trash2 className="mr-2 h-4 w-4" />,
+      onClick: (student: Student) => {
+        setDeleteModalState({ isOpen: true, student });
+      },
+    },
+  ];
 
   return (
     <AdminLayout title={'Manage Students'}>
@@ -255,42 +416,43 @@ const AdminStudentsPage = () => {
                     <TableHead>Progress</TableHead>
                     <TableHead>Completed Courses</TableHead>
                     <TableHead>Latest Course</TableHead>
+                    <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8">
+                      <TableCell colSpan={7} className="text-center py-8">
                         Loading students...
                       </TableCell>
                     </TableRow>
-                  ) : data?.students.length === 0 ? (
+                  ) : data?.students?.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8">
+                      <TableCell colSpan={7} className="text-center py-8">
                         No students found
                       </TableCell>
                     </TableRow>
                   ) : (
-                    data?.students.map((student) => {
-                      const coursesEnrolled = student.my_enrollments.length;
+                    data?.students?.map((student) => {
+                      const coursesEnrolled = student?.my_enrollments?.length;
                       const completedCourses = countCompletedCourses(
-                        student.my_enrollments
+                        student?.my_enrollments
                       );
                       const averageProgress = calculateAverageProgress(
-                        student.my_enrollments
+                        student?.my_enrollments
                       );
 
                       // Get the latest course
                       const latestCourse =
-                        student.my_enrollments.length > 0
-                          ? student.my_enrollments.reduce(
+                        student?.my_enrollments?.length > 0
+                          ? student?.my_enrollments?.reduce(
                               (latest, current) =>
                                 new Date(current.enrolled_at) >
                                 new Date(latest.enrolled_at)
                                   ? current
                                   : latest,
-                              student.my_enrollments[0]
+                              student?.my_enrollments[0]
                             )
                           : null;
 
@@ -300,19 +462,19 @@ const AdminStudentsPage = () => {
                             <div className="flex items-center gap-3">
                               <Avatar>
                                 <AvatarImage
-                                  src={student.avatar || undefined}
-                                  alt={student.name}
+                                  src={student?.avatar || undefined}
+                                  alt={student?.name}
                                 />
                                 <AvatarFallback>
-                                  {student.name.charAt(0)}
+                                  {student?.name?.charAt(0)}
                                 </AvatarFallback>
                               </Avatar>
                               <div>
                                 <div className="font-medium">
-                                  {student.name}
+                                  {student?.name}
                                 </div>
                                 <div className="text-sm text-muted-foreground">
-                                  {student.email}
+                                  {student?.email}
                                 </div>
                               </div>
                             </div>
@@ -374,50 +536,32 @@ const AdminStudentsPage = () => {
                               </span>
                             )}
                           </TableCell>
+                          <TableCell>
+                            <span
+                              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(
+                                student.status
+                              )}`}
+                            >
+                              {student.status || 'INACTIVE'}
+                            </span>
+                          </TableCell>
                           <TableCell className="text-right">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm">
-                                  Actions
+                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                  <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handleAction(
-                                      'View',
-                                      student.id,
-                                      student.name
-                                    )
-                                  }
-                                >
-                                  <EyeIcon className="mr-2 h-4 w-4" />
-                                  <span>View</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handleAction(
-                                      'Edit',
-                                      student.id,
-                                      student.name
-                                    )
-                                  }
-                                >
-                                  <FileEdit className="mr-2 h-4 w-4" />
-                                  <span>Edit</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handleAction(
-                                      'Delete',
-                                      student.id,
-                                      student.name
-                                    )
-                                  }
-                                >
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  <span>Delete</span>
-                                </DropdownMenuItem>
+                                {actions.map((action) => (
+                                  <DropdownMenuItem
+                                    key={action.name}
+                                    onClick={() => action.onClick(student)}
+                                  >
+                                    {action.icon}
+                                    <span>{action.name}</span>
+                                  </DropdownMenuItem>
+                                ))}
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </TableCell>
@@ -442,11 +586,45 @@ const AdminStudentsPage = () => {
         </Card>
       </div>
 
-      {/* Student Modal */}
+      {/* Create Student Modal */}
       <StudentModal
         isOpen={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}
       />
+
+      {/* Status update modal */}
+      {statusModalState.student && (
+        <UserStatusModal
+          isOpen={statusModalState.isOpen}
+          onOpenChange={(open) => setStatusModalState(prev => ({ ...prev, isOpen: open }))}
+          userName={statusModalState.student.name}
+          currentStatus={statusModalState.student.status || 'INACTIVE'}
+          onStatusUpdate={handleUpdateStatus}
+          isLoading={updateStatusMutation.isPending}
+        />
+      )}
+
+      {/* Password reset modal */}
+      {passwordModalState.student && (
+        <UserPasswordModal
+          isOpen={passwordModalState.isOpen}
+          onOpenChange={(open) => setPasswordModalState(prev => ({ ...prev, isOpen: open }))}
+          userName={passwordModalState.student.name}
+          onPasswordUpdate={handleUpdatePassword}
+          isLoading={updatePasswordMutation.isPending}
+        />
+      )}
+
+      {/* Delete confirmation modal */}
+      {deleteModalState.student && (
+        <DeleteUserModal
+          isOpen={deleteModalState.isOpen}
+          onOpenChange={(open) => setDeleteModalState(prev => ({ ...prev, isOpen: open }))}
+          userName={deleteModalState.student.name}
+          onConfirmDelete={handleDeleteUser}
+          isLoading={deleteUserMutation.isPending}
+        />
+      )}
     </AdminLayout>
   );
 };

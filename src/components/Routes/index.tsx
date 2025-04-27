@@ -34,6 +34,8 @@ import AdminProfilePage from '@/pages/AdminProfilePage';
 import AdminSecurity from '@/pages/AdminSecurity';
 import AdminStudentsPage from '@/pages/AdminStudentsPage';
 import AdminInstructorsPage from '@/pages/AdminInstructorsPage';
+import AdminTeacherViewPage from '@/pages/AdminTeacherViewPage';
+import AdminStudentViewPage from '@/pages/AdminStudentViewPage';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -319,10 +321,26 @@ const AppRoutes = () => (
         }
       />
       <Route
+        path="/admin/instructors/:id"
+        element={
+          <RouteWrapper accessType={'ADMIN'}>
+            <AdminTeacherViewPage />
+          </RouteWrapper>
+        }
+      />
+      <Route
         path="/admin/students"
         element={
           <RouteWrapper accessType="ADMIN">
             <AdminStudentsPage />
+          </RouteWrapper>
+        }
+      />
+      <Route
+        path="/admin/students/:id"
+        element={
+          <RouteWrapper accessType="ADMIN">
+            <AdminStudentViewPage />
           </RouteWrapper>
         }
       />

@@ -15,7 +15,6 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
   const { toast } = useToast();
   const { login } = useAuth();
 
@@ -34,13 +33,7 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      const user = await login(email, password);
-      console.log('user', user);
-      if (user?.role === 'ADMIN' || user.role === 'TEACHER') {
-        navigate('/admin/dashboard');
-        return;
-      }
-      navigate('/dashboard');
+      await login(email, password);
     } catch (error: any) {
       toast({
         title: 'Login Failed',

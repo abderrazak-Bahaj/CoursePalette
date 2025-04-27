@@ -5,14 +5,12 @@ import { Loader } from '@/components/ui/loader';
 
 interface AuthRouteWrapperProps {
   children: ReactNode;
-  redirectTo?: string;
 }
 
 export const AuthRouteWrapper = ({
   children,
-  redirectTo = '/dashboard',
 }: AuthRouteWrapperProps) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading,isAdmin,isTeacher } = useAuth();
   const location = useLocation();
 
   // Show loader while authentication status is being determined
@@ -23,7 +21,8 @@ export const AuthRouteWrapper = ({
   // If already authenticated, redirect to the specified path
   if (isAuthenticated) {
     // Check if we have a redirect in state from a previous navigation attempt
-    const from = location.state?.from?.pathname || redirectTo;
+    const nextPath = (isAdmin || isTeacher) ? '/admin/dashboard' : '/dashboard';
+    const from = location.state?.from?.pathname || nextPath;
     return <Navigate to={from} replace />;
   }
 
