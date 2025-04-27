@@ -18,7 +18,17 @@ import {
 } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Edit, X } from 'lucide-react';
+import { 
+  Edit, 
+  X, 
+  User, 
+  Mail, 
+  Phone, 
+  Home, 
+  FileText, 
+  Briefcase, 
+  Building 
+} from 'lucide-react';
 import { useState } from 'react';
 
 const adminFormSchema = z.object({
@@ -96,12 +106,64 @@ const AdminProfileInformation = () => {
     setIsEditMode(!isEditMode);
   };
 
-  // View mode data display component
-  const ViewModeField = ({ label, value }: { label: string; value?: string | number | null }) => (
+  // Enhanced View mode field component with icons
+  const ViewModeField = ({ 
+    label, 
+    value, 
+    icon: Icon 
+  }: { 
+    label: string; 
+    value?: string | number | null;
+    icon: React.ComponentType<any>;
+  }) => (
     <div className="mb-4">
-      <h4 className="text-sm font-medium text-gray-500 mb-1">{label}</h4>
-      <p className="text-base">{value || '-'}</p>
+      <div className="flex items-center gap-2 mb-1">
+        <Icon className="h-4 w-4 text-gray-500" />
+        <h4 className="text-sm font-medium text-gray-500">{label}</h4>
+      </div>
+      <p className="text-base pl-6">{value || '-'}</p>
     </div>
+  );
+
+  // Custom form field with icon
+  const IconFormField = ({ 
+    name, 
+    label, 
+    icon: Icon,
+    type = "text",
+    isTextarea = false,
+    hint
+  }: { 
+    name: any; 
+    label: string;
+    icon: React.ComponentType<any>;
+    type?: string;
+    isTextarea?: boolean;
+    hint?: string;
+  }) => (
+    <FormField
+      control={form.control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <div className="flex items-center gap-2 mb-1">
+            <Icon className="h-4 w-4 text-gray-500" />
+            <FormLabel className="mb-0">{label}</FormLabel>
+          </div>
+          <FormControl>
+            <div className="pl-6">
+              {isTextarea ? (
+                <Textarea {...field} rows={4} />
+              ) : (
+                <Input {...field} type={type} />
+              )}
+            </div>
+          </FormControl>
+          {hint && <p className="text-sm text-gray-500 mt-1 pl-6">{hint}</p>}
+          <FormMessage className="pl-6" />
+        </FormItem>
+      )}
+    />
   );
 
   return (
@@ -134,112 +196,41 @@ const AdminProfileInformation = () => {
       {isEditMode ? (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input {...field} type="email" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <IconFormField name="name" label="Full Name" icon={User} />
+                  <IconFormField name="email" label="Email" icon={Mail} type="email" />
+                </div>
 
-            <FormField
-              control={form.control}
-              name="bio"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Bio</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} rows={4} />
-                  </FormControl>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Tell us a little about yourself.
-                  </p>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <div className="mt-6">
+                  <IconFormField 
+                    name="bio" 
+                    label="Bio" 
+                    icon={FileText} 
+                    isTextarea={true}
+                    hint="Tell us a little about yourself."
+                  />
+                </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                  <IconFormField name="phone" label="Phone" icon={Phone} />
+                  <IconFormField name="address" label="Address" icon={Home} />
+                </div>
 
-            <Separator className="my-6" />
-            <h3 className="text-lg font-medium">Administrative Information</h3>
+                <Separator className="my-6" />
+                
+                <div className="flex items-center gap-2 mb-4">
+                  <Briefcase className="h-5 w-5 text-gray-500" />
+                  <h3 className="text-lg font-medium">Administrative Information</h3>
+                </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="admin.department"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Department</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="admin.position"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Position</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <IconFormField name="admin.department" label="Department" icon={Building} />
+                  <IconFormField name="admin.position" label="Position" icon={Briefcase} />
+                </div>
+              </CardContent>
+            </Card>
 
             <div className="flex justify-end">
               <Button type="submit" disabled={isUpdating}>
@@ -249,28 +240,31 @@ const AdminProfileInformation = () => {
           </form>
         </Form>
       ) : (
-        /* View mode */
+        /* View mode with icons */
         <div className="space-y-6">
           <Card>
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <ViewModeField label="Full Name" value={user?.name} />
-                <ViewModeField label="Email" value={user?.email} />
-                <ViewModeField label="Phone" value={user?.phone} />
-                <ViewModeField label="Address" value={user?.address} />
+                <ViewModeField label="Full Name" value={user?.name} icon={User} />
+                <ViewModeField label="Email" value={user?.email} icon={Mail} />
+                <ViewModeField label="Phone" value={user?.phone} icon={Phone} />
+                <ViewModeField label="Address" value={user?.address} icon={Home} />
               </div>
               
               <Separator className="my-4" />
               
-              <ViewModeField label="Bio" value={user?.bio} />
+              <ViewModeField label="Bio" value={user?.bio} icon={FileText} />
               
               <Separator className="my-4" />
               
-              <h3 className="text-lg font-medium mb-4">Administrative Information</h3>
+              <div className="flex items-center gap-2 mb-4">
+                <Briefcase className="h-5 w-5 text-gray-500" />
+                <h3 className="text-lg font-medium">Administrative Information</h3>
+              </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <ViewModeField label="Department" value={user?.admin?.department} />
-                <ViewModeField label="Position" value={user?.admin?.position} />
+                <ViewModeField label="Department" value={user?.admin?.department} icon={Building} />
+                <ViewModeField label="Position" value={user?.admin?.position} icon={Briefcase} />
               </div>
             </CardContent>
           </Card>
@@ -280,4 +274,4 @@ const AdminProfileInformation = () => {
   );
 };
 
-export default AdminProfileInformation; 
+export default AdminProfileInformation;

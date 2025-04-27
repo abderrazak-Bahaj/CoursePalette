@@ -50,30 +50,53 @@ import { UserPasswordModal } from '@/components/admin/UserPasswordModal';
 import { DeleteUserModal } from '@/components/admin/DeleteUserModal';
 import StudentModal from '@/components/admin/StudentModal';
 
+interface Lesson {
+  id: string;
+  student_id: string;
+  lesson_id: string;
+  started_at: string;
+  completed_at: string | null;
+  course_id: string;
+  status: string;
+  watch_time: number;
+  last_position: number;
+  created_at: string;
+}
+
 interface Enrollment {
-  id: number;
-  course: Course;
+  id: string;
+  user_id: string | null;
+  course_id: string;
+  status: string;
   enrolled_at: string;
   completed_at: string | null;
-  status: string;
-  progress: {
-    percentage: number;
-    completed_lessons: number;
-    total_lessons: number;
-  };
+  grade: string | null;
+  certificate_issued_at: string | null;
+  created_at: string;
+  updated_at: string;
+  course: Course;
+  progress_percentage: number;
+  is_completed: boolean;
+  has_certificate: boolean;
+  last_Lesson: Lesson;
 }
 
 interface Course {
-  id: number;
+  id: string;
   title: string;
   description: string;
   image_url: string;
   level: string;
   duration: number;
+  duration_readable: string;
+  skills: string;
+  language: string;
+  status: string;
+  lessons_count: number;
 }
 
 interface Student {
-  id: number | string;
+  id: string;
   name: string;
   email: string;
   role: string;
@@ -83,12 +106,16 @@ interface Student {
   address: string | null;
   email_verified_at: string;
   status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
-  my_enrollments: Enrollment[];
+  enrollments: Enrollment[];
   student?: {
     student_id?: string;
     enrollment_status?: string;
     education_level?: string;
     major?: string;
+    interests?: string[];
+    learning_preferences?: string[];
+    date_of_birth?: string;
+    gpa?: string;
   };
   last_login_at?: string;
 }
@@ -234,7 +261,7 @@ const AdminStudentsPage = () => {
     if (!enrollments || enrollments?.length === 0) return 0;
 
     const totalPercentage = enrollments?.reduce(
-      (sum, enrollment) => sum + enrollment?.progress?.percentage,
+      (sum, enrollment) => sum + enrollment?.progress_percentage,
       0
     );
 
@@ -243,8 +270,7 @@ const AdminStudentsPage = () => {
 
   const countCompletedCourses = (enrollments: Enrollment[]) => {
     return enrollments?.filter(
-      (enrollment) =>
-        enrollment?.progress?.percentage === 100 || enrollment?.completed_at
+      (enrollment) => enrollment.is_completed
     ).length;
   };
 
@@ -263,14 +289,14 @@ const AdminStudentsPage = () => {
     ];
 
     const csvContent = data.students?.map((student) => {
-      const coursesEnrolled = student.my_enrollments.length;
-      const completedCourses = countCompletedCourses(student.my_enrollments);
-      const averageProgress = calculateAverageProgress(student.my_enrollments);
+      const coursesEnrolled = student.enrollments.length;
+      const completedCourses = countCompletedCourses(student.enrollments);
+      const averageProgress = calculateAverageProgress(student.enrollments);
       const latestEnrollment =
-        student.my_enrollments.length > 0
+        student.enrollments.length > 0
           ? new Date(
               Math.max(
-                ...student.my_enrollments.map((e) =>
+                ...student.enrollments.map((e) =>
                   new Date(e.enrolled_at).getTime()
                 )
               )
@@ -392,10 +418,7 @@ const AdminStudentsPage = () => {
                 />
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Filter size={16} />
-                  <span>Filter</span>
-                </Button>
+            
                 <Button
                   variant="outline"
                   className="flex items-center gap-2"
@@ -435,24 +458,24 @@ const AdminStudentsPage = () => {
                     </TableRow>
                   ) : (
                     data?.students?.map((student) => {
-                      const coursesEnrolled = student?.my_enrollments?.length;
+                      const coursesEnrolled = student?.enrollments?.length;
                       const completedCourses = countCompletedCourses(
-                        student?.my_enrollments
+                        student?.enrollments
                       );
                       const averageProgress = calculateAverageProgress(
-                        student?.my_enrollments
+                        student?.enrollments
                       );
 
                       // Get the latest course
                       const latestCourse =
-                        student?.my_enrollments?.length > 0
-                          ? student?.my_enrollments?.reduce(
+                        student?.enrollments?.length > 0
+                          ? student?.enrollments?.reduce(
                               (latest, current) =>
                                 new Date(current.enrolled_at) >
                                 new Date(latest.enrolled_at)
                                   ? current
                                   : latest,
-                              student?.my_enrollments[0]
+                              student?.enrollments[0]
                             )
                           : null;
 
@@ -554,13 +577,13 @@ const AdminStudentsPage = () => {
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
                                 {actions.map((action) => (
-                                  <DropdownMenuItem
+                                <DropdownMenuItem
                                     key={action.name}
                                     onClick={() => action.onClick(student)}
                                   >
                                     {action.icon}
                                     <span>{action.name}</span>
-                                  </DropdownMenuItem>
+                                </DropdownMenuItem>
                                 ))}
                               </DropdownMenuContent>
                             </DropdownMenu>

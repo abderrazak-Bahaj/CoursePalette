@@ -36,6 +36,8 @@ import AdminStudentsPage from '@/pages/AdminStudentsPage';
 import AdminInstructorsPage from '@/pages/AdminInstructorsPage';
 import AdminTeacherViewPage from '@/pages/AdminTeacherViewPage';
 import AdminStudentViewPage from '@/pages/AdminStudentViewPage';
+import AdminCategoriesPage from '@/pages/AdminCategoriesPage';
+import AdminCategoriesViewPage from '@/pages/AdminCategoriesViewPage';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -341,6 +343,22 @@ const AppRoutes = () => (
         element={
           <RouteWrapper accessType="ADMIN">
             <AdminStudentViewPage />
+          </RouteWrapper>
+        }
+      />
+      <Route
+        path="/admin/categories"
+        element={
+          <RouteWrapper accessType="ADMIN">
+            <AdminCategoriesPage />
+          </RouteWrapper>
+        }
+      />
+      <Route
+        path="/admin/categories/:slug"
+        element={
+          <RouteWrapper accessType="ADMIN">
+            <AdminCategoriesViewPage />
           </RouteWrapper>
         }
       />

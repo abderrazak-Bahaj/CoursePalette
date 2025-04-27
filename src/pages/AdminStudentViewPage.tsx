@@ -43,6 +43,7 @@ import { useToast } from '@/hooks/use-toast';
 import { UserStatusModal } from '@/components/admin/UserStatusModal';
 import { UserPasswordModal } from '@/components/admin/UserPasswordModal';
 import { DeleteUserModal } from '@/components/admin/DeleteUserModal';
+import WrapperLoading from '@/components/ui/wrapper-loading';
 
 interface Student {
   id: string;
@@ -66,25 +67,43 @@ interface Student {
     learning_preferences: string[];
     gpa: string;
   };
+  enrollments?: Enrollment[];
   created_at: string;
-  my_enrollments?: Enrollment[];
+}
+
+interface Lesson {
+  id: string;
+  student_id: string;
+  lesson_id: string;
+  started_at: string;
+  completed_at: string | null;
+  course_id: string;
+  status: string;
+  watch_time: number;
+  last_position: number;
+  created_at: string;
 }
 
 interface Enrollment {
-  id: number;
-  course: Course;
+  id: string;
+  user_id: string | null;
+  course_id: string;
+  status: string;
   enrolled_at: string;
   completed_at: string | null;
-  status: string;
-  progress: {
-    percentage: number;
-    completed_lessons: number;
-    total_lessons: number;
-  };
+  grade: string | null;
+  certificate_issued_at: string | null;
+  created_at: string;
+  updated_at: string;
+  course: Course;
+  progress_percentage: number;
+  is_completed: boolean;
+  has_certificate: boolean;
+  last_Lesson: Lesson;
 }
 
 interface Course {
-  id: number;
+  id: string;
   title: string;
   description: string;
   image_url: string;
@@ -92,6 +111,9 @@ interface Course {
   level: string;
   price: string;
   duration: number;
+  duration_readable: string;
+  skills: string;
+  language: string;
 }
 
 const AdminStudentViewPage = () => {
@@ -104,12 +126,12 @@ const AdminStudentViewPage = () => {
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  const { data: responseStudent, isLoading, isError } = useQuery({
+  const { data: response, isLoading, isError } = useQuery({
     queryKey: ['student', id],
     queryFn: () => userService.getUser(id as string),
   });
 
-  const student = responseStudent?.data || {};
+  const student = response?.data || {};
 
   // Define mutations
   const updateStatusMutation = useMutation({
@@ -172,22 +194,7 @@ const AdminStudentViewPage = () => {
     },
   });
 
-  if (isLoading) {
-    return (
-      <AdminLayout title="Student Details">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center mb-6">
-            <Button variant="ghost" onClick={() => navigate(-1)} className="mr-4">
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back
-            </Button>
-            <h1 className="text-3xl font-bold">Loading student details...</h1>
-          </div>
-        </div>
-      </AdminLayout>
-    );
-  }
-
-  if (isError || !student) {
+  if (isError || (!student && !isLoading)) {
     return (
       <AdminLayout title="Student Details">
         <div className="container mx-auto px-4 py-8">
@@ -237,7 +244,7 @@ const AdminStudentViewPage = () => {
   const calculateAverageProgress = (enrollments?: Enrollment[]) => {
     if (!enrollments || enrollments.length === 0) return 0;
     const totalPercentage = enrollments.reduce(
-      (sum, enrollment) => sum + enrollment.progress.percentage,
+      (sum, enrollment) => sum + enrollment.progress_percentage,
       0
     );
     return Math.round(totalPercentage / enrollments.length);
@@ -245,9 +252,7 @@ const AdminStudentViewPage = () => {
 
   const countCompletedCourses = (enrollments?: Enrollment[]) => {
     if (!enrollments) return 0;
-    return enrollments.filter(
-      (enrollment) => enrollment.progress.percentage === 100 || enrollment.completed_at
-    ).length;
+    return enrollments.filter(enrollment => enrollment.is_completed).length;
   };
 
   const handleStatusUpdate = (status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED') => {
@@ -262,21 +267,11 @@ const AdminStudentViewPage = () => {
     deleteUserMutation.mutate();
   };
 
-  const getLevelBadgeColor = (level: string) => {
-    switch (level.toUpperCase()) {
-      case 'BEGINNER':
-        return 'bg-green-100 text-green-800';
-      case 'INTERMEDIATE':
-        return 'bg-blue-100 text-blue-800';
-      case 'ADVANCED':
-        return 'bg-purple-100 text-purple-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+
 
   return (
     <AdminLayout title={`Student: ${student?.name}`}>
+      <WrapperLoading isLoading={isLoading}>
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center mb-6">
           <Button variant="ghost" onClick={() => navigate(-1)} className="mr-4">
@@ -484,9 +479,9 @@ const AdminStudentViewPage = () => {
                 </TabsContent>
                 
                 <TabsContent value="courses" className="pt-4">
-                  {student?.my_enrollments && student.my_enrollments.length > 0 ? (
+                  {student?.enrollments && student.enrollments.length > 0 ? (
                     <div className="space-y-4">
-                      {student.my_enrollments.map((enrollment) => (
+                      {student.enrollments.map((enrollment) => (
                         <Card key={enrollment.id}>
                           <CardContent className="p-4">
                             <div className="flex items-center gap-3">
@@ -503,7 +498,7 @@ const AdminStudentViewPage = () => {
                                   <Badge 
                                     variant="outline" 
                                     className={
-                                      enrollment.status === 'COMPLETED' 
+                                      enrollment.is_completed 
                                         ? 'bg-green-100 text-green-800' 
                                         : 'bg-blue-100 text-blue-800'
                                     }
@@ -524,10 +519,10 @@ const AdminStudentViewPage = () => {
                               </div>
                               <div className="text-right">
                                 <div className="font-semibold text-lg">
-                                  {enrollment.progress.percentage}%
+                                  {enrollment.progress_percentage}%
                                 </div>
                                 <div className="text-xs text-muted-foreground">
-                                  {enrollment.progress.completed_lessons} of {enrollment.progress.total_lessons} lessons
+                                  {enrollment.course.duration_readable}
                                 </div>
                               </div>
                             </div>
@@ -551,7 +546,7 @@ const AdminStudentViewPage = () => {
                         <div className="text-center">
                           <BookOpen className="mx-auto h-8 w-8 text-primary" />
                           <h3 className="mt-2 text-3xl font-bold">
-                            {student?.my_enrollments?.length || 0}
+                            {student?.enrollments?.length || 0}
                           </h3>
                           <p className="text-sm text-muted-foreground">Total Courses</p>
                         </div>
@@ -563,7 +558,7 @@ const AdminStudentViewPage = () => {
                         <div className="text-center">
                           <CheckCircle className="mx-auto h-8 w-8 text-primary" />
                           <h3 className="mt-2 text-3xl font-bold">
-                            {countCompletedCourses(student?.my_enrollments)}
+                            {countCompletedCourses(student?.enrollments)}
                           </h3>
                           <p className="text-sm text-muted-foreground">Completed Courses</p>
                         </div>
@@ -575,7 +570,7 @@ const AdminStudentViewPage = () => {
                         <div className="text-center">
                           <Users className="mx-auto h-8 w-8 text-primary" />
                           <h3 className="mt-2 text-3xl font-bold">
-                            {calculateAverageProgress(student?.my_enrollments)}%
+                            {calculateAverageProgress(student?.enrollments)}%
                           </h3>
                           <p className="text-sm text-muted-foreground">Average Progress</p>
                         </div>
@@ -613,6 +608,7 @@ const AdminStudentViewPage = () => {
         onConfirmDelete={handleDeleteUser}
         isLoading={deleteUserMutation.isPending}
       />
+      </WrapperLoading>
     </AdminLayout>
   );
 };

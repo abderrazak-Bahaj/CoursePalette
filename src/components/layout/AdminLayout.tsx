@@ -73,6 +73,7 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
   const adminLinks = [
     { to: '/admin/instructors', label: 'Instructors', icon: <UsersRound /> },
     { to: '/admin/students', label: 'Students', icon: <Users /> },
+    { to: '/admin/categories', label: 'Categories', icon: <FolderKanban /> },
     { to: '/admin/reports', label: 'Reports', icon: <BarChart3 /> },
   ];
 
