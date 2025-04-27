@@ -9,6 +9,10 @@ import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { Eye, EyeOff } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
+import ReCaptcha from '@/components/ui/ReCaptcha';
+
+// Replace with your actual site key
+const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LcxoyYrAAAAAIDW5NTKsq0YYkw0P6lypOy3edTq';
 
 export const RegisterPage = () => {
   const [name, setName] = useState('');
@@ -17,6 +21,8 @@ export const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
+  const [recaptchaToken, setRecaptchaToken] = useState('');
+  const [recaptchaError, setRecaptchaError] = useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
   const { register } = useAuth();
@@ -36,8 +42,22 @@ export const RegisterPage = () => {
     setIsLoading(true);
 
     try {
-      // Register the user - we don't automatically login now
-      await register(name, email, password);
+      // With reCAPTCHA v3, token should already be set by the component
+      // If not, we can execute again just to be sure
+      if (!recaptchaToken && window.grecaptcha) {
+        try {
+          const newToken = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'register' });
+          setRecaptchaToken(newToken);
+        } catch (error) {
+          console.error('Failed to get reCAPTCHA token:', error);
+          setRecaptchaError('Failed to verify reCAPTCHA. Please try again or refresh the page.');
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // Register the user with reCAPTCHA token
+      await register(name, email, password, recaptchaToken);
       setIsRegistered(true);
       
       // Redirect to verification page
@@ -45,6 +65,21 @@ export const RegisterPage = () => {
         navigate(`/verify-email?email=${encodeURIComponent(email)}`);
       }, 3000);
     } catch (error: any) {
+      // Check if it's a reCAPTCHA validation error
+      if (error?.message?.includes('reCAPTCHA verification failed')) {
+        setRecaptchaError('reCAPTCHA verification failed. Please try again.');
+        // Reset reCAPTCHA
+        setRecaptchaToken('');
+        if (window.grecaptcha) {
+          try {
+            const newToken = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'register' });
+            setRecaptchaToken(newToken);
+          } catch (err) {
+            console.error('Failed to reset reCAPTCHA:', err);
+          }
+        }
+      }
+      
       toast({
         title: 'Registration Failed',
         description: error?.message || 'An error occurred during registration',
@@ -53,6 +88,21 @@ export const RegisterPage = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCaptchaChange = (token: string) => {
+    setRecaptchaToken(token);
+    setRecaptchaError('');
+  };
+
+  const handleCaptchaExpired = () => {
+    setRecaptchaToken('');
+    setRecaptchaError('reCAPTCHA has expired. Please verify again.');
+  };
+
+  const handleCaptchaError = () => {
+    setRecaptchaToken('');
+    setRecaptchaError('Error loading reCAPTCHA. Please refresh the page.');
   };
 
   return (
@@ -134,6 +184,41 @@ export const RegisterPage = () => {
                       Password must be at least 8 characters long
                     </p>
                   </div>
+                  
+                  <div className="mt-4">
+                    <ReCaptcha
+                      siteKey={RECAPTCHA_SITE_KEY}
+                      onChange={handleCaptchaChange}
+                      onExpired={handleCaptchaExpired}
+                      onError={handleCaptchaError}
+                      version="v3"
+                      action="register"
+                    />
+                    {recaptchaError && (
+                      <p className="text-xs text-red-500 mt-1">{recaptchaError}</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-2">
+                      This site is protected by reCAPTCHA v3. By registering, you agree to Google's 
+                      <a 
+                        href="https://policies.google.com/privacy" 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="text-course-blue hover:underline ml-1 mr-1"
+                      >
+                        Privacy Policy
+                      </a>
+                      and
+                      <a 
+                        href="https://policies.google.com/terms" 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="text-course-blue hover:underline ml-1"
+                      >
+                        Terms of Service
+                      </a>.
+                    </p>
+                  </div>
+                  
                   <div className="flex items-start">
                     <Checkbox id="terms" className="mt-1" />
                     <Label htmlFor="terms" className="ml-2 text-sm">

@@ -122,7 +122,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const register = async (
     name: string,
     email: string,
-    password: string
+    password: string,
+    recaptchaToken?: string
   ): Promise<User | null> => {
     try {
       const response = await authService.register({
@@ -131,6 +132,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         password,
         password_confirmation: password,
         role: 'STUDENT',
+        recaptcha_token: recaptchaToken
       });
       
       // In email verification flow, we won't auto-login the user

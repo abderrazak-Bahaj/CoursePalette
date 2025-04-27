@@ -9,6 +9,7 @@ interface RegisterData {
   phone?: string;
   address?: string;
   bio?: string;
+  recaptcha_token?: string;
 }
 
 interface LoginData {
