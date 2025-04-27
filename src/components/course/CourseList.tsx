@@ -218,12 +218,13 @@ const CourseList = ({
             </TabsContent>
           </Tabs>
 
-          {coursesData?.meta?.last_page > 1 && (
+
+         {coursesData?.meta?.last_page > 1 && (
             <MetaPagination
               meta={coursesData.meta}
               onPageChange={handlePageChange}
             />
-          )}
+          )} 
         </div>
       )}
 

@@ -30,15 +30,16 @@ const MetaPagination = ({ meta, onPageChange }: MetaPaginationProps) => {
     }
   };
 
+  const maxVisiblePages = 5;
+  let startPage = Math.max(1, page - Math.floor(maxVisiblePages / 2));
+  let endPage = Math.min(last_page, startPage + maxVisiblePages - 1);
+
+  if (endPage - startPage + 1 < maxVisiblePages) {
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+  }
+
   const renderPageNumbers = () => {
     const pages = [];
-    const maxVisiblePages = 5;
-    let startPage = Math.max(1, page - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(last_page, startPage + maxVisiblePages - 1);
-
-    if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
 
     for (let i = startPage; i <= endPage; i++) {
       pages.push(
@@ -123,6 +124,7 @@ const MetaPagination = ({ meta, onPageChange }: MetaPaginationProps) => {
     </div>
   );
 };
+
 
 const PaginationContent = React.forwardRef<
   HTMLUListElement,

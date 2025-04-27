@@ -5,8 +5,6 @@ import {
   AdminLayout,
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
   Button,
   Table,
   TableBody,
