@@ -6,14 +6,16 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import MainLayout from '@/components/layout/MainLayout';
+import { useAuth } from '@/hooks/useAuth';
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { forgotPassword } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email) {
@@ -27,15 +29,19 @@ const ForgotPasswordPage = () => {
 
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      await forgotPassword(email);
       setIsSubmitted(true);
-      setIsLoading(false);
+    } catch (error) {
+      console.error('Password reset request failed:', error);
       toast({
-        title: 'Reset Link Sent',
-        description: 'Check your email for instructions to reset your password',
+        title: 'Request Failed',
+        description: 'Unable to send password reset link. Please try again.',
+        variant: 'destructive',
       });
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

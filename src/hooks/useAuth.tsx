@@ -72,6 +72,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (email: string, password: string): Promise<User> => {
     try {
       const response = await authService.login({ email, password });
+      
+      // Check if email is not verified
+      if (response.email_verified === false) {
+        toast({
+          title: 'Email not verified',
+          description: 'Please check your email for verification link.',
+          variant: 'destructive',
+        });
+        throw new Error('Email not verified');
+      }
+      
       if (!response?.token) {
         throw new Error('Login failed: No token returned');
       }
@@ -94,8 +105,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       console.log("userData", userData);
       
-
-      return userData.user;
+      return userData.data;
     } catch (error) {
       console.error('Error logging in:', error);
 
@@ -113,7 +123,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     name: string,
     email: string,
     password: string
-  ): Promise<User> => {
+  ): Promise<User | null> => {
     try {
       const response = await authService.register({
         name,
@@ -123,27 +133,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         role: 'STUDENT',
       });
       
-      if (!response?.token) {
-        throw new Error('Registration failed: No token returned');
-      }
-      
-      // Store token to enable automatic login after registration
-      setToken(response.token);
-      localStorage.setItem('token', response.token);
-      
-      // Manually fetch user data after registration
-      const userData = await refetchUser();
-      
-      if (!userData.data) {
-        throw new Error('Failed to fetch user data after registration');
-      }
-
+      // In email verification flow, we won't auto-login the user
+      // We'll just show a success message and redirect to login
       toast({
         title: 'Registration successful',
-        description: `Welcome to CoursePalette, ${name}!`,
+        description: 'Please check your email to verify your account.',
       });
 
-      return userData.data;
+      return response.user || null;
     } catch (error: any) {
       if (error.response?.status === 422) {
         const validationErrors = error.response?.data?.errors || {};
@@ -191,6 +188,87 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  // Email verification methods
+  const verifyEmail = async (id: string, hash: string) => {
+    try {
+      const response = await authService.verifyEmail(id, hash);
+      toast({
+        title: 'Email verified',
+        description: 'Your email has been verified successfully. You can now log in.',
+      });
+      return response;
+    } catch (error) {
+      console.error('Error verifying email:', error);
+      toast({
+        title: 'Verification failed',
+        description: 'Unable to verify your email. Please try again or contact support.',
+        variant: 'destructive',
+      });
+      throw error;
+    }
+  };
+
+  const resendVerificationEmail = async (email: string) => {
+    try {
+      await authService.resendVerificationEmail(email);
+      toast({
+        title: 'Verification email sent',
+        description: 'Please check your email for the verification link.',
+      });
+    } catch (error) {
+      console.error('Error resending verification email:', error);
+      toast({
+        title: 'Failed to resend',
+        description: 'Unable to resend verification email. Please try again later.',
+        variant: 'destructive',
+      });
+      throw error;
+    }
+  };
+
+  // Password reset methods
+  const forgotPassword = async (email: string) => {
+    try {
+      await authService.forgotPassword(email);
+      toast({
+        title: 'Password reset email sent',
+        description: 'Please check your email for password reset instructions.',
+      });
+    } catch (error) {
+      console.error('Error sending password reset email:', error);
+      toast({
+        title: 'Request failed',
+        description: 'Unable to send password reset email. Please try again later.',
+        variant: 'destructive',
+      });
+      throw error;
+    }
+  };
+
+  const resetPassword = async (token: string, email: string, password: string, passwordConfirmation: string) => {
+    try {
+      await authService.resetPassword({
+        token,
+        email,
+        password,
+        password_confirmation: passwordConfirmation,
+      });
+      
+      toast({
+        title: 'Password reset successful',
+        description: 'Your password has been reset. You can now log in with your new password.',
+      });
+    } catch (error) {
+      console.error('Error resetting password:', error);
+      toast({
+        title: 'Reset failed',
+        description: 'Unable to reset your password. Please try again or request a new reset link.',
+        variant: 'destructive',
+      });
+      throw error;
+    }
+  };
+
   // Function to refresh user data
   const refreshUserData = () => {
     return refetchUser();
@@ -208,6 +286,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isTeacher,
     isStudent,
     refreshUserData,
+    verifyEmail,
+    resendVerificationEmail,
+    forgotPassword,
+    resetPassword,
   };
 
   return (

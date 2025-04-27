@@ -16,6 +16,7 @@ export const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { register } = useAuth();
@@ -35,10 +36,14 @@ export const RegisterPage = () => {
     setIsLoading(true);
 
     try {
-      const user = await register(name, email, password);
-      if (user) {
-        navigate('/login');
-      }
+      // Register the user - we don't automatically login now
+      await register(name, email, password);
+      setIsRegistered(true);
+      
+      // Redirect to verification page
+      setTimeout(() => {
+        navigate(`/verify-email?email=${encodeURIComponent(email)}`);
+      }, 3000);
     } catch (error: any) {
       toast({
         title: 'Registration Failed',
@@ -69,76 +74,94 @@ export const RegisterPage = () => {
               <CardTitle className="text-xl">Sign Up</CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleRegister} className="space-y-4">
-                <div>
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Enter your full name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="password">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Create a password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
+              {isRegistered ? (
+                <div className="text-center py-6">
+                  <div className="bg-green-100 text-green-800 p-4 rounded-md mb-4">
+                    <p className="font-medium">Registration Successful!</p>
+                    <p>Check your email to verify your account.</p>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Password must be at least 8 characters long
+                  <p className="mb-4">
+                    We've sent a verification link to <strong>{email}</strong>.
+                    Please check your inbox and click the link to complete your registration.
                   </p>
-                </div>
-                <div className="flex items-start">
-                  <Checkbox id="terms" className="mt-1" />
-                  <Label htmlFor="terms" className="ml-2 text-sm">
-                    I agree to the{' '}
-                    <Link
-                      to="/terms"
-                      className="text-course-blue hover:underline"
-                    >
-                      Terms of Service
-                    </Link>{' '}
-                    and{' '}
-                    <Link
-                      to="/privacy"
-                      className="text-course-blue hover:underline"
-                    >
-                      Privacy Policy
+                  <Button asChild variant="outline">
+                    <Link to={`/verify-email?email=${encodeURIComponent(email)}`}>
+                      Go to Verification Page
                     </Link>
-                  </Label>
+                  </Button>
                 </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-course-blue"
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Creating account...' : 'Sign Up'}
-                </Button>
-              </form>
+              ) : (
+                <form onSubmit={handleRegister} className="space-y-4">
+                  <div>
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input
+                      id="name"
+                      type="text"
+                      placeholder="Enter your full name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="password">Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Create a password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Password must be at least 8 characters long
+                    </p>
+                  </div>
+                  <div className="flex items-start">
+                    <Checkbox id="terms" className="mt-1" />
+                    <Label htmlFor="terms" className="ml-2 text-sm">
+                      I agree to the{' '}
+                      <Link
+                        to="/terms"
+                        className="text-course-blue hover:underline"
+                      >
+                        Terms of Service
+                      </Link>{' '}
+                      and{' '}
+                      <Link
+                        to="/privacy"
+                        className="text-course-blue hover:underline"
+                      >
+                        Privacy Policy
+                      </Link>
+                    </Label>
+                  </div>
+                  <Button
+                    type="submit"
+                    className="w-full bg-course-blue"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Creating account...' : 'Sign Up'}
+                  </Button>
+                </form>
+              )}
 
               {/*  
               <div className="mt-6">

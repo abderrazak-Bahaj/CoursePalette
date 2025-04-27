@@ -6,6 +6,8 @@ import NotFound from '@/pages/NotFound';
 import LoginPage from '@/pages/Login';
 import RegisterPage from '@/pages/RegisterPage';
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
+import ResetPasswordPage from '@/pages/ResetPasswordPage';
+import VerifyEmailPage from '@/pages/VerifyEmailPage';
 import CoursesPage from '@/pages/CoursesPage';
 import CourseDetailPage from '@/pages/CourseDetailPage';
 import CheckCertificatePage from '@/pages/CheckCertificatePage';
@@ -172,6 +174,22 @@ const AppRoutes = () => (
         element={
           <AuthRouteWrapper>
             <ForgotPasswordPage />
+          </AuthRouteWrapper>
+        }
+      />
+      <Route
+        path="/reset-password"
+        element={
+          <AuthRouteWrapper>
+            <ResetPasswordPage />
+          </AuthRouteWrapper>
+        }
+      />
+      <Route
+        path="/verify-email"
+        element={
+          <AuthRouteWrapper>
+            <VerifyEmailPage />
           </AuthRouteWrapper>
         }
       />

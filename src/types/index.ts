@@ -86,4 +86,13 @@ export interface AuthContextType {
   ) => Promise<User | null>;
   logout: () => void;
   refreshUserData: () => Promise<any>;
+  verifyEmail: (id: string, hash: string) => Promise<any>;
+  resendVerificationEmail: (email: string) => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (
+    token: string,
+    email: string,
+    password: string,
+    passwordConfirmation: string
+  ) => Promise<void>;
 }
