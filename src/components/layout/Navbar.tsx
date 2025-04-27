@@ -31,7 +31,8 @@ const Navbar = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout, isAdmin, isStudent, isTeacher } =
+    useAuth();
 
   const handleLogout = () => {
     logout();
@@ -120,46 +121,57 @@ const Navbar = () => {
                     </Avatar>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuItem onClick={() => navigate('/profile')}>
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() =>
-                        navigate(
-                          user.role === 'STUDENT'
-                            ? '/dashboard'
-                            : '/admin/dashboard'
-                        )
-                      }
-                    >
-                      <BookOpen className="mr-2 h-4 w-4" />
-                      <span>My Learning</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/certificates')}>
-                      <Award className="mr-2 h-4 w-4" />
-                      <span>Certificates</span>
-                    </DropdownMenuItem>
-                    {!(user.role === 'STUDENT') && (
+                    {isStudent && (
                       <>
+                        <DropdownMenuItem onClick={() => navigate('/profile')}>
+                          <User className="mr-2 h-4 w-4" />
+                          <span>Profile</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => navigate('/dashboard')}
+                        >
+                          <BookOpen className="mr-2 h-4 w-4" />
+                          <span>My Learning</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => navigate('/certificates')}
+                        >
+                          <Award className="mr-2 h-4 w-4" />
+                          <span>Certificates</span>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+
+                    {!isStudent && (
+                      <>
+                        <DropdownMenuItem
+                          onClick={() => navigate('/admin/profile')}
+                        >
+                          <User className="mr-2 h-4 w-4" />
+                          <span>Profile</span>
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => navigate('/admin/courses')}
                         >
                           <BookText className="mr-2 h-4 w-4" />
                           <span>Admin Dashboard</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => navigate('/admin/students')}
-                        >
-                          <Users className="mr-2 h-4 w-4" />
-                          <span>Students</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => navigate('/admin/reports')}
-                        >
-                          <PieChart className="mr-2 h-4 w-4" />
-                          <span>Reports</span>
-                        </DropdownMenuItem>
+                        {isAdmin && (
+                          <>
+                            <DropdownMenuItem
+                              onClick={() => navigate('/admin/students')}
+                            >
+                              <Users className="mr-2 h-4 w-4" />
+                              <span>Students</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => navigate('/admin/reports')}
+                            >
+                              <PieChart className="mr-2 h-4 w-4" />
+                              <span>Reports</span>
+                            </DropdownMenuItem>
+                          </>
+                        )}
                       </>
                     )}
                     <DropdownMenuItem onClick={handleLogout}>
