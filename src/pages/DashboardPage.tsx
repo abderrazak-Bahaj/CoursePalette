@@ -40,9 +40,8 @@ const DashboardPage = () => {
   const { inProgress, completed, all } = useFilteredCourses(enrollments);
 
   const enrolledCourses = enrollments.length;
-  const certificatesEarned = enrollments.filter(
-    (e) => e.is_completed && e.has_certificate
-  );
+  console.log('enrollments', enrollments);
+  const certificatesEarned = enrollments.filter((e) => e.course?.is_completed);
   const totalMinutes = enrollments.reduce(
     (sum, e) => sum + (e.course?.duration || 0),
     0

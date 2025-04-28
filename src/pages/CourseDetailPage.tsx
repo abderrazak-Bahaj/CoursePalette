@@ -46,7 +46,7 @@ const CourseDetailPage = () => {
   });
 
   const course = data?.course;
-  const skills = course?.skills || [];
+  const skills = JSON.parse(course?.skills || '[]') || [];
 
   const handleEnroll = () => {
     if (!isAuthenticated) {
@@ -108,7 +108,6 @@ const CourseDetailPage = () => {
                 <TabsContent value="instructor">
                   <CourseInstructor
                     instructor={course.instructor}
-                    category={course.category?.name}
                   />
                 </TabsContent>
 
@@ -119,7 +118,7 @@ const CourseDetailPage = () => {
             </div>
 
             {/* Related courses */}
-            <div className="bg-gray-50 py-12">
+            {/* <div className="bg-gray-50 py-12">
               <div className="container mx-auto px-4">
                 <h2 className="text-2xl font-bold mb-8">Related Courses</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -128,7 +127,7 @@ const CourseDetailPage = () => {
                   ))}
                 </div>
               </div>
-            </div>
+            </div> */}
           </>
         )}
       </MainLayout>

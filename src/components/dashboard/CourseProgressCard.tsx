@@ -29,25 +29,35 @@ const CourseProgressCard = ({ enrollment }: CourseProgressCardProps) => {
               <span>Your progress</span>
               <span>{enrollment?.progress_percentage}%</span>
             </div>
-            <Progress value={enrollment?.progress_percentage} className="h-2" />
+            <Progress value={Number(enrollment?.progress_percentage)} className={`h-2 ${course?.is_completed ? 'bg-green-500' : 'bg-blue-100'}`} />
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-start"></div>
 
             <div className="flex items-center gap-4">
-              <div className="text-sm text-gray-500">
-                <Calendar className="inline h-4 w-4 mr-1" />
-                Last accessed {course?.lastAccessed}
-              </div>
-              <Button asChild>
-                <Link
-                  to={`/courses/${enrollment?.last_Lesson?.course_id}/learn/${enrollment?.last_Lesson?.lesson_id}`}
+              {course?.is_completed ? (
+                <Button
+                  asChild
+                  variant="default"
+                  className="bg-green-500 hover:bg-green-600"
                 >
-                  Continue
-                  <ArrowRight className="h-4 w-4 ml-1" />
-                </Link>
-              </Button>
+                  <Link to={`/courses/${course?.id}/certificate`}>
+                    View Certificate
+                    <ArrowRight className="h-4 w-4 ml-1" />
+                  </Link>
+                </Button>
+              ) : (
+                
+                  <Button asChild>
+                    <Link
+                      to={`/courses/${enrollment?.last_Lesson?.course_id}/learn/${enrollment?.last_Lesson?.lesson_id}`}
+                    >
+                      Continue
+                      <ArrowRight className="h-4 w-4 ml-1" />
+                    </Link>
+                  </Button>
+              )}
             </div>
           </div>
         </div>

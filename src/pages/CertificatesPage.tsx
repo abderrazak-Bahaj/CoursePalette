@@ -6,45 +6,9 @@ import { Award, Download, Share2, Loader2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { certificateService } from '@/services/api/certificateService';
 import { format } from 'date-fns';
+import CertificatesSection from '@/components/dashboard/CertificatesSection';
 
 const CertificatesPage = () => {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['certificates'],
-    queryFn: () => certificateService.getCertificates(),
-  });
-
-  if (isLoading) {
-    return (
-      <MainLayout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex justify-center items-center h-64">
-            <Loader2 className="h-8 w-8 animate-spin" />
-          </div>
-        </div>
-      </MainLayout>
-    );
-  }
-
-  if (error) {
-    return (
-      <MainLayout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-            <h2 className="text-2xl font-bold mb-2 text-red-600">
-              Error Loading Certificates
-            </h2>
-            <p className="text-gray-500 mb-6">
-              There was an error loading your certificates. Please try again
-              later.
-            </p>
-          </div>
-        </div>
-      </MainLayout>
-    );
-  }
-
-  const certificates = data?.certificates || [];
-
   return (
     <MainLayout>
       <div className="bg-gray-50 py-8">
@@ -61,27 +25,7 @@ const CertificatesPage = () => {
             </div>
           </div>
 
-          {certificates.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-              <Award className="h-16 w-16 mx-auto text-gray-300 mb-4" />
-              <h2 className="text-2xl font-bold mb-2">No Certificates Yet</h2>
-              <p className="text-gray-500 mb-6">
-                Complete a course to earn your first certificate
-              </p>
-              <Button asChild>
-                <Link to="/courses">Browse Courses</Link>
-              </Button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {certificates.map((certificate) => (
-                <CertificateCard
-                  key={certificate.id}
-                  certificate={certificate}
-                />
-              ))}
-            </div>
-          )}
+          <CertificatesSection showTitle={false} />
         </div>
       </div>
     </MainLayout>
