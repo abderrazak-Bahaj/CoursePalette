@@ -1,45 +1,52 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { RouteWrapper } from '@/components/Routes/RouteWrapper';
 import { AuthRouteWrapper } from './AuthRouteWrapper';
-import Home from '@/pages/Home';
-import NotFound from '@/pages/NotFound';
-import LoginPage from '@/pages/Login';
-import RegisterPage from '@/pages/RegisterPage';
-import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
-import ResetPasswordPage from '@/pages/ResetPasswordPage';
-import VerifyEmailPage from '@/pages/VerifyEmailPage';
-import CoursesPage from '@/pages/CoursesPage';
-import CourseDetailPage from '@/pages/CourseDetailPage';
-import CheckCertificatePage from '@/pages/CheckCertificatePage';
-import CategoriesPage from '@/pages/CategoriesPage';
-import SearchResultsPage from '@/pages/SearchResultsPage';
-import HelpPage from '@/pages/HelpPage';
-import ContactPage from '@/pages/ContactPage';
-import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage';
-import TermsPage from '@/pages/TermsPage';
-import BlogPage from '@/pages/BlogPage';
-import BlogDetailPage from '@/pages/BlogDetailPage';
-import UnauthorizedPage from '@/pages/UnauthorizedPage';
-import DashboardPage from '@/pages/DashboardPage';
-import LessonPage from '@/pages/LessonPage';
-import ProfilePage from '@/pages/ProfilePage';
-import CertificatesPage from '@/pages/CertificatesPage';
-import CertificateDetailPage from '@/pages/CertificateDetailPage';
-import AdminCoursesPage from '@/pages/AdminCoursesPage';
-import AdminLessonsPage from '@/pages/AdminLessonsPage';
-import CreateLessonPage from '@/pages/CreateLessonPage';
-import LessonDetailPage from '@/pages/LessonDetailPage';
-import StudentsPage from '@/pages/StudentsPage';
-import ReportsPage from '@/pages/ReportsPage';
-import AdminDashboardPage from '@/pages/AdminDashboardPage';
-import AdminProfilePage from '@/pages/AdminProfilePage';
-import AdminSecurity from '@/pages/AdminSecurity';
-import AdminStudentsPage from '@/pages/AdminStudentsPage';
-import AdminInstructorsPage from '@/pages/AdminInstructorsPage';
-import AdminTeacherViewPage from '@/pages/AdminTeacherViewPage';
-import AdminStudentViewPage from '@/pages/AdminStudentViewPage';
-import AdminCategoriesPage from '@/pages/AdminCategoriesPage';
-import AdminCategoriesViewPage from '@/pages/AdminCategoriesViewPage';
+
+// Public Pages
+import Home from '@/pages/public/Home';
+import NotFound from '@/pages/public/NotFound';
+import UnauthorizedPage from '@/pages/public/UnauthorizedPage';
+import CoursesPage from '@/pages/public/courses/CoursesPage';
+import CourseDetailPage from '@/pages/public/courses/CourseDetailPage';
+import CategoriesPage from '@/pages/public/categories/CategoriesPage';
+import BlogPage from '@/pages/public/blog/BlogPage';
+import BlogDetailPage from '@/pages/public/blog/BlogDetailPage';
+import SearchResultsPage from '@/pages/public/utility/SearchResultsPage';
+import HelpPage from '@/pages/public/utility/HelpPage';
+import ContactPage from '@/pages/public/utility/ContactPage';
+import PrivacyPolicyPage from '@/pages/public/utility/PrivacyPolicyPage';
+import TermsPage from '@/pages/public/utility/TermsPage';
+import CheckCertificatePage from '@/pages/public/certificates/CheckCertificatePage';
+
+// Auth Pages
+import LoginPage from '@/pages/auth/LoginPage';
+import RegisterPage from '@/pages/auth/RegisterPage';
+import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from '@/pages/auth/ResetPasswordPage';
+import VerifyEmailPage from '@/pages/auth/VerifyEmailPage';
+
+// User Pages
+import DashboardPage from '@/pages/user/DashboardPage';
+import ProfilePage from '@/pages/user/ProfilePage';
+import LessonPage from '@/pages/user/learning/LessonPage';
+import CertificatesPage from '@/pages/user/certificates/CertificatesPage';
+import CertificateDetailPage from '@/pages/user/certificates/CertificateDetailPage';
+
+// Admin Pages
+import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
+import AdminProfilePage from '@/pages/admin/AdminProfilePage';
+import AdminCoursesPage from '@/pages/admin/courses/AdminCoursesPage';
+import AdminLessonsPage from '@/pages/admin/courses/AdminLessonsPage';
+import CreateLessonPage from '@/pages/admin/courses/CreateLessonPage';
+import LessonDetailPage from '@/pages/admin/courses/LessonDetailPage';
+import StudentsPage from '@/pages/admin/users/StudentsPage';
+import AdminStudentsPage from '@/pages/admin/users/AdminStudentsPage';
+import AdminStudentViewPage from '@/pages/admin/users/AdminStudentViewPage';
+import AdminInstructorsPage from '@/pages/admin/users/AdminInstructorsPage';
+import AdminTeacherViewPage from '@/pages/admin/users/AdminTeacherViewPage';
+import AdminCategoriesPage from '@/pages/admin/categories/AdminCategoriesPage';
+import AdminCategoriesViewPage from '@/pages/admin/categories/AdminCategoriesViewPage';
+import ReportsPage from '@/pages/admin/analytics/ReportsPage';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -253,7 +260,6 @@ const AppRoutes = () => (
       />
 
       {/* Teacher & Admin Routes */}
-
       <Route
         path="/admin/profile"
         element={
@@ -322,7 +328,6 @@ const AppRoutes = () => (
       />
 
       {/* Admin-only Routes */}
-
       <Route
         path="/admin/instructors"
         element={
