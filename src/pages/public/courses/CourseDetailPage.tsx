@@ -14,12 +14,14 @@ import { CourseCurriculum } from '@/components/course/CourseCurriculum';
 import { CourseOverview } from '@/components/course/CourseOverview';
 import { CourseInstructor } from '@/components/course/CourseInstructor';
 import { CourseReviews } from '@/components/course/CourseReviews';
+import { useCart } from '@/contexts/CartContext';
 
 const CourseDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
+  const { addToCart } = useCart();
 
   const { data, isLoading } = useQuery({
     queryKey: ['course', id],
@@ -47,6 +49,7 @@ const CourseDetailPage = () => {
 
   const course = data?.course;
   const skills = JSON.parse(course?.skills || '[]') || [];
+  const price = parseFloat(course?.price || '0');
 
   const handleEnroll = () => {
     if (!isAuthenticated) {
@@ -57,7 +60,21 @@ const CourseDetailPage = () => {
       });
       return;
     }
-    enrollMutation.mutate();
+
+    if (price === 0) {
+      enrollMutation.mutate();
+    } else {
+      addToCart({
+        id: course.id,
+        title: course.title,
+        price: price,
+        image_url: course.image_url,
+      });
+      toast({
+        title: 'Added to Cart',
+        description: 'Course has been added to your cart.',
+      });
+    }
   };
 
   return (
