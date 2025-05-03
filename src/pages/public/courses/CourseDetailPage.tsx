@@ -48,7 +48,6 @@ const CourseDetailPage = () => {
   });
 
   const course = data?.course;
-  const skills = JSON.parse(course?.skills || '[]') || [];
   const price = parseFloat(course?.price || '0');
 
   const handleEnroll = () => {
@@ -117,7 +116,7 @@ const CourseDetailPage = () => {
                 <TabsContent value="overview">
                   <CourseOverview
                     description={course.description}
-                    skills={skills}
+                    skills={course?.skills}
                     category={course.category?.name}
                   />
                 </TabsContent>

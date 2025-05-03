@@ -81,7 +81,7 @@ export const CourseInstructor = ({ instructor }: CourseInstructorProps) => {
               {instructor.teacher.certifications.map((cert, index) => (
                 <div key={index} className="flex items-center">
                   <Award className="h-5 w-5 mr-2 text-gray-500" />
-                  <span>{cert.name} ({cert.year})</span>
+                  <span>{cert?.name} ({cert?.year})</span>
                 </div>
               ))}
             </div>

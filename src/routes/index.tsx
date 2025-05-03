@@ -41,7 +41,7 @@ import AdminStudentViewPage from '@/pages/admin/users/AdminStudentViewPage';
 import AdminInstructorsPage from '@/pages/admin/users/AdminInstructorsPage';
 import AdminCategoriesPage from '@/pages/admin/categories/AdminCategoriesPage';
 import AdminCategoriesViewPage from '@/pages/admin/categories/AdminCategoriesViewPage';
-import CartPage from '@/pages/public/cart/CartPage';
+import Checkout from '@/pages/public/checkout/Checkout';
 
 const AppRoutes = () => (
   <Routes>
@@ -213,10 +213,10 @@ const AppRoutes = () => (
       }
     />
     <Route
-      path="/cart"
+      path="/checkout"
       element={
         <RouteWrapper accessType="ALL">
-          <CartPage />
+          <Checkout />
         </RouteWrapper>
       }
     />

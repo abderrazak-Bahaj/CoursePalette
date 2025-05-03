@@ -94,14 +94,6 @@ const AdminCategoriesViewPage = () => {
     }
   };
 
-  const parseSkills = (skillsStr: string): string[] => {
-    try {
-      return JSON.parse(skillsStr);
-    } catch (e) {
-      return [];
-    }
-  };
-
   return (
     <AdminLayout title={category?.name || 'Category Details'}>
       <div className="container mx-auto px-4 py-8">

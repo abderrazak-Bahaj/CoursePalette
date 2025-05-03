@@ -164,8 +164,10 @@ const ProfilePage = () => {
   const typedUser = user as UserWithStudent;
   const { toast } = useToast();
   const [isEditMode, setIsEditMode] = useState(false);
+
+
   const [interests, setInterests] = useState<string[]>(
-    typedUser?.student?.interests || []
+    (typedUser?.student?.interests) || []
   );
   const [interestInput, setInterestInput] = useState('');
   const [learningPreferences, setLearningPreferences] = useState<string[]>(
@@ -646,9 +648,10 @@ const ProfilePage = () => {
                               </h4>
                             </div>
                             <div className="flex flex-wrap gap-2 pl-6">
-                              {typedUser?.student?.interests &&
-                              typedUser.student.interests.length > 0 ? (
-                                typedUser.student.interests.map(
+                              {console.log("typedUser",typedUser?.student?.interests)}
+                              
+                              {typedUser?.student?.interests?.length > 0 ? (
+                                typedUser?.student?.interests?.map(
                                   (interest, index) => (
                                     <Badge key={index} variant="outline">
                                       {interest}
