@@ -4,6 +4,7 @@ export * from './categoryService';
 export * from './courseService';
 export * from './enrollmentService';
 export * from './lessonService';
+export * from './paymentService';
 export * from './resourceService';
 export * from './certificateService';
 export * from './assignmentService';

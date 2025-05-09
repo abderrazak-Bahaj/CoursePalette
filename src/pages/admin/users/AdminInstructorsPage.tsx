@@ -98,7 +98,7 @@ interface NewTeacherData {
   address?: string;
 }
 
-const InstructorsPage = () => {
+const AdminInstructorsPage = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -542,4 +542,4 @@ const InstructorsPage = () => {
   );
 };
 
-export default InstructorsPage;
+export default AdminInstructorsPage;

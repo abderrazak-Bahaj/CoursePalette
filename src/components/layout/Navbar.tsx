@@ -22,9 +22,11 @@ import {
   Users,
   PieChart,
   BookText,
+  ShoppingCart,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/hooks/useAuth';
+import { useCart } from '@/contexts/CartContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,6 +35,7 @@ const Navbar = () => {
   const { toast } = useToast();
   const { user, isAuthenticated, logout, isAdmin, isStudent, isTeacher } =
     useAuth();
+  const { items } = useCart();
 
   const handleLogout = () => {
     logout();
@@ -110,7 +113,15 @@ const Navbar = () => {
 
           <div className="flex items-center">
             {isAuthenticated ? (
-              <div className="flex items-center space-x-3">
+              <>
+                <Link to="/checkout" className="relative">
+                  <ShoppingCart className="h-6 w-6" />
+                  {items.length > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {items.length}
+                    </span>
+                  )}
+                </Link>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Avatar className="cursor-pointer">
@@ -180,7 +191,7 @@ const Navbar = () => {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </div>
+              </>
             ) : (
               <div className="flex items-center space-x-3">
                 {!isMobile && (
@@ -276,6 +287,16 @@ const Navbar = () => {
                 <Award size={20} className="mr-2" />
                 Certificates
               </Link>
+              {isAuthenticated && (
+                <Link
+                  to="/Checkout"
+                  className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <ShoppingCart size={20} className="mr-2" />
+                  Cart ({items.length})
+                </Link>
+              )}
               {isAuthenticated ? (
                 <>
                   <Link
