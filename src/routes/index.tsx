@@ -42,6 +42,10 @@ import AdminInstructorsPage from '@/pages/admin/users/AdminInstructorsPage';
 import AdminCategoriesPage from '@/pages/admin/categories/AdminCategoriesPage';
 import AdminCategoriesViewPage from '@/pages/admin/categories/AdminCategoriesViewPage';
 import Checkout from '@/pages/public/checkout/Checkout';
+import StudentInvoicesPage from '@/pages/user/invoices/StudentInvoicesPage';
+import TeacherInvoicesPage from '@/pages/user/invoices/TeacherInvoicesPage';
+import AdminInvoicesPage from '@/pages/admin/invoices/AdminInvoicesPage';
+import InvoiceDetailPage from '@/pages/user/invoices/InvoiceDetailPage';
 
 const AppRoutes = () => (
   <Routes>
@@ -381,6 +385,44 @@ const AppRoutes = () => (
       element={
         <RouteWrapper accessType="ADMIN">
           <ReportsPage />
+        </RouteWrapper>
+      }
+    />
+
+
+    <Route
+      path="/invoices/:id"
+      element={
+        <RouteWrapper accessType="STUDENT">
+          <InvoiceDetailPage />
+        </RouteWrapper>
+      }
+    />
+
+    {/* Teacher Invoice Routes */}
+    <Route
+      path="/admin/c"
+      element={
+        <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
+          <TeacherInvoicesPage />
+        </RouteWrapper>
+      }
+    />
+    <Route
+      path="/admin/invoices/:id"
+      element={
+        <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
+          <InvoiceDetailPage />
+        </RouteWrapper>
+      }
+    />
+
+    {/* Admin Invoice Routes */}
+    <Route
+      path="/admin/all-invoices"
+      element={
+        <RouteWrapper accessType="ADMIN">
+          <AdminInvoicesPage />
         </RouteWrapper>
       }
     />

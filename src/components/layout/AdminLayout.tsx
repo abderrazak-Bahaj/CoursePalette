@@ -11,6 +11,7 @@ import {
   UsersRound,
   User,
   Lock,
+  File,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -83,6 +84,7 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
   ];
 
   const accountLinks = [
+    { to: '/admin/invoices', label: 'Invoices', icon: <File /> },
     { to: '/admin/profile', label: 'Profile', icon: <User /> },
   ];
 

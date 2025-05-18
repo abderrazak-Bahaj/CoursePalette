@@ -1,6 +1,6 @@
 import { toast } from '@/hooks/use-toast';
 
-const API_BASE_URL =
+export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
 
 interface ApiOptions {
@@ -55,7 +55,6 @@ export const apiClient = async (
   const requestOptions: RequestInit = {
     method,
     headers,
-    credentials: 'include',
   };
 
   // Add body for non-GET requests

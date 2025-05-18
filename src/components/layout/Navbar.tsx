@@ -23,10 +23,15 @@ import {
   PieChart,
   BookText,
   ShoppingCart,
+  LayoutDashboard,
+  Receipt,
+  Settings,
+  LogOut,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/contexts/CartContext';
+import { Separator } from '@/components/ui/separator';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,6 +53,49 @@ const Navbar = () => {
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const UserMenuContent = () => {
+    if (!user) return null;
+
+    return (
+      <div className="w-56">
+        <div className="px-4 py-2">
+          <p className="text-sm font-medium">{user.name}</p>
+          <p className="text-xs text-gray-500">{user.email}</p>
+        </div>
+        <Separator />
+        <div className="py-2">
+          <DropdownMenuItem onClick={() => navigate('/profile')}>
+            <User className="mr-2 h-4 w-4" />
+            <span>Profile</span>
+          </DropdownMenuItem>
+          {user.role === 'STUDENT' && (
+            <>
+              <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                <span>Dashboard</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/certificates')}>
+                <Award className="mr-2 h-4 w-4" />
+                <span>Certificates</span>
+              </DropdownMenuItem>
+            </>
+          )}
+          <DropdownMenuItem onClick={() => navigate('/settings')}>
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Settings</span>
+          </DropdownMenuItem>
+        </div>
+        <Separator />
+        <div className="py-2">
+          <DropdownMenuItem onClick={handleLogout}>
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Logout</span>
+          </DropdownMenuItem>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -131,64 +179,8 @@ const Navbar = () => {
                       </AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    {isStudent && (
-                      <>
-                        <DropdownMenuItem onClick={() => navigate('/profile')}>
-                          <User className="mr-2 h-4 w-4" />
-                          <span>Profile</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => navigate('/dashboard')}
-                        >
-                          <BookOpen className="mr-2 h-4 w-4" />
-                          <span>My Learning</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => navigate('/certificates')}
-                        >
-                          <Award className="mr-2 h-4 w-4" />
-                          <span>Certificates</span>
-                        </DropdownMenuItem>
-                      </>
-                    )}
-
-                    {!isStudent && (
-                      <>
-                        <DropdownMenuItem
-                          onClick={() => navigate('/admin/profile')}
-                        >
-                          <User className="mr-2 h-4 w-4" />
-                          <span>Profile</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => navigate('/admin/courses')}
-                        >
-                          <BookText className="mr-2 h-4 w-4" />
-                          <span>Admin Dashboard</span>
-                        </DropdownMenuItem>
-                        {isAdmin && (
-                          <>
-                            <DropdownMenuItem
-                              onClick={() => navigate('/admin/students')}
-                            >
-                              <Users className="mr-2 h-4 w-4" />
-                              <span>Students</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => navigate('/admin/reports')}
-                            >
-                              <PieChart className="mr-2 h-4 w-4" />
-                              <span>Reports</span>
-                            </DropdownMenuItem>
-                          </>
-                        )}
-                      </>
-                    )}
-                    <DropdownMenuItem onClick={handleLogout}>
-                      <LogIn className="mr-2 h-4 w-4" />
-                      <span>Logout</span>
-                    </DropdownMenuItem>
+                  <DropdownMenuContent>
+                    <UserMenuContent />
                   </DropdownMenuContent>
                 </DropdownMenu>
               </>
@@ -260,7 +252,7 @@ const Navbar = () => {
                 className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
                 onClick={() => setIsOpen(false)}
               >
-                <BookOpen size={20} className="mr-2" />
+                <BookText size={20} className="mr-2" />
                 Categories
               </Link>
               <Link
@@ -272,106 +264,30 @@ const Navbar = () => {
                 Blog
               </Link>
               <Link
-                to="/instructors"
-                className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                onClick={() => setIsOpen(false)}
-              >
-                <Users size={20} className="mr-2" />
-                Instructors
-              </Link>
-              <Link
-                to="/certificates"
+                to="/check-certificate"
                 className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
                 onClick={() => setIsOpen(false)}
               >
                 <Award size={20} className="mr-2" />
-                Certificates
+                Check Certificate
               </Link>
-              {isAuthenticated && (
-                <Link
-                  to="/Checkout"
-                  className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <ShoppingCart size={20} className="mr-2" />
-                  Cart ({items.length})
-                </Link>
-              )}
-              {isAuthenticated ? (
-                <>
-                  <Link
-                    to="/dashboard"
-                    className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <User size={20} className="mr-2" />
-                    My Learning
-                  </Link>
-                  <Link
-                    to="/profile"
-                    className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <User size={20} className="mr-2" />
-                    Profile
-                  </Link>
-                  {user?.role !== 'STUDENT' && (
-                    <>
-                      <Link
-                        to="/admin/courses"
-                        className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <BookText size={20} className="mr-2" />
-                        Admin Dashboard
-                      </Link>
-                      <Link
-                        to="/students"
-                        className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <Users size={20} className="mr-2" />
-                        Students
-                      </Link>
-                      <Link
-                        to="/reports"
-                        className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <PieChart size={20} className="mr-2" />
-                        Reports
-                      </Link>
-                    </>
-                  )}
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start"
-                    onClick={() => {
-                      handleLogout();
-                      setIsOpen(false);
-                    }}
-                  >
-                    <LogIn size={20} className="mr-2" />
-                    Logout
-                  </Button>
-                </>
-              ) : (
+              {!isAuthenticated && (
                 <>
                   <Link
                     to="/login"
-                    className="w-full"
+                    className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
                     onClick={() => setIsOpen(false)}
                   >
-                    <Button variant="outline" className="w-full">
-                      Log In
-                    </Button>
+                    <LogIn size={20} className="mr-2" />
+                    Log In
                   </Link>
                   <Link
                     to="/register"
-                    className="w-full"
+                    className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
                     onClick={() => setIsOpen(false)}
                   >
-                    <Button className="w-full">Sign Up</Button>
+                    <User size={20} className="mr-2" />
+                    Sign Up
                   </Link>
                 </>
               )}

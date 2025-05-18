@@ -47,6 +47,7 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { userService } from '@/services/api/userService';
 import AvatarProfile from '@/components/profile/AvatarProfile';
+import StudentInvoicesPage from './invoices/StudentInvoicesPage';
 
 type StudentData = {
   student_id?: string;
@@ -296,6 +297,7 @@ const ProfilePage = () => {
           <TabsList className="mb-4">
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="security">Security</TabsTrigger>
+            <TabsTrigger value="invoices">Invoices</TabsTrigger>
             {/*             <TabsTrigger value="preferences">Preferences</TabsTrigger>
              */}{' '}
           </TabsList>
@@ -702,6 +704,10 @@ const ProfilePage = () => {
 
           <TabsContent value="security">
             <SecuritySettings />
+          </TabsContent>
+
+          <TabsContent value="invoices">
+            <StudentInvoicesPage />
           </TabsContent>
 
           {/*  <TabsContent value="preferences">
