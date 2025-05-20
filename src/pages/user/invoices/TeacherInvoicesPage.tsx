@@ -12,6 +12,7 @@ import { Loader2 } from 'lucide-react';
 import { PaginationMeta } from '@/services/pagination/PaginationService';
 import { useToast } from '@/components/ui/use-toast';
 import { useQuery } from '@tanstack/react-query';
+import { AdminLayout } from '@/components';
 
 const statusColors = {
   PENDING: 'bg-yellow-100 text-yellow-800',
@@ -54,7 +55,7 @@ const TeacherInvoicesPage: React.FC = () => {
 
       const response = await invoiceApi.getTeacherInvoices(filters);
       setMeta(response.meta);
-      return response.data;
+      return response.invoices;
     }
   });
 
@@ -78,11 +79,7 @@ const TeacherInvoicesPage: React.FC = () => {
       await invoiceApi.printInvoice(invoiceId);
     } catch (error) {
       console.error('Error printing invoice:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to print invoice. Please try again.',
-        variant: 'destructive',
-      });
+     
     }
   };
 
@@ -95,7 +92,8 @@ const TeacherInvoicesPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto py-8">
+   <AdminLayout>
+     <div className="container mx-auto py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-4">Invoices</h1>
         
@@ -171,6 +169,7 @@ const TeacherInvoicesPage: React.FC = () => {
         )}
       </div>
     </div>
+   </AdminLayout>
   );
 };
 

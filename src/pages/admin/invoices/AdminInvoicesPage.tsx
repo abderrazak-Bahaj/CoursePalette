@@ -14,9 +14,10 @@ import { Download } from 'lucide-react';
 import { invoiceApi, Invoice, InvoiceFilters } from '@/services/api/invoice';
 import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
+import { AdminLayout } from '@/components';
 
 export default function AdminInvoicesPage() {
-  const [status, setStatus] = useState<string>('');
+  const [status, setStatus] = useState<string>('ALL');
   const [dateRange, setDateRange] = useState({
     from: addDays(new Date(), -30),
     to: new Date(),
@@ -25,9 +26,10 @@ export default function AdminInvoicesPage() {
 
   const { data: invoices, isLoading, error } = useQuery<Invoice[]>({
     queryKey: ['adminInvoices', status, dateRange],
+    retry: false,
     queryFn: async () => {
       const filters: InvoiceFilters = {
-        status: status || undefined,
+        status: status === 'ALL' ? undefined : status,
         from: dateRange.from.toISOString(),
         to: dateRange.to.toISOString(),
       };
@@ -35,6 +37,7 @@ export default function AdminInvoicesPage() {
       return response.invoices;
     }
   });
+  
 
 
   const calculateTotalRevenue = () => {
@@ -47,29 +50,46 @@ export default function AdminInvoicesPage() {
       }, 0);
   };
 
-  const handleExportCSV = async () => {
-    try {
-      const filters: InvoiceFilters = {
-        status: status || undefined,
-        from: dateRange.from.toISOString(),
-        to: dateRange.to.toISOString(),
-      };
-      const blob = await invoiceApi.exportInvoices(filters);
-      const url = window.URL.createObjectURL(new Blob([blob]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `invoices-${new Date().toISOString()}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error('Error exporting invoices:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to export invoices. Please try again.',
-        variant: 'destructive',
-      });
-    }
+  const handleExportCSV = () => {
+    if (!invoices) return;
+
+    // Define CSV headers
+    const headers = [
+      'Invoice Number',
+      'Date',
+      'Customer',
+      'Status',
+      'Subtotal',
+      'Tax',
+      'Total'
+    ];
+
+    // Convert invoices to CSV rows
+    const rows = invoices.map(invoice => [
+      invoice.invoice_number,
+      new Date(invoice.created_at).toLocaleDateString(),
+      invoice.user?.name || 'N/A',
+      invoice.status,
+      invoice.subtotal,
+      invoice.tax,
+      invoice.total
+    ]);
+
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.join(','))
+    ].join('\n');
+
+    // Create and download the file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `invoices-${new Date().toISOString()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
   };
 
   const handlePrint = async (invoiceId: string) => {
@@ -77,11 +97,6 @@ export default function AdminInvoicesPage() {
       await invoiceApi.printInvoice(invoiceId);
     } catch (error) {
       console.error('Error printing invoice:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to print invoice. Please try again.',
-        variant: 'destructive',
-      });
     }
   };
 
@@ -94,7 +109,8 @@ export default function AdminInvoicesPage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
+   <AdminLayout>
+     <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">All Invoices</h1>
         <div className="flex items-center space-x-4">
@@ -107,7 +123,7 @@ export default function AdminInvoicesPage() {
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All</SelectItem>
+              <SelectItem value="ALL">All</SelectItem>
               <SelectItem value="PENDING">Pending</SelectItem>
               <SelectItem value="PAID">Paid</SelectItem>
               <SelectItem value="FAILED">Failed</SelectItem>
@@ -175,5 +191,6 @@ export default function AdminInvoicesPage() {
         />
       )}
     </div>
+   </AdminLayout>
   );
 } 

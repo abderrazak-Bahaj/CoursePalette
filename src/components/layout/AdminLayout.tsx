@@ -12,6 +12,7 @@ import {
   User,
   Lock,
   File,
+  Files,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -71,10 +72,15 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
     { to: '/admin/lessons', label: 'Lessons', icon: <BookText /> },
   ];
 
+  const newink =  (user?.role === 'ADMIN')? 
+  { to: '/admin/all-invoices', label: 'All Invoices', icon: <Files /> } :  
+  { to: '/admin/invoices', label: 'Invoices', icon: <File /> }
+
   const adminLinks = [
     { to: '/admin/instructors', label: 'Instructors', icon: <UsersRound /> },
     { to: '/admin/students', label: 'Students', icon: <Users /> },
     { to: '/admin/categories', label: 'Categories', icon: <FolderKanban /> },
+    newink
 /*     { to: '/admin/reports', label: 'Reports', icon: <BarChart3 /> },
  */  ];
 
@@ -84,7 +90,6 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
   ];
 
   const accountLinks = [
-    { to: '/admin/invoices', label: 'Invoices', icon: <File /> },
     { to: '/admin/profile', label: 'Profile', icon: <User /> },
   ];
 

@@ -401,7 +401,7 @@ const AppRoutes = () => (
 
     {/* Teacher Invoice Routes */}
     <Route
-      path="/admin/c"
+      path="/admin/invoices"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
           <TeacherInvoicesPage />

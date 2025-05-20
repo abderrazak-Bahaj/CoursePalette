@@ -113,9 +113,7 @@ const TeacherProfileInformation = () => {
     }
   });
 
-  const onSubmit = (data: TeacherFormValues) => {
-    updateProfile(data);
-  };
+  const onSubmit = (data: TeacherFormValues) => updateProfile(data)
 
   const toggleEditMode = () => {
     if (isEditMode) {
@@ -523,8 +521,8 @@ const TeacherProfileInformation = () => {
                   {user.teacher.certifications.map((cert, index) => (
                     <div key={index} className="p-4 border rounded-md">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <ViewModeField label="Certification" value={cert} />
-                        <ViewModeField label="Year" value={cert?.year?.toString()} />
+                        <ViewModeField label="Certification" value={cert.name} />
+                        <ViewModeField label="Year" value={cert.year?.toString()} />
                       </div>
                     </div>
                   ))}
