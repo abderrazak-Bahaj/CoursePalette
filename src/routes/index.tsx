@@ -32,9 +32,10 @@ import AdminCoursesPage from '@/pages/admin/courses/AdminCoursesPage';
 import AdminLessonsPage from '@/pages/admin/courses/AdminLessonsPage';
 import CreateLessonPage from '@/pages/admin/courses/CreateLessonPage';
 import LessonDetailPage from '@/pages/admin/courses/LessonDetailPage';
+import AdminCourseDetailPage from '@/pages/admin/courses/CourseDetailPage';
 import StudentsPage from '@/pages/admin/users/StudentsPage';
 import ReportsPage from '@/pages/admin/analytics/ReportsPage';
-import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
+import AdminDashboardPage from '@/pages/admin/dashboard';
 import AdminTeacherViewPage from '@/pages/admin/users/AdminTeacherViewPage';
 import AdminStudentsPage from '@/pages/admin/users/AdminStudentsPage';
 import AdminStudentViewPage from '@/pages/admin/users/AdminStudentViewPage';
@@ -69,7 +70,7 @@ const AppRoutes = () => (
       }
     />
     <Route
-      path="/courses/:id"
+      path="/courses/:courseId"
       element={
         <RouteWrapper accessType="PUBLIC">
           <CourseDetailPage />
@@ -279,6 +280,14 @@ const AppRoutes = () => (
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
           <AdminCoursesPage />
+        </RouteWrapper>
+      }
+    />
+    <Route
+      path="/admin/courses/:courseId"
+      element={
+        <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
+          <AdminCourseDetailPage />
         </RouteWrapper>
       }
     />

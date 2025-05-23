@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   BookText,
   LayoutDashboard,
@@ -30,6 +30,7 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
 } from '@/components/ui/sidebar';
+import { cn } from '@/lib/utils';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -39,6 +40,7 @@ interface AdminLayoutProps {
 const AdminLayout = ({ children, title }: AdminLayoutProps) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
 
   const handleLogout = async () => {
@@ -72,17 +74,16 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
     { to: '/admin/lessons', label: 'Lessons', icon: <BookText /> },
   ];
 
-  const newink =  (user?.role === 'ADMIN')? 
-  { to: '/admin/all-invoices', label: 'All Invoices', icon: <Files /> } :  
-  { to: '/admin/invoices', label: 'Invoices', icon: <File /> }
+  const newink = (user?.role === 'ADMIN')
+    ? { to: '/admin/all-invoices', label: 'All Invoices', icon: <Files /> }
+    : { to: '/admin/invoices', label: 'Invoices', icon: <File /> };
 
   const adminLinks = [
     { to: '/admin/instructors', label: 'Instructors', icon: <UsersRound /> },
     { to: '/admin/students', label: 'Students', icon: <Users /> },
     { to: '/admin/categories', label: 'Categories', icon: <FolderKanban /> },
     newink
-/*     { to: '/admin/reports', label: 'Reports', icon: <BarChart3 /> },
- */  ];
+  ];
 
   const mainLinks = [
     ...baseLinks,
@@ -93,32 +94,49 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
     { to: '/admin/profile', label: 'Profile', icon: <User /> },
   ];
 
+  const isActive = (path: string) => {
+    if (path === '/admin/dashboard') {
+      return location.pathname === path;
+    }
+    return location.pathname.startsWith(path);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-background">
       <SidebarProvider>
         <div className="flex min-h-screen w-full">
-          <Sidebar variant="inset">
-            <SidebarHeader>
-              <div className="flex items-center gap-2 px-4 py-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
+          <Sidebar variant="inset" className="border-r bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-slate-100">
+            <SidebarHeader className="border-b border-slate-800/50">
+              <div className="flex items-center gap-2 px-4 py-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
                   <BookText className="h-4 w-4 text-primary-foreground" />
                 </div>
-                <span className="text-lg font-bold">ELearning Admin</span>
+                <div>
+                  <span className="text-sm font-semibold tracking-tight">ELearning</span>
+                  <p className="text-[10px] text-slate-400">Admin Portal</p>
+                </div>
               </div>
             </SidebarHeader>
-            <SidebarContent>
+            <SidebarContent className="px-2 py-3">
               <SidebarGroup>
-                <SidebarGroupLabel>Main Navigation</SidebarGroupLabel>
-                <SidebarMenu>
+                <SidebarGroupLabel className="px-2 text-[10px] font-medium text-slate-400">
+                  Main Navigation
+                </SidebarGroupLabel>
+                <SidebarMenu className="mt-1 space-y-0.5">
                   {mainLinks.map(({ to, label, icon }) => (
                     <SidebarMenuItem key={to}>
                       <SidebarMenuButton asChild tooltip={label}>
                         <a
                           href={to}
                           onClick={(e) => handleClickLink(e, to)}
-                          className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                          className={cn(
+                            "flex items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
+                            "hover:bg-white/10 hover:text-slate-100",
+                            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-700",
+                            isActive(to) && "bg-white/10 text-slate-100 border-l-2 border-primary"
+                          )}
                         >
-                          {icon}
+                          <span className={cn("text-slate-400", isActive(to) && "text-primary")}>{icon}</span>
                           <span>{label}</span>
                         </a>
                       </SidebarMenuButton>
@@ -127,26 +145,41 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
                 </SidebarMenu>
               </SidebarGroup>
 
-              <SidebarGroup>
-                <SidebarGroupLabel> Account Settings</SidebarGroupLabel>
-                <SidebarMenu>
-                  {accountLinks.map(({ to, label, icon, children }) => (
+              <SidebarGroup className="mt-4">
+                <SidebarGroupLabel className="px-2 text-[10px] font-medium text-slate-400">
+                  Account Settings
+                </SidebarGroupLabel>
+                <SidebarMenu className="mt-1 space-y-0.5">
+                  {accountLinks.map(({ to, label, icon }) => (
                     <SidebarMenuItem key={to}>
                       <SidebarMenuButton asChild tooltip={label}>
                         <a
                           href={to}
                           onClick={(e) => handleClickLink(e, to)}
-                          className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100"
+                          className={cn(
+                            "flex items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
+                            "hover:bg-white/10 hover:text-slate-100",
+                            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-700",
+                            isActive(to) && "bg-white/10 text-slate-100 border-l-2 border-primary"
+                          )}
                         >
-                          {icon}
+                          <span className={cn("text-slate-400", isActive(to) && "text-primary")}>{icon}</span>
                           <span>{label}</span>
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
                   <SidebarMenuItem>
-                    <SidebarMenuButton onClick={handleLogout} tooltip="Logout">
-                      <LogOut />
+                    <SidebarMenuButton
+                      onClick={handleLogout}
+                      tooltip="Logout"
+                      className={cn(
+                        "flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                        "hover:bg-red-500/10 hover:text-red-400",
+                        "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-700"
+                      )}
+                    >
+                      <LogOut className="h-3.5 w-3.5" />
                       <span>Logout</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -154,10 +187,19 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
               </SidebarGroup>
             </SidebarContent>
 
-            <SidebarFooter>
-              <div className="p-4 text-xs text-muted-foreground">
-                <p>Logged in as: {user?.name}</p>
-                <p className="mt-1">Role: {user?.role}</p>
+            <SidebarFooter className="border-t border-slate-800/50">
+              <div className="bg-white p-3 rounded-t-lg">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20">
+                    <span className="text-xs font-medium text-primary">
+                      {user?.name?.charAt(0)}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-900">{user?.name}</p>
+                    <p className="text-[10px] text-slate-500 capitalize">{user?.role?.toLowerCase()}</p>
+                  </div>
+                </div>
               </div>
             </SidebarFooter>
           </Sidebar>

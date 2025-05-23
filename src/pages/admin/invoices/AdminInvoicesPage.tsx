@@ -15,6 +15,7 @@ import { invoiceApi, Invoice, InvoiceFilters } from '@/services/api/invoice';
 import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
 import { AdminLayout } from '@/components';
+import WrapperLoading from '@/components/ui/wrapper-loading';
 
 export default function AdminInvoicesPage() {
   const [status, setStatus] = useState<string>('ALL');
@@ -24,7 +25,11 @@ export default function AdminInvoicesPage() {
   });
   const { toast } = useToast();
 
-  const { data: invoices, isLoading, error } = useQuery<Invoice[]>({
+  const {
+    data: invoices,
+    isLoading,
+    error,
+  } = useQuery<Invoice[]>({
     queryKey: ['adminInvoices', status, dateRange],
     retry: false,
     queryFn: async () => {
@@ -35,17 +40,18 @@ export default function AdminInvoicesPage() {
       };
       const response = await invoiceApi.getAdminInvoices(filters);
       return response.invoices;
-    }
+    },
   });
-  
-
 
   const calculateTotalRevenue = () => {
     if (!invoices) return 0;
     return invoices
       .filter((invoice) => invoice.status === 'PAID')
       .reduce((sum, invoice) => {
-        const amount = typeof invoice.total === 'string' ? parseFloat(invoice.total) : invoice.total;
+        const amount =
+          typeof invoice.total === 'string'
+            ? parseFloat(invoice.total)
+            : invoice.total;
         return sum + amount;
       }, 0);
   };
@@ -61,24 +67,24 @@ export default function AdminInvoicesPage() {
       'Status',
       'Subtotal',
       'Tax',
-      'Total'
+      'Total',
     ];
 
     // Convert invoices to CSV rows
-    const rows = invoices.map(invoice => [
+    const rows = invoices.map((invoice) => [
       invoice.invoice_number,
       new Date(invoice.created_at).toLocaleDateString(),
       invoice.user?.name || 'N/A',
       invoice.status,
       invoice.subtotal,
       invoice.tax,
-      invoice.total
+      invoice.total,
     ]);
 
     // Combine headers and rows
     const csvContent = [
       headers.join(','),
-      ...rows.map(row => row.join(','))
+      ...rows.map((row) => row.join(',')),
     ].join('\n');
 
     // Create and download the file
@@ -100,97 +106,83 @@ export default function AdminInvoicesPage() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
-      </div>
-    );
-  }
-
   return (
-   <AdminLayout>
-     <div className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">All Invoices</h1>
-        <div className="flex items-center space-x-4">
-          <DateRangePicker
-            date={dateRange}
-            onDateChange={setDateRange}
-          />
-          <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All</SelectItem>
-              <SelectItem value="PENDING">Pending</SelectItem>
-              <SelectItem value="PAID">Paid</SelectItem>
-              <SelectItem value="FAILED">Failed</SelectItem>
-              <SelectItem value="REFUNDED">Refunded</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button onClick={handleExportCSV}>
-            <Download className="w-4 h-4 mr-2" />
-            Export CSV
-          </Button>
+    <AdminLayout>
+      <div className="container mx-auto py-8">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">All Invoices</h1>
+          <div className="flex items-center space-x-4">
+            <DateRangePicker date={dateRange} onDateChange={setDateRange} />
+            <Select value={status} onValueChange={setStatus}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All</SelectItem>
+                <SelectItem value="PENDING">Pending</SelectItem>
+                <SelectItem value="PAID">Paid</SelectItem>
+                <SelectItem value="FAILED">Failed</SelectItem>
+                <SelectItem value="REFUNDED">Refunded</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button onClick={handleExportCSV}>
+              <Download className="w-4 h-4 mr-2" />
+              Export CSV
+            </Button>
+          </div>
         </div>
-      </div>
+        <WrapperLoading isLoading={isLoading} skeletonCount={2} >
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-lg font-semibold mb-2">Total Revenue</h2>
+                <p className="text-2xl font-bold text-green-600">
+                  ${calculateTotalRevenue().toFixed(2)}
+                </p>
+                <p className="text-sm text-gray-500">From paid invoices</p>
+              </div>
+              <div className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-lg font-semibold mb-2">Pending Invoices</h2>
+                <p className="text-2xl font-bold text-yellow-600">
+                  {invoices?.filter((i) => i.status === 'PENDING').length || 0}
+                </p>
+                <p className="text-sm text-gray-500">Awaiting payment</p>
+              </div>
+              <div className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-lg font-semibold mb-2">Failed Invoices</h2>
+                <p className="text-2xl font-bold text-red-600">
+                  {invoices?.filter((i) => i.status === 'FAILED').length || 0}
+                </p>
+                <p className="text-sm text-gray-500">Payment failed</p>
+              </div>
+            </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-2">Total Revenue</h2>
-          <p className="text-2xl font-bold text-green-600">
-            ${calculateTotalRevenue().toFixed(2)}
-          </p>
-          <p className="text-sm text-gray-500">
-            From paid invoices
-          </p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-2">Pending Invoices</h2>
-          <p className="text-2xl font-bold text-yellow-600">
-            {invoices?.filter((i) => i.status === 'PENDING').length || 0}
-          </p>
-          <p className="text-sm text-gray-500">
-            Awaiting payment
-          </p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-2">Failed Invoices</h2>
-          <p className="text-2xl font-bold text-red-600">
-            {invoices?.filter((i) => i.status === 'FAILED').length || 0}
-          </p>
-          <p className="text-sm text-gray-500">
-            Payment failed
-          </p>
-        </div>
+            {error ? (
+              <div className="text-center py-8">
+                <p className="text-red-500">Failed to load invoices</p>
+              </div>
+            ) : !invoices?.length ? (
+              <div className="text-center py-8">
+                <p className="text-gray-500">No invoices found</p>
+              </div>
+            ) : (
+              <InvoiceTable
+                invoices={invoices}
+                meta={{
+                  current_page: 1,
+                  last_page: 1,
+                  per_page: invoices.length,
+                  total: invoices.length,
+                }}
+                onViewDetails={() => {}}
+                onPrint={handlePrint}
+                onPageChange={() => {}}
+                onPageSizeChange={() => {}}
+              />
+            )}
+          </>
+        </WrapperLoading>
       </div>
-
-      {error ? (
-        <div className="text-center py-8">
-          <p className="text-red-500">Failed to load invoices</p>
-        </div>
-      ) : !invoices?.length ? (
-        <div className="text-center py-8">
-          <p className="text-gray-500">No invoices found</p>
-        </div>
-      ) : (
-        <InvoiceTable 
-          invoices={invoices} 
-          meta={{
-            current_page: 1,
-            last_page: 1,
-            per_page: invoices.length,
-            total: invoices.length
-          }}
-          onViewDetails={() => {}}
-          onPrint={handlePrint}
-          onPageChange={() => {}}
-          onPageSizeChange={() => {}}
-        />
-      )}
-    </div>
-   </AdminLayout>
+    </AdminLayout>
   );
-} 
+}

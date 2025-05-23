@@ -17,7 +17,8 @@ import { CourseReviews } from '@/components/course/CourseReviews';
 import { useCart } from '@/contexts/CartContext';
 
 const CourseDetailPage = () => {
-  const { id } = useParams<{ id: string }>();
+  const { courseId: id } = useParams<{ courseId: string }>();
+
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();

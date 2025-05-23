@@ -194,7 +194,7 @@ const AdminCourseList = ({
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem asChild>
                             <Link
-                              to={`/courses/${course.id}`}
+                              to={`/admin/courses/${course.id}`}
                               className="flex items-center"
                             >
                               <Eye className="mr-2 h-4 w-4" />
