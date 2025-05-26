@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Table,
   TableBody,
@@ -16,7 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Eye, Edit, Trash2, MoreHorizontal, Plus } from 'lucide-react';
+import { Eye, Edit, Trash2, MoreHorizontal, PlusCircle, BookOpen } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
@@ -58,6 +58,8 @@ const AdminCourseList = ({
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { isTeacher } = useAuth();
+
+  const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | undefined>(
@@ -202,6 +204,14 @@ const AdminCourseList = ({
                             </Link>
                           </DropdownMenuItem>
                           {isTeacher && (
+                            <> 
+                            <DropdownMenuItem
+                              onClick={() => navigate(`/admin/courses/${course.id}/assignments`)}
+                              className="flex items-center"
+                            >
+                              <BookOpen className="mr-2 h-4 w-4" />
+                              <span>Assignments</span>
+                            </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => handleEdit(course)}
                               className="flex items-center"
@@ -209,6 +219,7 @@ const AdminCourseList = ({
                               <Edit className="mr-2 h-4 w-4" />
                               <span>Edit</span>
                             </DropdownMenuItem>
+                            </>
                           )}
                           <DropdownMenuItem
                             onClick={() => setCourseToDelete(course)}

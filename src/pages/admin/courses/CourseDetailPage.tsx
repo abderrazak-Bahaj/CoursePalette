@@ -107,7 +107,7 @@ const CourseDetailPage = () => {
           </Badge>
         </div>
 
-        {isTeacher && (
+       {/*  {isTeacher && (
           <div className="flex space-x-2">
             <Button onClick={() => navigate(`/admin/courses/${courseId}/edit`)}>
               <Edit className="mr-2 h-4 w-4" />
@@ -118,7 +118,7 @@ const CourseDetailPage = () => {
               Add Lesson
             </Button>
           </div>
-        )}
+        )} */}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">

@@ -25,6 +25,12 @@ import VerifyEmailPage from '@/pages/auth/VerifyEmailPage';
 import DashboardPage from '@/pages/user/DashboardPage';
 import ProfilePage from '@/pages/user/ProfilePage';
 import LessonPage from '@/pages/user/learning/LessonPage';
+import AssignmentPage from '@/pages/user/learning/AssignmentPage';
+import CreateAssignmentPage from '@/pages/admin/courses/CreateAssignmentPage';
+import AssignmentManagementPage from '@/pages/admin/courses/AssignmentManagementPage';
+import SubmissionsReviewPage from '@/pages/admin/courses/SubmissionsReviewPage';
+import SubmissionReviewDetailPage from '@/pages/admin/courses/SubmissionReviewDetailPage';
+import AdminAssignmentsPage from '@/pages/admin/courses/AdminAssignmentsPage';
 import CertificatesPage from '@/pages/user/certificates/CertificatesPage';
 import CertificateDetailPage from '@/pages/user/certificates/CertificateDetailPage';
 import AdminProfilePage from '@/pages/admin/AdminProfilePage';
@@ -242,6 +248,14 @@ const AppRoutes = () => (
       }
     />
     <Route
+      path="/courses/:courseId/assignments/:assignmentId"
+      element={
+        <RouteWrapper accessType="ALL">
+          <AssignmentPage />
+        </RouteWrapper>
+      }
+    />
+    <Route
       path="/certificates"
       element={
         <RouteWrapper accessType="ALL">
@@ -316,7 +330,48 @@ const AppRoutes = () => (
       }
     />
     <Route
-      path="/students"
+      path="/admin/courses/:courseId/assignments"
+      element={
+        <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
+          <AssignmentManagementPage />
+        </RouteWrapper>
+      }
+    />
+    <Route
+        path="/admin/courses/:courseId/assignments/create"
+      element={
+        <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
+          <CreateAssignmentPage />
+        </RouteWrapper>
+      }
+    />
+    <Route
+      path="/admin/courses/:courseId/assignments/:assignmentId/edit"
+      element={
+        <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
+          <CreateAssignmentPage />
+        </RouteWrapper>
+      }
+    />
+    <Route
+      path="/admin/courses/:courseId/assignments/:assignmentId/submissions"
+      element={
+        <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
+          <SubmissionsReviewPage />
+        </RouteWrapper>
+      }
+    />
+    <Route
+      path="/admin/courses/:courseId/assignments/:assignmentId/submissions/:submissionId/review"
+      element={
+        <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
+          <SubmissionReviewDetailPage />
+        </RouteWrapper>
+      }
+    />
+
+    <Route
+      path="/admin/students"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
           <StudentsPage />

@@ -3,7 +3,7 @@ import { get, post } from './apiClient';
 interface SubmissionData {
   status?: string;
   answers?: Array<{
-    question_id: number;
+    question_id: string;
     answer: string;
   }>;
 }
