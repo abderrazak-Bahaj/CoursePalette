@@ -50,6 +50,10 @@ export const courseService = {
     return put(`/courses/${id}/unpublish`);
   },
 
+  getCourseLessons: (courseId: string, params?: Record<string, string>) => {
+    return get(`/courses/${courseId}/lessons`, { params });
+  },
+
   getAssignment: (courseId: string, assignmentId: string) => {
     return get(`/courses/${courseId}/assignments/${assignmentId}`);
   },

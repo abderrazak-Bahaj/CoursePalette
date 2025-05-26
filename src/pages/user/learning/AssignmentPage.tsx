@@ -221,8 +221,12 @@ const AssignmentPage = () => {
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Assignment Not Found</h1>
             <p className="mb-6">The assignment you are looking for does not exist.</p>
-            <Button asChild>
-              <Link to={`/courses/${courseId}/learn`}>Back to Course</Link>
+            <Button onClick={(e) => {
+                e.preventDefault();
+                navigate(-1);
+              }}>
+              
+              Back to Course
             </Button>
           </div>
         </div>
@@ -237,13 +241,16 @@ const AssignmentPage = () => {
         <div className="bg-white border-b px-4 py-4">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between">
-              <Link
-                to={`/courses/${courseId}/learn`}
-                className="flex items-center text-gray-700 hover:text-course-blue transition-colors"
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate(-1);
+                }}
+                className="flex bg-gray-50 hover:bg-gray-100 items-center text-gray-700 hover:text-course-blue  cursor-pointer transition-colors"
               >
                 <ChevronLeft className="h-5 w-5 mr-1" />
                 <span>Back to Course</span>
-              </Link>
+              </Button>
               
               {timeRemaining !== null && !isSubmitted && (
                 <div className={`flex items-center space-x-2 ${isOverdue ? 'text-red-500' : 'text-gray-600'}`}>

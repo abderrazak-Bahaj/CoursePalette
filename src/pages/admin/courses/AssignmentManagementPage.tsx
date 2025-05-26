@@ -169,7 +169,7 @@ const AssignmentManagementPage = () => {
             </div>
             <Button
               onClick={() =>
-                navigate(`/courses/${courseId}/assignments/create`)
+                navigate(`/admin/courses/${courseId}/assignments/create`)
               }
               className="flex items-center gap-2"
             >

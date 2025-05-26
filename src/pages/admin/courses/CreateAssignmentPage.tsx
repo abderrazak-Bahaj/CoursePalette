@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -52,14 +52,16 @@ interface AssignmentFormData {
   due_date: string;
   max_score: number;
   status: 'DRAFT' | 'PUBLISHED';
+  lesson_id: string | null;
   questions: AssignmentQuestion[];
 }
 
 const CreateAssignmentPage = () => {
-  const { courseId } = useParams<{ courseId: string }>();
+  const { courseId, assignmentId } = useParams<{ courseId: string; assignmentId?: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const isEditMode = !!assignmentId;
 
   const [formData, setFormData] = useState<AssignmentFormData>({
     title: '',
@@ -69,6 +71,7 @@ const CreateAssignmentPage = () => {
     due_date: '',
     max_score: 100,
     status: 'DRAFT',
+    lesson_id: null,
     questions: [],
   });
 
@@ -77,24 +80,68 @@ const CreateAssignmentPage = () => {
     queryFn: async () => await courseService.getCourse(courseId),
   });
 
+  const { data: lessonsData, isLoading: lessonsLoading } = useQuery({
+    queryKey: ['course-lessons', courseId],
+    queryFn: async () => await courseService.getCourseLessons(courseId!),
+    enabled: !!courseId,
+  });
+
+  const { data: assignmentData, isLoading: assignmentLoading } = useQuery({
+    queryKey: ['assignment', courseId, assignmentId],
+    queryFn: async () => await courseService.getAssignment(courseId!, assignmentId!),
+    enabled: isEditMode && !!courseId && !!assignmentId,
+  });
+
   const createAssignmentMutation = useMutation({
     mutationFn: (data: AssignmentFormData) =>
-      courseService.createAssignment(courseId!, data),
+      isEditMode 
+        ? courseService.updateAssignment(courseId!, assignmentId!, data)
+        : courseService.createAssignment(courseId!, data),
     onSuccess: () => {
       toast({
-        title: 'Assignment Created',
-        description: 'Assignment has been created successfully.',
+        title: isEditMode ? 'Assignment Updated' : 'Assignment Created',
+        description: `Assignment has been ${isEditMode ? 'updated' : 'created'} successfully.`,
       });
-      navigate(`/courses/${courseId}/assignments`);
+      navigate(`/admin/courses/${courseId}/assignments`);
     },
     onError: () => {
       toast({
-        title: 'Creation Failed',
-        description: 'Failed to create assignment. Please try again.',
+        title: isEditMode ? 'Update Failed' : 'Creation Failed',
+        description: `Failed to ${isEditMode ? 'update' : 'create'} assignment. Please try again.`,
         variant: 'destructive',
       });
     },
   });
+
+  // Populate form data when assignment data is loaded (edit mode)
+  useEffect(() => {
+    if (isEditMode && assignmentData?.assignment) {
+      const assignment = assignmentData.assignment;
+      setFormData({
+        title: assignment.title || '',
+        description: assignment.description || '',
+        instructions: assignment.instructions || '',
+        type: assignment.type || 'QUIZ',
+        due_date: assignment.due_date ? new Date(assignment.due_date).toISOString().slice(0, 16) : '',
+        max_score: assignment.max_score || 100,
+        status: assignment.status || 'DRAFT',
+        lesson_id: assignment.lesson_id || null,
+        questions: assignment.questions?.map((q: any) => ({
+          id: q.id,
+          question: q.question,
+          type: q.type,
+          points: q.points,
+          order: q.order,
+          options: q.options?.map((opt: any) => ({
+            id: opt.id,
+            text: opt.text,
+            is_correct: opt.is_correct,
+            order: opt.order,
+          })) || [],
+        })) || [],
+      });
+    }
+  }, [isEditMode, assignmentData]);
 
   const handleInputChange = (field: keyof AssignmentFormData, value: any) => {
     setFormData(prev => ({
@@ -254,6 +301,16 @@ const CreateAssignmentPage = () => {
       ...formData,
       status,
       max_score: formData.questions.reduce((sum, q) => sum + q.points, 0),
+      questions: formData.questions.map(question => {
+        // Only include options for question types that need them
+        if (question.type === 'MULTIPLE_CHOICE' || question.type === 'TRUE_FALSE') {
+          return question;
+        } else {
+          // Remove options for ESSAY and SHORT_ANSWER questions
+          const { options, ...questionWithoutOptions } = question;
+          return questionWithoutOptions;
+        }
+      }),
     };
 
     createAssignmentMutation.mutate(submissionData);
@@ -278,8 +335,8 @@ const CreateAssignmentPage = () => {
   const course = courseData?.course || null;
 
   return (
-    <AdminLayout title="Create Assignment">
-      <WrapperLoading isLoading={courseLoading}>
+    <AdminLayout title={isEditMode ? "Edit Assignment" : "Create Assignment"}>
+      <WrapperLoading isLoading={courseLoading || lessonsLoading || (isEditMode && assignmentLoading)}>
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
@@ -293,7 +350,7 @@ const CreateAssignmentPage = () => {
             Back
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">Create Assignment</h1>
+            <h1 className="text-2xl font-bold">{isEditMode ? 'Edit Assignment' : 'Create Assignment'}</h1>
             <p className="text-muted-foreground">
               Course: {course?.title}
             </p>
@@ -337,6 +394,26 @@ const CreateAssignmentPage = () => {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="lesson">Lesson (Optional)</Label>
+                <Select
+                  value={formData.lesson_id || 'no-lesson'}
+                  onValueChange={(value) => handleInputChange('lesson_id', value === 'no-lesson' ? null : value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a lesson (optional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="no-lesson">No lesson</SelectItem>
+                    {lessonsData?.lessons?.map((lesson: any) => (
+                      <SelectItem key={lesson.id} value={lesson.id}>
+                        {lesson.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
@@ -438,7 +515,7 @@ const CreateAssignmentPage = () => {
                 className="flex items-center gap-2"
               >
                 <Save className="h-4 w-4" />
-                Save as Draft
+                {isEditMode ? 'Update as Draft' : 'Save as Draft'}
               </Button>
               <Button
                 onClick={() => handleSubmit('PUBLISHED')}
@@ -446,7 +523,7 @@ const CreateAssignmentPage = () => {
                 className="flex items-center gap-2"
               >
                 <Eye className="h-4 w-4" />
-                Publish Assignment
+                {isEditMode ? 'Update & Publish' : 'Publish Assignment'}
               </Button>
             </div>
           </div>
@@ -512,7 +589,26 @@ const QuestionEditor = ({
               <Label>Type</Label>
               <Select
                 value={question.type}
-                onValueChange={(value) => onUpdate(questionIndex, 'type', value)}
+                onValueChange={(value) => {
+                  onUpdate(questionIndex, 'type', value);
+                  // Set appropriate options based on question type
+                  if (value === 'MULTIPLE_CHOICE') {
+                    onUpdate(questionIndex, 'options', [
+                      { text: '', is_correct: true, order: 1 },
+                      { text: '', is_correct: false, order: 2 },
+                      { text: '', is_correct: false, order: 3 },
+                      { text: '', is_correct: false, order: 4 },
+                    ]);
+                  } else if (value === 'TRUE_FALSE') {
+                    onUpdate(questionIndex, 'options', [
+                      { text: 'True', is_correct: true, order: 1 },
+                      { text: 'False', is_correct: false, order: 2 },
+                    ]);
+                  } else {
+                    // Remove options for ESSAY and SHORT_ANSWER
+                    onUpdate(questionIndex, 'options', undefined);
+                  }
+                }}
               >
                 <SelectTrigger>
                   <SelectValue />

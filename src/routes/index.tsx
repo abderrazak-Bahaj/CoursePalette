@@ -232,14 +232,6 @@ const AppRoutes = () => (
       }
     />
     <Route
-      path="/courses/:courseId/learn"
-      element={
-        <RouteWrapper accessType="ALL">
-          <LessonPage />
-        </RouteWrapper>
-      }
-    />
-    <Route
       path="/courses/:courseId/learn/:lessonId"
       element={
         <RouteWrapper accessType="ALL">
@@ -342,6 +334,14 @@ const AppRoutes = () => (
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
           <CreateAssignmentPage />
+        </RouteWrapper>
+      }
+    />
+    <Route
+      path="/admin/courses/:courseId/assignments/:assignmentId"
+      element={
+        <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
+          <AssignmentPage />
         </RouteWrapper>
       }
     />

@@ -73,7 +73,6 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
     { to: '/admin/dashboard', label: 'Dashboard', icon: <LayoutDashboard /> },
     { to: '/admin/courses', label: 'Courses', icon: <FolderKanban /> },
     { to: '/admin/lessons', label: 'Lessons', icon: <BookText /> },
-    { to: '/admin/assignments', label: 'Assignments', icon: <ClipboardList /> },
   ];
 
   const newink = (user?.role === 'ADMIN')
