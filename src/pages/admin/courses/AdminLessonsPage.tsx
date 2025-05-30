@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
@@ -15,8 +15,10 @@ import LessonsList from '@/components/admin/LessonsList';
 import LessonModal from '@/components/admin/LessonModal';
 import { courseService } from '@/services/api/courseService';
 import { useAuth } from '@/hooks/useAuth';
+import { useUrlParams } from '@/hooks/useUrlParams';
 
 const AdminLessonsPage = () => {
+  const { getParam, setParam } = useUrlParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCourseId, setSelectedCourseId] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -30,7 +32,25 @@ const AdminLessonsPage = () => {
 
   const courses = coursesResponse?.courses || [];
 
+  // Initialize selected course from URL params on component mount
+  useEffect(() => {
+    const courseIdFromUrl = getParam('courseId');
+    if (courseIdFromUrl && courses.length > 0) {
+      const courseExists = courses.some(course => course.id === courseIdFromUrl);
+      if (courseExists) {
+        setSelectedCourseId(courseIdFromUrl);
+      } else {
+        // If course doesn't exist or user doesn't have access, clear the URL param
+        setParam('courseId', null);
+      }
+    }
+  }, [courses, getParam, setParam]);
 
+  // Update URL when course selection changes
+  const handleCourseSelection = (courseId: string) => {
+    setSelectedCourseId(courseId);
+    setParam('courseId', courseId);
+  };
 
   return (
     <AdminLayout title="Lesson Management">
@@ -40,15 +60,22 @@ const AdminLessonsPage = () => {
             <p className="text-muted-foreground">
               Manage and organize your course lessons
             </p>
+            {selectedCourseId && (
+              <div className="mt-2">
+                <span className="text-sm text-muted-foreground">Selected Course: </span>
+                <span className="text-sm font-medium">
+                  {courses.find(c => c.id === selectedCourseId)?.title || 'Unknown Course'}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
             <Select
               value={selectedCourseId}
-              onValueChange={setSelectedCourseId}
-              placeholder="Select Course"
+              onValueChange={handleCourseSelection}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[250px]">
                 <SelectValue placeholder="Select Course" />
               </SelectTrigger>
               <SelectContent>
@@ -75,7 +102,7 @@ const AdminLessonsPage = () => {
           <h3 className="text-lg font-medium mb-2">Select a Course</h3>
           <p className="text-muted-foreground mb-4">
             Please select a course from the dropdown to view and manage its
-            lessons.
+            lessons. Your selection will be saved in the URL for easy navigation.
           </p>
         </div>
       ) : (

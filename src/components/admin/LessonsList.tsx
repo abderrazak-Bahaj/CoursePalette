@@ -25,6 +25,7 @@ import {
   Plus,
   ChevronDown,
   PlayCircle,
+  FolderOpen,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -125,6 +126,10 @@ const LessonsList = ({ courseId, onAddNew }: LessonsListProps) => {
 
   const handleDelete = (lessonId: string) => {
     deleteMutation.mutate(lessonId);
+  };
+
+  const handleManageResources = (lesson: Lesson) => {
+    navigate(`/admin/courses/${courseId}/lessons/${lesson.id}/resources?courseId=${courseId}`);
   };
 
   const getStatusBadge = (status: string) => {
@@ -292,6 +297,13 @@ const LessonsList = ({ courseId, onAddNew }: LessonsListProps) => {
                                     >
                                       <Edit className="mr-2 h-4 w-4" />
                                       <span>Edit</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={() => handleManageResources(lesson)}
+                                      className="flex items-center"
+                                    >
+                                      <FolderOpen className="mr-2 h-4 w-4" />
+                                      <span>Manage Resources</span>
                                     </DropdownMenuItem>
                                   </>
                                 )}

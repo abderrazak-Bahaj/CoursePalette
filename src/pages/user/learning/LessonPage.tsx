@@ -9,30 +9,22 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import {
-  Play,
   Check,
-  Lock,
   ChevronLeft,
   ChevronRight,
   Award,
-  FileText,
-  Download,
-  ExternalLink,
-  Clock,
-  AlertCircle,
-  CheckCircle,
-  Video,
-  Headphones,
-  Link as LinkIcon,
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import { Lesson, Resource, Assignment } from '@/types/course';
+import { Lesson } from '@/types/course';
 import { courseService, lessonService } from '@/services/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import WrapperLoading from '@/components/ui/wrapper-loading';
 import VideoPlayer from '@/components/ui/video-player';
 import useGroupedLessons from '@/hooks/use-grouped-lessons';
 import MainLayout from '@/components/layout/MainLayout';
+import ResourceItem from '@/components/learning/ResourceItem';
+import AssignmentItem from '@/components/learning/AssignmentItem';
+import LessonItem from '@/components/learning/LessonItem';
 
 const LessonPage = () => {
   const { courseId, lessonId } = useParams<{
@@ -200,7 +192,10 @@ const LessonPage = () => {
                 {/* Resources Section */}
                 {lesson?.resources && lesson.resources.length > 0 && (
                   <div className="mb-8">
-                    <h3 className="text-xl font-semibold mb-4">Resources</h3>
+                    <h3 className="text-xl font-semibold mb-4 flex items-center">
+                      <span className="mr-2">📚</span>
+                      Resources
+                    </h3>
                     <div className="grid gap-4">
                       {lesson.resources.map((resource) => (
                         <ResourceItem key={resource.id} resource={resource} />
@@ -212,10 +207,17 @@ const LessonPage = () => {
                 {/* Assignments Section */}
                 {lesson?.assignments && lesson.assignments.length > 0 && (
                   <div className="mb-8">
-                    <h3 className="text-xl font-semibold mb-4">Assignments</h3>
+                    <h3 className="text-xl font-semibold mb-4 flex items-center">
+                      <span className="mr-2">📝</span>
+                      Assignments
+                    </h3>
                     <div className="space-y-4">
                       {lesson.assignments.map((assignment) => (
-                        <AssignmentItem key={assignment.id} assignment={assignment} courseId={courseId} />
+                        <AssignmentItem 
+                          key={assignment.id} 
+                          assignment={assignment} 
+                          courseId={courseId!} 
+                        />
                       ))}
                     </div>
                   </div>
@@ -276,9 +278,13 @@ const LessonPage = () => {
             {/* Sidebar with dynamic course curriculum */}
             <div className="md:w-80 border-l flex-shrink-0 overflow-y-auto bg-gray-50">
               <div className="p-4">
-                <h3 className="font-bold mb-4">{course?.title}</h3>
+                <h3 className="font-bold mb-4 text-lg">{course?.title}</h3>
 
-                <div className="w-24">
+                <div className="mb-4">
+                  <div className="flex justify-between text-sm text-gray-600 mb-2">
+                    <span>Progress</span>
+                    <span>{Math.round(progressPercentage)}%</span>
+                  </div>
                   <Progress
                     value={progressPercentage}
                     className={`h-2 ${
@@ -287,7 +293,11 @@ const LessonPage = () => {
                         : 'bg-course-blue'
                     }`}
                   />
+                  <div className="text-xs text-gray-500 mt-1">
+                    {completedLessons} of {course?.lessons?.length || 0} lessons completed
+                  </div>
                 </div>
+
                 <Accordion
                   type="multiple"
                   defaultValue={sections.map((_, idx) => `section-${idx}`)}
@@ -298,7 +308,7 @@ const LessonPage = () => {
                       key={`section-${idx}`}
                       value={`section-${idx}`}
                     >
-                      <AccordionTrigger>
+                      <AccordionTrigger className="hover:no-underline">
                         <div className="text-left">
                           <div className="font-semibold">{section.title}</div>
                           <div className="text-sm text-gray-500">
@@ -307,12 +317,12 @@ const LessonPage = () => {
                         </div>
                       </AccordionTrigger>
                       <AccordionContent>
-                        <ul className="space-y-2">
+                        <ul className="space-y-1">
                           {section.lessons.map((lesson) => (
                             <LessonItem
                               key={lesson.id}
                               lesson={lesson}
-                              courseId={courseId}
+                              courseId={courseId!}
                               isActive={lesson.id === currentLessonId}
                             />
                           ))}
@@ -327,201 +337,6 @@ const LessonPage = () => {
         </div>
       </WrapperLoading>
     </MainLayout>
-  );
-};
-
-// ResourceItem component
-interface ResourceItemProps {
-  resource: Resource;
-}
-
-const ResourceItem = ({ resource }: ResourceItemProps) => {
-  const getResourceIcon = (type: string) => {
-    switch (type) {
-      case 'PDF':
-        return <FileText className="h-5 w-5 text-red-500" />;
-      case 'VIDEO':
-        return <Video className="h-5 w-5 text-blue-500" />;
-      case 'AUDIO':
-        return <Headphones className="h-5 w-5 text-purple-500" />;
-      case 'LINK':
-        return <LinkIcon className="h-5 w-5 text-green-500" />;
-      default:
-        return <FileText className="h-5 w-5 text-gray-500" />;
-    }
-  };
-
-  const getResourceTypeLabel = (type: string) => {
-    switch (type) {
-      case 'PDF':
-        return 'Document';
-      case 'VIDEO':
-        return 'Video';
-      case 'AUDIO':
-        return 'Audio';
-      case 'LINK':
-        return 'Link';
-      default:
-        return 'File';
-    }
-  };
-
-  const handleResourceClick = () => {
-    if (resource.url) {
-      window.open(resource.url, '_blank');
-    } else if (resource.file_path) {
-      window.open(resource.file_path, '_blank');
-    }
-  };
-
-  return (
-    <div className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer" onClick={handleResourceClick}>
-      <div className="flex-shrink-0 mr-3">
-        {getResourceIcon(resource.type)}
-      </div>
-      <div className="flex-1">
-        <h4 className="font-medium text-gray-900">{resource.title}</h4>
-        {resource.description && (
-          <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
-        )}
-        <div className="flex items-center space-x-4 mt-2">
-          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-            {getResourceTypeLabel(resource.type)}
-          </span>
-          {resource.file_size_formatted && (
-            <span className="text-xs text-gray-500">
-              {resource.file_size_formatted}
-            </span>
-          )}
-        </div>
-      </div>
-      <div className="flex-shrink-0 ml-3">
-        {resource.is_link ? (
-          <ExternalLink className="h-4 w-4 text-gray-400" />
-        ) : (
-          <Download className="h-4 w-4 text-gray-400" />
-        )}
-      </div>
-    </div>
-  );
-};
-
-// AssignmentItem component
-interface AssignmentItemProps {
-  assignment: Assignment;
-  courseId: string;
-}
-
-const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
-  const formatDueDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const getAssignmentIcon = (type: string) => {
-    switch (type) {
-      case 'QUIZ':
-        return <CheckCircle className="h-5 w-5 text-blue-500" />;
-      case 'ESSAY':
-        return <FileText className="h-5 w-5 text-purple-500" />;
-      case 'MULTIPLE_CHOICE':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      default:
-        return <FileText className="h-5 w-5 text-gray-500" />;
-    }
-  };
-
-  return (
-    <div className="border rounded-lg p-4 bg-white">
-      <div className="flex items-start justify-between">
-        <div className="flex items-start space-x-3">
-          <div className="flex-shrink-0 mt-1">
-            {getAssignmentIcon(assignment.type)}
-          </div>
-          <div className="flex-1">
-            <h4 className="font-semibold text-gray-900">{assignment.title}</h4>
-            <p className="text-sm text-gray-600 mt-1">{assignment.description}</p>
-            <div className="flex items-center space-x-4 mt-3">
-              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                {assignment.type}
-              </span>
-              {assignment.max_score && (
-                <span className="text-xs text-gray-500">
-                  Max Score: {assignment.max_score}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col items-end space-y-2">
-          {assignment.due_date && (
-            <div className={`flex items-center space-x-1 text-xs ${assignment.is_overdue ? 'text-red-500' : 'text-gray-500'}`}>
-              <Clock className="h-3 w-3" />
-              <span>Due: {formatDueDate(assignment.due_date)}</span>
-            </div>
-          )}
-          {assignment.is_overdue && (
-            <div className="flex items-center space-x-1 text-xs text-red-500">
-              <AlertCircle className="h-3 w-3" />
-              <span>Overdue</span>
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="mt-4 flex justify-end">
-        <Button asChild size="sm" className="bg-course-blue">
-          <Link to={`/courses/${courseId}/assignments/${assignment.id}`}>
-            {assignment.type === 'QUIZ' ? 'Start Quiz' : 'View Assignment'}
-          </Link>
-        </Button>
-      </div>
-    </div>
-  );
-};
-
-// LessonItem component
-interface LessonItemProps {
-  lesson: Lesson;
-  courseId: string;
-  isActive: boolean;
-}
-
-const LessonItem = ({ lesson, courseId, isActive }: LessonItemProps) => {
-  return (
-    <li>
-      <Link
-        to={`/courses/${courseId}/learn/${lesson.id}`}
-        className={`flex items-center p-2 rounded-md ${
-          isActive
-            ? 'bg-course-blue bg-opacity-10 text-course-blue'
-            : 'hover:bg-gray-100'
-        }`}
-      >
-        <div className="flex-shrink-0 mr-2">
-          {lesson?.is_completed ? (
-            <div className="h-5 w-5 rounded-full bg-green-500 flex items-center justify-center">
-              <Check className="h-3 w-3 text-white" />
-            </div>
-          ) : isActive ? (
-            <Play className="h-5 w-5 text-course-blue" />
-          ) : (
-            <Lock className="h-5 w-5 text-gray-400" />
-          )}
-        </div>
-        <div className="flex-1">
-          <div className="text-sm font-medium line-clamp-1">{lesson.title}</div>
-          <div className="text-xs text-gray-500">
-            {lesson.duration_readable}
-          </div>
-        </div>
-      </Link>
-    </li>
   );
 };
 

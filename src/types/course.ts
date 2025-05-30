@@ -20,22 +20,14 @@ export interface Course {
 export interface Resource {
   id: string;
   title: string;
-  description?: string;
   type: 'PDF' | 'VIDEO' | 'AUDIO' | 'LINK' | 'OTHER';
-  url?: string;
-  file_path?: string;
-  file_size?: number;
-  file_type?: string;
+  file_url?: string;
   course_id: string;
   lesson_id: string;
   order: number;
-  is_preview?: boolean;
   created_at: string;
   updated_at: string;
   file_size_formatted?: string;
-  is_document: boolean;
-  is_video: boolean;
-  is_link: boolean;
 }
 
 export interface AssignmentOption {

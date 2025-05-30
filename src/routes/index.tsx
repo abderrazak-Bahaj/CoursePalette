@@ -31,6 +31,7 @@ import AssignmentManagementPage from '@/pages/admin/courses/AssignmentManagement
 import SubmissionsReviewPage from '@/pages/admin/courses/SubmissionsReviewPage';
 import SubmissionReviewDetailPage from '@/pages/admin/courses/SubmissionReviewDetailPage';
 import AdminAssignmentsPage from '@/pages/admin/courses/AdminAssignmentsPage';
+import ResourceManagementPage from '@/pages/admin/courses/ResourceManagementPage';
 import CertificatesPage from '@/pages/user/certificates/CertificatesPage';
 import CertificateDetailPage from '@/pages/user/certificates/CertificateDetailPage';
 import AdminProfilePage from '@/pages/admin/AdminProfilePage';
@@ -318,6 +319,14 @@ const AppRoutes = () => (
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
           <LessonDetailPage />
+        </RouteWrapper>
+      }
+    />
+    <Route
+      path="/admin/courses/:courseId/lessons/:lessonId/resources"
+      element={
+        <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
+          <ResourceManagementPage />
         </RouteWrapper>
       }
     />
