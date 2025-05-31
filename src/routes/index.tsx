@@ -1,59 +1,76 @@
 import { Routes, Route } from 'react-router-dom';
+import { Suspense, lazy } from 'react';
 
 import { RouteWrapper } from './RouteWrapper';
 import { AuthRouteWrapper } from './AuthRouteWrapper';
+import { PageLoadingFallback } from '@/components/common/LoadingFallback';
 
-import Home from '@/pages/public/Home'
-import CoursesPage from '@/pages/public/courses/CoursesPage';
-import CourseDetailPage from '@/pages/public/courses/CourseDetailPage';
-import CategoriesPage from '@/pages/public/categories/CategoriesPage';
-import SearchResultsPage from '@/pages/public/utility/SearchResultsPage';
-import CheckCertificatePage from '@/pages/public/certificates/CheckCertificatePage';
-import HelpPage from '@/pages/public/utility/HelpPage';
-import ContactPage from '@/pages/public/utility/ContactPage';
-import PrivacyPolicyPage from '@/pages/public/utility/PrivacyPolicyPage';
-import TermsPage from '@/pages/public/utility/TermsPage';
-import BlogPage from '@/pages/public/blog/BlogPage';
-import BlogDetailPage from '@/pages/public/blog/BlogDetailPage';
-import UnauthorizedPage from '@/pages/public/UnauthorizedPage';
-import NotFound from '@/pages/public/NotFound';
-import LoginPage from '@/pages/auth/LoginPage';
-import RegisterPage from '@/pages/auth/RegisterPage';
-import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
-import ResetPasswordPage from '@/pages/auth/ResetPasswordPage';
-import VerifyEmailPage from '@/pages/auth/VerifyEmailPage';
-import DashboardPage from '@/pages/user/DashboardPage';
-import ProfilePage from '@/pages/user/ProfilePage';
-import LessonPage from '@/pages/user/learning/LessonPage';
-import AssignmentPage from '@/pages/user/learning/AssignmentPage';
-import CreateAssignmentPage from '@/pages/admin/courses/CreateAssignmentPage';
-import AssignmentManagementPage from '@/pages/admin/courses/AssignmentManagementPage';
-import SubmissionsReviewPage from '@/pages/admin/courses/SubmissionsReviewPage';
-import SubmissionReviewDetailPage from '@/pages/admin/courses/SubmissionReviewDetailPage';
-import AdminAssignmentsPage from '@/pages/admin/courses/AdminAssignmentsPage';
-import ResourceManagementPage from '@/pages/admin/courses/ResourceManagementPage';
-import CertificatesPage from '@/pages/user/certificates/CertificatesPage';
-import CertificateDetailPage from '@/pages/user/certificates/CertificateDetailPage';
-import AdminProfilePage from '@/pages/admin/AdminProfilePage';
-import AdminCoursesPage from '@/pages/admin/courses/AdminCoursesPage';
-import AdminLessonsPage from '@/pages/admin/courses/AdminLessonsPage';
-import CreateLessonPage from '@/pages/admin/courses/CreateLessonPage';
-import LessonDetailPage from '@/pages/admin/courses/LessonDetailPage';
-import AdminCourseDetailPage from '@/pages/admin/courses/CourseDetailPage';
-import StudentsPage from '@/pages/admin/users/StudentsPage';
-import ReportsPage from '@/pages/admin/analytics/ReportsPage';
-import AdminDashboardPage from '@/pages/admin/dashboard';
-import AdminTeacherViewPage from '@/pages/admin/users/AdminTeacherViewPage';
-import AdminStudentsPage from '@/pages/admin/users/AdminStudentsPage';
-import AdminStudentViewPage from '@/pages/admin/users/AdminStudentViewPage';
-import AdminInstructorsPage from '@/pages/admin/users/AdminInstructorsPage';
-import AdminCategoriesPage from '@/pages/admin/categories/AdminCategoriesPage';
-import AdminCategoriesViewPage from '@/pages/admin/categories/AdminCategoriesViewPage';
-import Checkout from '@/pages/public/checkout/Checkout';
-import StudentInvoicesPage from '@/pages/user/invoices/StudentInvoicesPage';
-import TeacherInvoicesPage from '@/pages/user/invoices/TeacherInvoicesPage';
-import AdminInvoicesPage from '@/pages/admin/invoices/AdminInvoicesPage';
-import InvoiceDetailPage from '@/pages/user/invoices/InvoiceDetailPage';
+// Lazy load all components
+// Public pages
+const Home = lazy(() => import('@/pages/public/Home'));
+const CoursesPage = lazy(() => import('@/pages/public/courses/CoursesPage'));
+const CourseDetailPage = lazy(() => import('@/pages/public/courses/CourseDetailPage'));
+const CategoriesPage = lazy(() => import('@/pages/public/categories/CategoriesPage'));
+const SearchResultsPage = lazy(() => import('@/pages/public/utility/SearchResultsPage'));
+const CheckCertificatePage = lazy(() => import('@/pages/public/certificates/CheckCertificatePage'));
+const HelpPage = lazy(() => import('@/pages/public/utility/HelpPage'));
+const ContactPage = lazy(() => import('@/pages/public/utility/ContactPage'));
+const PrivacyPolicyPage = lazy(() => import('@/pages/public/utility/PrivacyPolicyPage'));
+const TermsPage = lazy(() => import('@/pages/public/utility/TermsPage'));
+const BlogPage = lazy(() => import('@/pages/public/blog/BlogPage'));
+const BlogDetailPage = lazy(() => import('@/pages/public/blog/BlogDetailPage'));
+const UnauthorizedPage = lazy(() => import('@/pages/public/UnauthorizedPage'));
+const NotFound = lazy(() => import('@/pages/public/NotFound'));
+
+// Auth pages
+const LoginPage = lazy(() => import('@/pages/auth/LoginPage'));
+const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'));
+const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPasswordPage'));
+const ResetPasswordPage = lazy(() => import('@/pages/auth/ResetPasswordPage'));
+const VerifyEmailPage = lazy(() => import('@/pages/auth/VerifyEmailPage'));
+
+// User pages
+const DashboardPage = lazy(() => import('@/pages/user/DashboardPage'));
+const ProfilePage = lazy(() => import('@/pages/user/ProfilePage'));
+const LessonPage = lazy(() => import('@/pages/user/learning/LessonPage'));
+const AssignmentPage = lazy(() => import('@/pages/user/learning/AssignmentPage'));
+const CertificatesPage = lazy(() => import('@/pages/user/certificates/CertificatesPage'));
+const CertificateDetailPage = lazy(() => import('@/pages/user/certificates/CertificateDetailPage'));
+
+// Admin pages
+const CreateAssignmentPage = lazy(() => import('@/pages/admin/courses/CreateAssignmentPage'));
+const AssignmentManagementPage = lazy(() => import('@/pages/admin/courses/AssignmentManagementPage'));
+const SubmissionsReviewPage = lazy(() => import('@/pages/admin/courses/SubmissionsReviewPage'));
+const SubmissionReviewDetailPage = lazy(() => import('@/pages/admin/courses/SubmissionReviewDetailPage'));
+const AdminAssignmentsPage = lazy(() => import('@/pages/admin/courses/AdminAssignmentsPage'));
+const ResourceManagementPage = lazy(() => import('@/pages/admin/courses/ResourceManagementPage'));
+const AdminProfilePage = lazy(() => import('@/pages/admin/AdminProfilePage'));
+const AdminCoursesPage = lazy(() => import('@/pages/admin/courses/AdminCoursesPage'));
+const AdminLessonsPage = lazy(() => import('@/pages/admin/courses/AdminLessonsPage'));
+const CreateLessonPage = lazy(() => import('@/pages/admin/courses/CreateLessonPage'));
+const LessonDetailPage = lazy(() => import('@/pages/admin/courses/LessonDetailPage'));
+const AdminCourseDetailPage = lazy(() => import('@/pages/admin/courses/CourseDetailPage'));
+const StudentsPage = lazy(() => import('@/pages/admin/users/StudentsPage'));
+const ReportsPage = lazy(() => import('@/pages/admin/analytics/ReportsPage'));
+const AdminDashboardPage = lazy(() => import('@/pages/admin/dashboard'));
+const AdminTeacherViewPage = lazy(() => import('@/pages/admin/users/AdminTeacherViewPage'));
+const AdminStudentsPage = lazy(() => import('@/pages/admin/users/AdminStudentsPage'));
+const AdminStudentViewPage = lazy(() => import('@/pages/admin/users/AdminStudentViewPage'));
+const AdminInstructorsPage = lazy(() => import('@/pages/admin/users/AdminInstructorsPage'));
+const AdminCategoriesPage = lazy(() => import('@/pages/admin/categories/AdminCategoriesPage'));
+const AdminCategoriesViewPage = lazy(() => import('@/pages/admin/categories/AdminCategoriesViewPage'));
+const Checkout = lazy(() => import('@/pages/public/checkout/Checkout'));
+const StudentInvoicesPage = lazy(() => import('@/pages/user/invoices/StudentInvoicesPage'));
+const TeacherInvoicesPage = lazy(() => import('@/pages/user/invoices/TeacherInvoicesPage'));
+const AdminInvoicesPage = lazy(() => import('@/pages/admin/invoices/AdminInvoicesPage'));
+const InvoiceDetailPage = lazy(() => import('@/pages/user/invoices/InvoiceDetailPage'));
+
+// Wrapper component for Suspense
+const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<PageLoadingFallback />}>
+    {children}
+  </Suspense>
+);
 
 const AppRoutes = () => (
   <Routes>
@@ -62,7 +79,9 @@ const AppRoutes = () => (
       path="/"
       element={
         <RouteWrapper accessType="PUBLIC">
-          <Home />
+          <SuspenseWrapper>
+            <Home />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -72,7 +91,9 @@ const AppRoutes = () => (
       path="/courses"
       element={
         <RouteWrapper accessType="PUBLIC">
-          <CoursesPage />
+          <SuspenseWrapper>
+            <CoursesPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -80,7 +101,9 @@ const AppRoutes = () => (
       path="/courses/:courseId"
       element={
         <RouteWrapper accessType="PUBLIC">
-          <CourseDetailPage />
+          <SuspenseWrapper>
+            <CourseDetailPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -88,7 +111,9 @@ const AppRoutes = () => (
       path="/categories"
       element={
         <RouteWrapper accessType="PUBLIC">
-          <CategoriesPage />
+          <SuspenseWrapper>
+            <CategoriesPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -96,7 +121,9 @@ const AppRoutes = () => (
       path="/search"
       element={
         <RouteWrapper accessType="PUBLIC">
-          <SearchResultsPage />
+          <SuspenseWrapper>
+            <SearchResultsPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -104,7 +131,9 @@ const AppRoutes = () => (
       path="/check-certificate"
       element={
         <RouteWrapper accessType="PUBLIC">
-          <CheckCertificatePage />
+          <SuspenseWrapper>
+            <CheckCertificatePage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -112,7 +141,9 @@ const AppRoutes = () => (
       path="/help"
       element={
         <RouteWrapper accessType="PUBLIC">
-          <HelpPage />
+          <SuspenseWrapper>
+            <HelpPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -120,7 +151,9 @@ const AppRoutes = () => (
       path="/contact"
       element={
         <RouteWrapper accessType="PUBLIC">
-          <ContactPage />
+          <SuspenseWrapper>
+            <ContactPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -128,7 +161,9 @@ const AppRoutes = () => (
       path="/privacy"
       element={
         <RouteWrapper accessType="PUBLIC">
-          <PrivacyPolicyPage />
+          <SuspenseWrapper>
+            <PrivacyPolicyPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -136,7 +171,9 @@ const AppRoutes = () => (
       path="/terms"
       element={
         <RouteWrapper accessType="PUBLIC">
-          <TermsPage />
+          <SuspenseWrapper>
+            <TermsPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -144,7 +181,9 @@ const AppRoutes = () => (
       path="/blog"
       element={
         <RouteWrapper accessType="PUBLIC">
-          <BlogPage />
+          <SuspenseWrapper>
+            <BlogPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -152,7 +191,9 @@ const AppRoutes = () => (
       path="/blog/:id"
       element={
         <RouteWrapper accessType="PUBLIC">
-          <BlogDetailPage />
+          <SuspenseWrapper>
+            <BlogDetailPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -160,7 +201,9 @@ const AppRoutes = () => (
       path="/unauthorized"
       element={
         <RouteWrapper accessType="PUBLIC">
-          <UnauthorizedPage />
+          <SuspenseWrapper>
+            <UnauthorizedPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -170,7 +213,9 @@ const AppRoutes = () => (
       path="/login"
       element={
         <AuthRouteWrapper>
-          <LoginPage />
+          <SuspenseWrapper>
+            <LoginPage />
+          </SuspenseWrapper>
         </AuthRouteWrapper>
       }
     />
@@ -178,7 +223,9 @@ const AppRoutes = () => (
       path="/register"
       element={
         <AuthRouteWrapper>
-          <RegisterPage />
+          <SuspenseWrapper>
+            <RegisterPage />
+          </SuspenseWrapper>
         </AuthRouteWrapper>
       }
     />
@@ -186,7 +233,9 @@ const AppRoutes = () => (
       path="/forgot-password"
       element={
         <AuthRouteWrapper>
-          <ForgotPasswordPage />
+          <SuspenseWrapper>
+            <ForgotPasswordPage />
+          </SuspenseWrapper>
         </AuthRouteWrapper>
       }
     />
@@ -194,7 +243,9 @@ const AppRoutes = () => (
       path="/reset-password"
       element={
         <AuthRouteWrapper>
-          <ResetPasswordPage />
+          <SuspenseWrapper>
+            <ResetPasswordPage />
+          </SuspenseWrapper>
         </AuthRouteWrapper>
       }
     />
@@ -202,7 +253,9 @@ const AppRoutes = () => (
       path="/verify-email"
       element={
         <AuthRouteWrapper>
-          <VerifyEmailPage />
+          <SuspenseWrapper>
+            <VerifyEmailPage />
+          </SuspenseWrapper>
         </AuthRouteWrapper>
       }
     />
@@ -212,7 +265,9 @@ const AppRoutes = () => (
       path="/dashboard"
       element={
         <RouteWrapper accessType="ALL">
-          <DashboardPage />
+          <SuspenseWrapper>
+            <DashboardPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -220,7 +275,9 @@ const AppRoutes = () => (
       path="/profile"
       element={
         <RouteWrapper accessType="ALL">
-          <ProfilePage />
+          <SuspenseWrapper>
+            <ProfilePage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -228,7 +285,9 @@ const AppRoutes = () => (
       path="/checkout"
       element={
         <RouteWrapper accessType="ALL">
-          <Checkout />
+          <SuspenseWrapper>
+            <Checkout />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -236,7 +295,9 @@ const AppRoutes = () => (
       path="/courses/:courseId/learn/:lessonId"
       element={
         <RouteWrapper accessType="ALL">
-          <LessonPage />
+          <SuspenseWrapper>
+            <LessonPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -244,7 +305,9 @@ const AppRoutes = () => (
       path="/courses/:courseId/assignments/:assignmentId"
       element={
         <RouteWrapper accessType="ALL">
-          <AssignmentPage />
+          <SuspenseWrapper>
+            <AssignmentPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -252,7 +315,9 @@ const AppRoutes = () => (
       path="/certificates"
       element={
         <RouteWrapper accessType="ALL">
-          <CertificatesPage />
+          <SuspenseWrapper>
+            <CertificatesPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -260,7 +325,9 @@ const AppRoutes = () => (
       path="/certificates/:id"
       element={
         <RouteWrapper accessType="ALL">
-          <CertificateDetailPage />
+          <SuspenseWrapper>
+            <CertificateDetailPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -268,7 +335,9 @@ const AppRoutes = () => (
       path="/courses/:courseId/certificate"
       element={
         <RouteWrapper accessType="ALL">
-          <CertificateDetailPage />
+          <SuspenseWrapper>
+            <CertificateDetailPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -278,7 +347,9 @@ const AppRoutes = () => (
       path="/admin/profile"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <AdminProfilePage />
+          <SuspenseWrapper>
+            <AdminProfilePage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -286,7 +357,9 @@ const AppRoutes = () => (
       path="/admin/courses"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <AdminCoursesPage />
+          <SuspenseWrapper>
+            <AdminCoursesPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -294,7 +367,9 @@ const AppRoutes = () => (
       path="/admin/courses/:courseId"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <AdminCourseDetailPage />
+          <SuspenseWrapper>
+            <AdminCourseDetailPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -302,7 +377,9 @@ const AppRoutes = () => (
       path="/admin/lessons"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <AdminLessonsPage />
+          <SuspenseWrapper>
+            <AdminLessonsPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -310,7 +387,9 @@ const AppRoutes = () => (
       path="/admin/courses/:courseId/lessons/create"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <CreateLessonPage />
+          <SuspenseWrapper>
+            <CreateLessonPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -318,7 +397,9 @@ const AppRoutes = () => (
       path="/admin/courses/:courseId/lessons/:lessonId"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <LessonDetailPage />
+          <SuspenseWrapper>
+            <LessonDetailPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -326,7 +407,9 @@ const AppRoutes = () => (
       path="/admin/courses/:courseId/lessons/:lessonId/resources"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <ResourceManagementPage />
+          <SuspenseWrapper>
+            <ResourceManagementPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -334,7 +417,9 @@ const AppRoutes = () => (
       path="/admin/courses/:courseId/assignments"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <AssignmentManagementPage />
+          <SuspenseWrapper>
+            <AssignmentManagementPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -342,7 +427,9 @@ const AppRoutes = () => (
         path="/admin/courses/:courseId/assignments/create"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <CreateAssignmentPage />
+          <SuspenseWrapper>
+            <CreateAssignmentPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -350,7 +437,9 @@ const AppRoutes = () => (
       path="/admin/courses/:courseId/assignments/:assignmentId"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <AssignmentPage />
+          <SuspenseWrapper>
+            <AssignmentPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -358,7 +447,9 @@ const AppRoutes = () => (
       path="/admin/courses/:courseId/assignments/:assignmentId/edit"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <CreateAssignmentPage />
+          <SuspenseWrapper>
+            <CreateAssignmentPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -366,7 +457,9 @@ const AppRoutes = () => (
       path="/admin/courses/:courseId/assignments/:assignmentId/submissions"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <SubmissionsReviewPage />
+          <SuspenseWrapper>
+            <SubmissionsReviewPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -374,7 +467,9 @@ const AppRoutes = () => (
       path="/admin/courses/:courseId/assignments/:assignmentId/submissions/:submissionId/review"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <SubmissionReviewDetailPage />
+          <SuspenseWrapper>
+            <SubmissionReviewDetailPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -383,7 +478,9 @@ const AppRoutes = () => (
       path="/admin/students"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <StudentsPage />
+          <SuspenseWrapper>
+            <StudentsPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -391,7 +488,9 @@ const AppRoutes = () => (
       path="/reports"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <ReportsPage />
+          <SuspenseWrapper>
+            <ReportsPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -399,7 +498,9 @@ const AppRoutes = () => (
       path="/admin/dashboard"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <AdminDashboardPage />
+          <SuspenseWrapper>
+            <AdminDashboardPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -409,7 +510,9 @@ const AppRoutes = () => (
       path="/admin/instructors"
       element={
         <RouteWrapper accessType={'ADMIN'}>
-          <AdminInstructorsPage />
+          <SuspenseWrapper>
+            <AdminInstructorsPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -417,7 +520,9 @@ const AppRoutes = () => (
       path="/admin/instructors/:id"
       element={
         <RouteWrapper accessType={'ADMIN'}>
-          <AdminTeacherViewPage />
+          <SuspenseWrapper>
+            <AdminTeacherViewPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -425,7 +530,9 @@ const AppRoutes = () => (
       path="/admin/students"
       element={
         <RouteWrapper accessType="ADMIN">
-          <AdminStudentsPage />
+          <SuspenseWrapper>
+            <AdminStudentsPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -433,7 +540,9 @@ const AppRoutes = () => (
       path="/admin/students/:id"
       element={
         <RouteWrapper accessType="ADMIN">
-          <AdminStudentViewPage />
+          <SuspenseWrapper>
+            <AdminStudentViewPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -441,7 +550,9 @@ const AppRoutes = () => (
       path="/admin/categories"
       element={
         <RouteWrapper accessType="ADMIN">
-          <AdminCategoriesPage />
+          <SuspenseWrapper>
+            <AdminCategoriesPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -449,7 +560,9 @@ const AppRoutes = () => (
       path="/admin/categories/:slug"
       element={
         <RouteWrapper accessType="ADMIN">
-          <AdminCategoriesViewPage />
+          <SuspenseWrapper>
+            <AdminCategoriesViewPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -457,7 +570,9 @@ const AppRoutes = () => (
       path="/admin/reports"
       element={
         <RouteWrapper accessType="ADMIN">
-          <ReportsPage />
+          <SuspenseWrapper>
+            <ReportsPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -467,7 +582,9 @@ const AppRoutes = () => (
       path="/invoices/:id"
       element={
         <RouteWrapper accessType="STUDENT">
-          <InvoiceDetailPage />
+          <SuspenseWrapper>
+            <InvoiceDetailPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -477,7 +594,9 @@ const AppRoutes = () => (
       path="/admin/invoices"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <TeacherInvoicesPage />
+          <SuspenseWrapper>
+            <TeacherInvoicesPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -485,7 +604,9 @@ const AppRoutes = () => (
       path="/admin/invoices/:id"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <InvoiceDetailPage />
+          <SuspenseWrapper>
+            <InvoiceDetailPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
@@ -495,13 +616,22 @@ const AppRoutes = () => (
       path="/admin/all-invoices"
       element={
         <RouteWrapper accessType="ADMIN">
-          <AdminInvoicesPage />
+          <SuspenseWrapper>
+            <AdminInvoicesPage />
+          </SuspenseWrapper>
         </RouteWrapper>
       }
     />
 
     {/* Catch-all for 404 */}
-    <Route path="*" element={<NotFound />} />
+    <Route 
+      path="*" 
+      element={
+        <SuspenseWrapper>
+          <NotFound />
+        </SuspenseWrapper>
+      } 
+    />
   </Routes>
 );
 
