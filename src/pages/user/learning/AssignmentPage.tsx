@@ -14,6 +14,7 @@ import {
   FileText,
   Send,
   Save,
+  Play,
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { Assignment, AssignmentQuestion, Submission } from '@/types/course';
@@ -39,6 +40,7 @@ const AssignmentPage = () => {
 
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
+  const [hasStarted, setHasStarted] = useState(false);
 
   const { data: assignmentData, isLoading } = useQuery({
     queryKey: ['assignment', courseId, assignmentId],
@@ -55,32 +57,38 @@ const AssignmentPage = () => {
   const course = courseData?.course;
   const existingSubmission = assignment?.submissions?.[0];
 
-  // Calculate time remaining
+  // Check if assignment is started and set timer
   useEffect(() => {
-    if (assignment?.due_date) {
-      const dueDate = new Date(assignment.due_date);
-      const now = new Date();
-      const remaining = dueDate.getTime() - now.getTime();
-      
-      if (remaining > 0) {
-        setTimeRemaining(remaining);
+    if (assignment) {
+      const isSubmitted = assignment.is_submitted;
+      const isExpired = assignment.is_expired;
+      const remainingTime = assignment.remaining_time;
+
+      setHasStarted(!!(assignment.assignment_start || isSubmitted || isExpired));
+
+      if (remainingTime && remainingTime > 0 && !isSubmitted && !isExpired) {
+        setTimeRemaining(remainingTime * 1000); // Convert seconds to milliseconds
         
         const timer = setInterval(() => {
-          const newRemaining = dueDate.getTime() - new Date().getTime();
-          if (newRemaining <= 0) {
-            setTimeRemaining(0);
-            clearInterval(timer);
-          } else {
-            setTimeRemaining(newRemaining);
-          }
+          setTimeRemaining(prev => {
+            if (!prev || prev <= 1000) {
+              clearInterval(timer);
+              // Refresh assignment data when timer expires
+              queryClient.invalidateQueries({
+                queryKey: ['assignment', courseId, assignmentId],
+              });
+              return 0;
+            }
+            return prev - 1000;
+          });
         }, 1000);
 
         return () => clearInterval(timer);
-      } else {
+      } else if (isExpired) {
         setTimeRemaining(0);
       }
     }
-  }, [assignment?.due_date]);
+  }, [assignment, courseId, assignmentId, queryClient]);
 
   // Load existing answers if there's a submission
   useEffect(() => {
@@ -92,6 +100,27 @@ const AssignmentPage = () => {
       setAnswers(existingAnswers);
     }
   }, [existingSubmission]);
+
+  const startAssignmentMutation = useMutation({
+    mutationFn: () => courseService.startAssignment(courseId!, assignmentId!),
+    onSuccess: () => {
+      toast({
+        title: 'Assignment Started',
+        description: 'Your timer has started. Good luck!',
+      });
+      setHasStarted(true);
+      queryClient.invalidateQueries({
+        queryKey: ['assignment', courseId, assignmentId],
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Failed to Start',
+        description: 'Failed to start assignment timer. Please try again.',
+        variant: 'destructive',
+      });
+    },
+  });
 
   const saveSubmissionMutation = useMutation({
     mutationFn: (data: { status: string; answers: AnswerData[] }) =>
@@ -141,6 +170,10 @@ const AssignmentPage = () => {
       ...prev,
       [questionId]: answer,
     }));
+  };
+
+  const handleStartAssignment = () => {
+    startAssignmentMutation.mutate();
   };
 
   const handleSaveDraft = () => {
@@ -195,14 +228,28 @@ const AssignmentPage = () => {
     }
   };
 
+  const formatTimeLimit = (minutes: number) => {
+    if (minutes < 60) {
+      return `${minutes} minutes`;
+    } else if (minutes === 60) {
+      return '1 hour';
+    } else if (minutes % 60 === 0) {
+      return `${minutes / 60} hours`;
+    } else {
+      const hours = Math.floor(minutes / 60);
+      const remainingMinutes = minutes % 60;
+      return `${hours} hour${hours > 1 ? 's' : ''} ${remainingMinutes} minutes`;
+    }
+  };
+
   const getProgressPercentage = () => {
     if (!assignment?.questions) return 0;
     const answeredQuestions = assignment.questions.filter((q: AssignmentQuestion) => answers[q.id]);
     return (answeredQuestions.length / assignment.questions.length) * 100;
   };
 
-  const isOverdue = timeRemaining === 0;
-  const isSubmitted = existingSubmission?.status === 'SUBMITTED' || existingSubmission?.status === 'GRADED';
+  const isExpired = assignment?.is_expired;
+  const isSubmitted = assignment?.is_submitted;
 
   if (isLoading) {
     return (
@@ -225,9 +272,62 @@ const AssignmentPage = () => {
                 e.preventDefault();
                 navigate(-1);
               }}>
-              
               Back to Course
             </Button>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  // Show start screen if assignment hasn't been started yet
+  if (!hasStarted && !isSubmitted && !isExpired) {
+    return (
+      <MainLayout>
+        <div className="min-h-screen bg-gray-50">
+          <div className="max-w-4xl mx-auto p-6">
+            <Card className="mt-20">
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl mb-4">{assignment.title}</CardTitle>
+                <p className="text-gray-600 mb-6">{assignment.description}</p>
+              </CardHeader>
+              <CardContent className="text-center space-y-6">
+                <div className="bg-blue-50 p-6 rounded-lg">
+                  <Clock className="h-12 w-12 mx-auto mb-4 text-blue-600" />
+                  <h3 className="text-lg font-medium mb-2">Time Limit</h3>
+                  <p className="text-2xl font-bold text-blue-600 mb-2">
+                    {formatTimeLimit(assignment.date_limit)}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Once you start, you'll have {formatTimeLimit(assignment.date_limit)} to complete and submit this assignment.
+                  </p>
+                </div>
+
+                {assignment.instructions && (
+                  <div className="bg-gray-50 p-4 rounded-lg text-left">
+                    <h4 className="font-medium mb-2">Instructions:</h4>
+                    <p className="text-gray-700">{assignment.instructions}</p>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-center gap-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate(-1)}
+                  >
+                    Back to Course
+                  </Button>
+                  <Button
+                    onClick={handleStartAssignment}
+                    disabled={startAssignmentMutation.isPending}
+                    className="bg-course-blue flex items-center gap-2"
+                  >
+                    <Play className="h-4 w-4" />
+                    Start Assignment
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </MainLayout>
@@ -246,17 +346,17 @@ const AssignmentPage = () => {
                   e.preventDefault();
                   navigate(-1);
                 }}
-                className="flex bg-gray-50 hover:bg-gray-100 items-center text-gray-700 hover:text-course-blue  cursor-pointer transition-colors"
+                className="flex bg-gray-50 hover:bg-gray-100 items-center text-gray-700 hover:text-course-blue cursor-pointer transition-colors"
               >
                 <ChevronLeft className="h-5 w-5 mr-1" />
                 <span>Back to Course</span>
               </Button>
               
               {timeRemaining !== null && !isSubmitted && (
-                <div className={`flex items-center space-x-2 ${isOverdue ? 'text-red-500' : 'text-gray-600'}`}>
+                <div className={`flex items-center space-x-2 ${isExpired ? 'text-red-500' : timeRemaining < 300000 ? 'text-orange-500' : 'text-gray-600'}`}>
                   <Clock className="h-5 w-5" />
                   <span className="font-medium">
-                    {isOverdue ? 'Overdue' : `Time remaining: ${formatTimeRemaining(timeRemaining)}`}
+                    {isExpired ? 'Time Expired' : `${formatTimeRemaining(timeRemaining)} remaining`}
                   </span>
                 </div>
               )}
@@ -276,6 +376,7 @@ const AssignmentPage = () => {
                   <div className="flex items-center space-x-4 text-sm text-gray-500">
                     <span>Course: {course?.title}</span>
                     <span>Type: {assignment.type}</span>
+                    <span>Time Limit: {formatTimeLimit(assignment.date_limit)}</span>
                     {assignment.max_score && <span>Max Score: {assignment.max_score}</span>}
                   </div>
                 </div>
@@ -285,10 +386,10 @@ const AssignmentPage = () => {
                       <CheckCircle className="h-5 w-5 mr-1" />
                       <span>Submitted</span>
                     </div>
-                  ) : isOverdue ? (
+                  ) : isExpired ? (
                     <div className="flex items-center text-red-500">
                       <AlertCircle className="h-5 w-5 mr-1" />
-                      <span>Overdue</span>
+                      <span>Expired</span>
                     </div>
                   ) : (
                     <div className="flex items-center text-blue-600">
@@ -322,13 +423,13 @@ const AssignmentPage = () => {
                 questionNumber={index + 1}
                 answer={answers[question.id]}
                 onAnswerChange={(answer) => handleAnswerChange(question.id, answer)}
-                disabled={isSubmitted}
+                disabled={isSubmitted || isExpired}
               />
             ))}
           </div>
 
           {/* Action Buttons */}
-          {!isSubmitted && (
+          {!isSubmitted && !isExpired && (
             <div className="mt-8 flex justify-between">
               <Button
                 variant="outline"
@@ -342,7 +443,7 @@ const AssignmentPage = () => {
               
               <Button
                 onClick={handleSubmit}
-                disabled={submitAssignmentMutation.isPending || isOverdue}
+                disabled={submitAssignmentMutation.isPending}
                 className="flex items-center bg-course-blue"
               >
                 <Send className="h-4 w-4 mr-2" />

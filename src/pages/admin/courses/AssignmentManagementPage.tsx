@@ -112,36 +112,41 @@ const AssignmentManagementPage = () => {
     if (assignment.status === 'DRAFT') {
       return <Badge variant="secondary">Draft</Badge>;
     }
-    if (assignment.is_overdue) {
-      return <Badge variant="destructive">Overdue</Badge>;
+    if (assignment.is_submitted) {
+      return <Badge variant="default">Completed</Badge>;
     }
-    if (assignment.is_active) {
-      return <Badge variant="default">Active</Badge>;
+    if (assignment.is_expired) {
+      return <Badge variant="destructive">Expired</Badge>;
     }
-    return <Badge variant="outline">Inactive</Badge>;
+    return <Badge variant="outline">Available</Badge>;
   };
 
   const getStatusIcon = (assignment: Assignment) => {
     if (assignment.status === 'DRAFT') {
       return <FileText className="h-4 w-4 text-gray-500" />;
     }
-    if (assignment.is_overdue) {
-      return <XCircle className="h-4 w-4 text-red-500" />;
-    }
-    if (assignment.is_active) {
+    if (assignment.is_submitted) {
       return <CheckCircle className="h-4 w-4 text-green-500" />;
     }
-    return <AlertCircle className="h-4 w-4 text-yellow-500" />;
+    if (assignment.is_expired) {
+      return <XCircle className="h-4 w-4 text-red-500" />;
+    }
+    return <AlertCircle className="h-4 w-4 text-blue-500" />;
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  const formatTimeLimit = (minutes: number) => {
+    if (!minutes) return 'No limit';
+    if (minutes < 60) {
+      return `${minutes}min`;
+    } else if (minutes === 60) {
+      return '1hr';
+    } else if (minutes % 60 === 0) {
+      return `${minutes / 60}hrs`;
+    } else {
+      const hours = Math.floor(minutes / 60);
+      const remainingMinutes = minutes % 60;
+      return `${hours}h ${remainingMinutes}m`;
+    }
   };
 
   const handleDeleteAssignment = (assignmentId: string) => {
@@ -259,7 +264,7 @@ const AssignmentManagementPage = () => {
                   onDelete={handleDeleteAssignment}
                   getStatusBadge={getStatusBadge}
                   getStatusIcon={getStatusIcon}
-                  formatDate={formatDate}
+                  formatTimeLimit={formatTimeLimit}
                 />
               ))}
             </div>
@@ -276,7 +281,7 @@ interface AssignmentCardProps {
   onDelete: (assignmentId: string) => void;
   getStatusBadge: (assignment: Assignment) => JSX.Element;
   getStatusIcon: (assignment: Assignment) => JSX.Element;
-  formatDate: (dateString: string) => string;
+  formatTimeLimit: (minutes: number) => string;
 }
 
 const AssignmentCard = ({
@@ -285,7 +290,7 @@ const AssignmentCard = ({
   onDelete,
   getStatusBadge,
   getStatusIcon,
-  formatDate,
+  formatTimeLimit,
 }: AssignmentCardProps) => {
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -305,13 +310,11 @@ const AssignmentCard = ({
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-gray-500" />
+                <Clock className="h-4 w-4 text-gray-500" />
                 <div>
-                  <p className="text-muted-foreground">Due Date</p>
+                  <p className="text-muted-foreground">Time Limit</p>
                   <p className="font-medium">
-                    {assignment.due_date
-                      ? formatDate(assignment.due_date)
-                      : 'No due date'}
+                    {formatTimeLimit(assignment.date_limit)}
                   </p>
                 </div>
               </div>
@@ -337,7 +340,7 @@ const AssignmentCard = ({
               </div>
 
               <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-gray-500" />
+                <CheckCircle className="h-4 w-4 text-gray-500" />
                 <div>
                   <p className="text-muted-foreground">Max Score</p>
                   <p className="font-medium">{assignment.max_score || 0} pts</p>

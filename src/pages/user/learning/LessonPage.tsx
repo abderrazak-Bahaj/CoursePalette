@@ -122,6 +122,21 @@ const LessonPage = () => {
     if (lesson?.is_completed) {
       return;
     }
+
+    // Check if all assignments are submitted
+    const unsubmittedAssignments = lesson?.assignments?.filter(
+      assignment => assignment.is_active && !assignment.is_submitted
+    ) || [];
+
+    if (unsubmittedAssignments.length > 0) {
+      toast({
+        title: 'Cannot Complete Lesson',
+        description: `You must submit all assignments before marking this lesson as completed. ${unsubmittedAssignments.length} assignment(s) remaining.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
     await completeLessonMutation.mutateAsync();
     if (nextLesson) {
       navigate(`/courses/${courseId}/learn/${nextLesson.id}`);
@@ -241,23 +256,48 @@ const LessonPage = () => {
                   ) : (
                     <div></div>
                   )}
-                  <Button
-                    onClick={markAsCompleted}
-                    disabled={lesson?.is_completed}
-                    className="flex items-center bg-course-blue"
-                  >
-                    {lesson?.is_completed ? (
-                      <>
-                        <Check className="h-5 w-5 mr-1" />
-                        Completed
-                      </>
-                    ) : (
-                      <>
-                        <Check className="h-5 w-5 mr-1" />
-                        Mark as Completed
-                      </>
-                    )}
-                  </Button>
+                  
+                  {/* Completion Status */}
+                  {(() => {
+                    const unsubmittedAssignments = lesson?.assignments?.filter(
+                      assignment => assignment.is_active && !assignment.is_submitted
+                    ) || [];
+                    
+                    const hasUnsubmittedAssignments = unsubmittedAssignments.length > 0;
+                    const isCompleted = lesson?.is_completed;
+                    
+                    return (
+                      <div className="flex flex-col items-center">
+                        {hasUnsubmittedAssignments && !isCompleted && (
+                          <div className="text-xs text-orange-600 mb-2 text-center">
+                            Complete {unsubmittedAssignments.length} assignment(s) first
+                          </div>
+                        )}
+                        <Button
+                          onClick={markAsCompleted}
+                          disabled={isCompleted || hasUnsubmittedAssignments}
+                          className={`flex items-center ${
+                            hasUnsubmittedAssignments 
+                              ? 'bg-gray-400 cursor-not-allowed' 
+                              : 'bg-course-blue'
+                          }`}
+                        >
+                          {isCompleted ? (
+                            <>
+                              <Check className="h-5 w-5 mr-1" />
+                              Completed
+                            </>
+                          ) : (
+                            <>
+                              <Check className="h-5 w-5 mr-1" />
+                              Mark as Completed
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    );
+                  })()}
+                  
                   {nextLesson ? (
                     <Button
                       asChild

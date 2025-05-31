@@ -5,6 +5,8 @@ import {
   AlertCircle,
   CheckCircle,
   FileText,
+  Timer,
+  Check,
 } from 'lucide-react';
 import { Assignment } from '@/types/course';
 
@@ -14,15 +16,15 @@ interface AssignmentItemProps {
 }
 
 const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
-  const formatDueDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  const formatTimeLimit = (minutes: number) => {
+    if (minutes < 60) {
+      return `${minutes} minutes`;
+    }
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return remainingMinutes > 0 
+      ? `${hours}h ${remainingMinutes}m` 
+      : `${hours} hour${hours > 1 ? 's' : ''}`;
   };
 
   const getAssignmentIcon = (type: string) => {
@@ -39,6 +41,15 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
   };
 
   const getStatusBadge = () => {
+    if (assignment.is_submitted) {
+      return (
+        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded flex items-center gap-1">
+          <Check className="h-3 w-3" />
+          Submitted
+        </span>
+      );
+    }
+    
     if (assignment.status === 'DRAFT') {
       return (
         <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">
@@ -46,20 +57,23 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
         </span>
       );
     }
-    if (assignment.is_overdue) {
+    
+    if (assignment.is_expired) {
       return (
         <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
-          Overdue
+          Expired
         </span>
       );
     }
+    
     if (assignment.is_active) {
       return (
-        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
           Active
         </span>
       );
     }
+    
     return (
       <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
         Inactive
@@ -68,6 +82,10 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
   };
 
   const getButtonText = () => {
+    if (assignment.is_submitted) {
+      return 'View Submission';
+    }
+    
     switch (assignment.type) {
       case 'QUIZ':
         return 'Start Quiz';
@@ -76,9 +94,11 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
       case 'MULTIPLE_CHOICE':
         return 'Take Test';
       default:
-        return 'View Assignment';
+        return 'Start Assignment';
     }
   };
+
+  const isDisabled = assignment.status === 'DRAFT' || assignment.is_expired;
 
   return (
     <div className="border rounded-lg p-4 bg-white hover:shadow-md transition-shadow">
@@ -90,12 +110,10 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
           <div className="flex-1">
             <div className="flex items-start justify-between">
               <h4 className="font-semibold text-gray-900">{assignment.title}</h4>
-              {assignment.due_date && (
-                <div className={`flex items-center space-x-1 text-xs ${
-                  assignment.is_overdue ? 'text-red-500' : 'text-gray-500'
-                }`}>
-                  <Clock className="h-3 w-3" />
-                  <span>Due: {formatDueDate(assignment.due_date)}</span>
+              {assignment.date_limit && (
+                <div className="flex items-center space-x-1 text-xs text-gray-500">
+                  <Timer className="h-3 w-3" />
+                  <span>Time Limit: {formatTimeLimit(assignment.date_limit)}</span>
                 </div>
               )}
             </div>
@@ -123,16 +141,24 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
 
             {/* Status indicators */}
             <div className="flex items-center space-x-4 mt-2">
-              {assignment.is_overdue && (
+              {assignment.is_expired && (
                 <div className="flex items-center space-x-1 text-xs text-red-500">
                   <AlertCircle className="h-3 w-3" />
-                  <span>Overdue</span>
+                  <span>Time Expired</span>
                 </div>
               )}
-              {assignment.time_limit && (
-                <div className="flex items-center space-x-1 text-xs text-gray-500">
+              {assignment.remaining_time && !assignment.is_submitted && (
+                <div className="flex items-center space-x-1 text-xs text-orange-500">
                   <Clock className="h-3 w-3" />
-                  <span>Time Limit: {assignment.time_limit} minutes</span>
+                  <span>
+                    Time remaining: {Math.floor(assignment.remaining_time / 60)}m {assignment.remaining_time % 60}s
+                  </span>
+                </div>
+              )}
+              {assignment.is_submitted && (
+                <div className="flex items-center space-x-1 text-xs text-green-500">
+                  <CheckCircle className="h-3 w-3" />
+                  <span>Completed</span>
                 </div>
               )}
             </div>
@@ -145,11 +171,13 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
           asChild 
           size="sm" 
           className={`${
-            assignment.is_overdue 
-              ? 'bg-red-500 hover:bg-red-600' 
-              : 'bg-course-blue hover:bg-course-blue/90'
+            assignment.is_submitted
+              ? 'bg-green-500 hover:bg-green-600' 
+              : assignment.is_expired 
+                ? 'bg-red-500 hover:bg-red-600' 
+                : 'bg-course-blue hover:bg-course-blue/90'
           }`}
-          disabled={assignment.status === 'DRAFT'}
+          disabled={isDisabled}
         >
           <Link to={`/courses/${courseId}/assignments/${assignment.id}`}>
             {getButtonText()}

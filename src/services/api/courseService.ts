@@ -74,6 +74,14 @@ export const courseService = {
     return del(`/courses/${courseId}/assignments/${assignmentId}`);
   },
 
+  startAssignment: (courseId: string, assignmentId: string) => {
+    return post(`/courses/${courseId}/assignments/${assignmentId}/start`);
+  },
+
+  getTimeRemaining: (courseId: string, assignmentId: string) => {
+    return get(`/courses/${courseId}/assignments/${assignmentId}/time-remaining`);
+  },
+
   gradeSubmission: (courseId: string, assignmentId: string, data: any) => {
     return post(`/courses/${courseId}/assignments/${assignmentId}/grade`, data);
   },

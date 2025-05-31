@@ -28,6 +28,7 @@ import { courseService, submissionService } from '@/services/api';
 import { Assignment, Submission, AssignmentQuestion, SubmissionAnswer } from '@/types/course';
 import AdminLayout from '@/components/layout/AdminLayout';
 import WrapperLoading from '@/components/ui/wrapper-loading';
+import { formatTimeLimit } from '@/utils/dateLimit';
 
 interface GradingData {
   score: number;
@@ -270,9 +271,9 @@ const SubmissionReviewDetailPage = () => {
                     <p className="font-medium">{assignment.max_score || 100} points</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Due Date</p>
+                    <p className="text-sm text-muted-foreground">Date Limit</p>
                     <p className="font-medium">
-                      {assignment.due_date ? formatDate(assignment.due_date) : 'No due date'}
+                      {assignment.date_limit ? formatTimeLimit(assignment.date_limit) : 'No date limit'}
                     </p>
                   </div>
                 </div>
@@ -344,7 +345,9 @@ const SubmissionReviewDetailPage = () => {
                           <p className="text-sm font-medium text-blue-900 mb-2">
                             Student's Answer:
                           </p>
-                          <p className="text-blue-800">{answer.answer}</p>
+                          <p className="text-blue-800">{
+                            question?.options?.length > 0 ? question.options.find(option => option.id === answer.answer)?.text || answer.answer : answer.answer
+                            }</p>
                         </div>
                       </div>
                     </div>

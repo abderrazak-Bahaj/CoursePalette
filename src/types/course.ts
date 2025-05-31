@@ -97,14 +97,16 @@ export interface Assignment {
   title: string;
   description: string;
   course_id: string;
-  due_date?: string;
+  date_limit?: number; // Time limit in minutes
   max_score?: number;
   status?: string;
   type: 'QUIZ' | 'ESSAY' | 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'MATCHING';
   created_at: string;
   updated_at: string;
-  is_overdue: boolean;
+  is_expired?: boolean;
   is_active: boolean;
+  is_submitted?: boolean;
+  remaining_time?: number; // Time remaining in seconds
   questions?: AssignmentQuestion[];
   submissions?: Submission[];
   course?: Course;
@@ -112,6 +114,17 @@ export interface Assignment {
   questions_count?: number;
   submissions_count?: number;
   user_submission?: Submission;
+  assignment_start?: {
+    started_at: string;
+    expires_at?: string;
+    remaining_time?: {
+      hours: number;
+      minutes: number;
+      seconds: number;
+      total_seconds: number;
+    };
+    is_expired: boolean;
+  };
 }
 
 export interface UserProgress {

@@ -129,7 +129,6 @@ const SubmissionsReviewPage = () => {
   };
 
 
-
   const getScoreColor = (score: number, maxScore: number) => {
     const percentage = (score / maxScore) * 100;
     if (percentage >= 90) return 'text-green-600';
@@ -172,6 +171,10 @@ const SubmissionsReviewPage = () => {
           <div className="flex-1">
             <h1 className="text-2xl font-bold">Assignment Submissions</h1>
               <p className="text-muted-foreground">{assignment?.title}</p>
+              {/* Course Title */}
+              <p className="text-muted-foreground">
+                <span className="font-bold">Course:</span> {assignment?.course?.title}
+              </p>
             </div>
         </div>
 

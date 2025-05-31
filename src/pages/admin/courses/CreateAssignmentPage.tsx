@@ -27,6 +27,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { courseService } from '@/services/api';
 import AdminLayout from '@/components/layout/AdminLayout';
 import WrapperLoading from '@/components/ui/wrapper-loading';
+import { formatTimeLimit } from '@/utils/dateLimit';
 
 interface QuestionOption {
   id?: string;
@@ -49,7 +50,7 @@ interface AssignmentFormData {
   description: string;
   instructions: string;
   type: 'QUIZ' | 'ESSAY' | 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'MATCHING';
-  due_date: string;
+  date_limit: number; // Time in minutes
   max_score: number;
   status: 'DRAFT' | 'PUBLISHED';
   lesson_id: string | null;
@@ -68,7 +69,7 @@ const CreateAssignmentPage = () => {
     description: '',
     instructions: '',
     type: 'QUIZ',
-    due_date: '',
+    date_limit: 60, // Default 60 minutes
     max_score: 100,
     status: 'DRAFT',
     lesson_id: null,
@@ -122,7 +123,7 @@ const CreateAssignmentPage = () => {
         description: assignment.description || '',
         instructions: assignment.instructions || '',
         type: assignment.type || 'QUIZ',
-        due_date: assignment.due_date ? new Date(assignment.due_date).toISOString().slice(0, 16) : '',
+        date_limit: assignment.date_limit || 60, // Use date_limit instead of due_date
         max_score: assignment.max_score || 100,
         status: assignment.status || 'DRAFT',
         lesson_id: assignment.lesson_id || null,
@@ -332,6 +333,7 @@ const CreateAssignmentPage = () => {
   };
 
 
+
   const course = courseData?.course || null;
 
   return (
@@ -440,13 +442,39 @@ const CreateAssignmentPage = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="due_date">Due Date</Label>
-                  <Input
-                    id="due_date"
-                    type="datetime-local"
-                    value={formData.due_date}
-                    onChange={(e) => handleInputChange('due_date', e.target.value)}
-                  />
+                  <Label htmlFor="date_limit">Time Limit</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="date_limit"
+                      type="number"
+                      value={formData.date_limit}
+                      onChange={(e) => handleInputChange('date_limit', parseInt(e.target.value) || 60)}
+                      min="1"
+                      max="600"
+                      placeholder="Minutes"
+                    />
+                    <Select
+                      value={formData.date_limit >= 60 ? 'hours' : 'minutes'}
+                      onValueChange={(unit) => {
+                        if (unit === 'hours' && formData.date_limit < 60) {
+                          handleInputChange('date_limit', Math.ceil(formData.date_limit / 60) * 60);
+                        } else if (unit === 'minutes' && formData.date_limit >= 60) {
+                          handleInputChange('date_limit', Math.floor(formData.date_limit / 60));
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="w-24">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="minutes">Min</SelectItem>
+                        <SelectItem value="hours">Hrs</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Students will have {formatTimeLimit(formData.date_limit)} to complete this assignment once they start.
+                  </p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="max_score">Max Score</Label>
