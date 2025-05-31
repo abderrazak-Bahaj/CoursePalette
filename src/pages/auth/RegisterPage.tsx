@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,15 @@ export const RegisterPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { register } = useAuth();
+
+  // Cleanup effect to reset reCAPTCHA state when component unmounts
+  useEffect(() => {
+    return () => {
+      // Reset reCAPTCHA token and error state when leaving the page
+      setRecaptchaToken('');
+      setRecaptchaError('');
+    };
+  }, []);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();

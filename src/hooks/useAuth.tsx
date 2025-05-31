@@ -11,6 +11,7 @@ import { Loader } from '@/components/ui/loader';
 import { AuthContextType, User } from '@/types';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import LoadingFallback from '@/components/common/LoadingFallback';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -171,9 +172,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     try {
-      authService.logout();
+      await authService.logout();
     } catch (error) {
       console.error('API logout failed:', error);
     }
@@ -296,7 +297,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {isLoading && <Loader fullPage />}
+      {isLoading && <LoadingFallback 
+        size="lg" 
+        text="Loading page..."
+        fullPage
+          />}
       {children}
     </AuthContext.Provider>
   );

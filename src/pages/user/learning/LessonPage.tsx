@@ -272,28 +272,28 @@ const LessonPage = () => {
                           <div className="text-xs text-orange-600 mb-2 text-center">
                             Complete {unsubmittedAssignments.length} assignment(s) first
                           </div>
-                        )}
-                        <Button
-                          onClick={markAsCompleted}
+                  )}
+                  <Button
+                    onClick={markAsCompleted}
                           disabled={isCompleted || hasUnsubmittedAssignments}
                           className={`flex items-center ${
                             hasUnsubmittedAssignments 
                               ? 'bg-gray-400 cursor-not-allowed' 
                               : 'bg-course-blue'
                           }`}
-                        >
+                  >
                           {isCompleted ? (
-                            <>
-                              <Check className="h-5 w-5 mr-1" />
-                              Completed
-                            </>
-                          ) : (
-                            <>
-                              <Check className="h-5 w-5 mr-1" />
-                              Mark as Completed
-                            </>
-                          )}
-                        </Button>
+                      <>
+                        <Check className="h-5 w-5 mr-1" />
+                        Completed
+                      </>
+                    ) : (
+                      <>
+                        <Check className="h-5 w-5 mr-1" />
+                        Mark as Completed
+                      </>
+                    )}
+                  </Button>
                       </div>
                     );
                   })()}

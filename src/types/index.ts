@@ -45,6 +45,7 @@ export interface Course {
   updated_at: string;
   has_available_spots: boolean;
   is_active: boolean;
+  is_completed: boolean;
 }
 
 export interface Enrollment {

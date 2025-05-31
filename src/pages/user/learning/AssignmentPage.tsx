@@ -65,14 +65,14 @@ const AssignmentPage = () => {
       const remainingTime = assignment.remaining_time;
 
       setHasStarted(!!(assignment.assignment_start || isSubmitted || isExpired));
-
+      
       if (remainingTime && remainingTime > 0 && !isSubmitted && !isExpired) {
         setTimeRemaining(remainingTime * 1000); // Convert seconds to milliseconds
         
         const timer = setInterval(() => {
           setTimeRemaining(prev => {
             if (!prev || prev <= 1000) {
-              clearInterval(timer);
+            clearInterval(timer);
               // Refresh assignment data when timer expires
               queryClient.invalidateQueries({
                 queryKey: ['assignment', courseId, assignmentId],

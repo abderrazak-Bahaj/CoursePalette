@@ -300,7 +300,7 @@ const ResourceManagementPage = () => {
               <div className="flex items-center gap-2 text-muted-foreground">
                 <span>Lesson:</span>
                 <span className="font-medium">
-                  {lesson?.lesson?.title || 'Loading lesson...'}
+                {lesson?.lesson?.title || 'Loading lesson...'}
                 </span>
               </div>
             </div>

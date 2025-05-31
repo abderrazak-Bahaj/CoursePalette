@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { Loader } from '@/components/ui/loader';
+import LoadingFallback from '@/components/common/LoadingFallback';
 
 interface AuthRouteWrapperProps {
   children: ReactNode;
@@ -15,7 +15,11 @@ export const AuthRouteWrapper = ({
 
   // Show loader while authentication status is being determined
   if (isLoading) {
-    return <Loader fullPage />;
+    return <LoadingFallback 
+    size="lg" 
+    text="Loading page..."
+    fullPage
+  />;
   }
 
   // If already authenticated, redirect to the specified path

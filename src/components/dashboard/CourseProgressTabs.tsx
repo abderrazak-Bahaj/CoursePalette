@@ -36,20 +36,12 @@ const CourseProgressTabs: React.FC<CourseProgressTabsProps> = ({
   };
 
   return (
-    <Tabs defaultValue="in-progress">
+    <Tabs defaultValue="all">
       <TabsList className="mb-6">
+        <TabsTrigger value="all">All Courses</TabsTrigger>
         <TabsTrigger value="in-progress">In Progress</TabsTrigger>
         <TabsTrigger value="completed">Completed</TabsTrigger>
-        <TabsTrigger value="all">All Courses</TabsTrigger>
       </TabsList>
-
-      <TabsContent value="in-progress" className="mt-0">
-        {renderContent(inProgress, 'progress')}
-      </TabsContent>
-
-      <TabsContent value="completed" className="mt-0">
-        {renderContent(completed, 'courses yet')}
-      </TabsContent>
 
       <TabsContent value="all" className="mt-0">
         <div className="space-y-4">
@@ -61,6 +53,18 @@ const CourseProgressTabs: React.FC<CourseProgressTabsProps> = ({
           ))}
         </div>
       </TabsContent>
+
+      <TabsContent value="completed" className="mt-0">
+        {renderContent(completed, 'courses yet')}
+      </TabsContent>
+
+      <TabsContent value="in-progress" className="mt-0">
+        {renderContent(inProgress, 'progress')}
+      </TabsContent>
+
+     
+
+    
     </Tabs>
   );
 };

@@ -322,7 +322,7 @@ const AppRoutes = () => (
       }
     />
     <Route
-      path="/certificates/:id"
+      path="/certificates/:courseId"
       element={
         <RouteWrapper accessType="ALL">
           <SuspenseWrapper>

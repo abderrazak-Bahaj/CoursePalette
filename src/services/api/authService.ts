@@ -43,7 +43,11 @@ export const authService = {
   },
 
   logout: () => {
-    return post('/logout').finally(() => {
+    return post('/logout',{
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+    }).finally(() => {
       localStorage.removeItem('user');
     });
   },

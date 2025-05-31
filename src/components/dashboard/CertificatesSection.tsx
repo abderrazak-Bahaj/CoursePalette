@@ -57,7 +57,7 @@ const CertificatesSection = ({ showTitle = true }: { showTitle?: boolean }) => {
             {certificates.map((certificate) => (
               <CertificateCard
                 key={certificate.id}
-                id={certificate.id}
+                id={certificate.course.id}
                 title={certificate.course.title}
                 image={certificate.course.image_url}
                 issueDate={formatDate(certificate.issue_date)}

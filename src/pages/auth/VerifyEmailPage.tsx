@@ -9,6 +9,7 @@ import { Loader } from '@/components/ui/loader';
 import { CheckCircle, XCircle, Mail } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { authService } from '@/services/api/authService';
+import LoadingFallback from '@/components/common/LoadingFallback';
 
 const VerifyEmailPage = () => {
   const [verifying, setVerifying] = useState(false);
@@ -158,8 +159,11 @@ const VerifyEmailPage = () => {
             <CardContent className="pt-6">
               {verifying ? (
                 <div className="text-center py-12">
-                  <Loader />
-                  <p className="mt-4">Verifying your email...</p>
+                  <LoadingFallback 
+                    size="lg" 
+                    text="Verifying your email..."
+                  />
+                  
                 </div>
               ) : verified ? (
                 <div className="text-center py-8">
