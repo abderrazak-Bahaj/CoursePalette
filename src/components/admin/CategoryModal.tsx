@@ -71,7 +71,7 @@ const CategoryModal = ({
   onSubmit,
   category,
   isLoading,
-  isEdit
+  isEdit,
 }: CategoryModalProps) => {
   const [parentCategories, setParentCategories] = useState<Category[]>([]);
 
@@ -92,7 +92,7 @@ const CategoryModal = ({
   useEffect(() => {
     if (isOpen) {
       if (category) {
-        console.log("Editing category:", category);
+        console.log('Editing category:', category);
         form.reset({
           name: category.name || '',
           description: category.description || '',
@@ -117,9 +117,9 @@ const CategoryModal = ({
 
   // Handle form submission
   const handleSubmit = (values: FormValues) => {
-    console.log("Form values:", values);
-    console.log("Is editing:", !!category);
-    
+    console.log('Form values:', values);
+    console.log('Is editing:', !!category);
+
     // Ensure numeric values are properly formatted
     const formattedValues = {
       ...values,
@@ -132,7 +132,9 @@ const CategoryModal = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{category ? 'Edit Category' : 'Add Category'}</DialogTitle>
+          <DialogTitle>
+            {category ? 'Edit Category' : 'Add Category'}
+          </DialogTitle>
           <DialogDescription>
             {category
               ? 'Update the category details below'
@@ -141,7 +143,10 @@ const CategoryModal = ({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="name"
@@ -250,7 +255,7 @@ const CategoryModal = ({
               >
                 Cancel
               </Button>
-             
+
               <Button type="submit" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {category ? 'Update' : 'Create'}
@@ -263,4 +268,4 @@ const CategoryModal = ({
   );
 };
 
-export default CategoryModal; 
+export default CategoryModal;

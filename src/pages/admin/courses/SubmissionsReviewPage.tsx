@@ -41,8 +41,6 @@ import { Assignment, Submission, AssignmentQuestion } from '@/types/course';
 import AdminLayout from '@/components/layout/AdminLayout';
 import WrapperLoading from '@/components/ui/wrapper-loading';
 
-
-
 const SubmissionsReviewPage = () => {
   const { courseId, assignmentId } = useParams<{
     courseId: string;
@@ -70,15 +68,13 @@ const SubmissionsReviewPage = () => {
       ),
   });
 
-
-
   const assignment = assignmentData?.assignment;
   const submissions = submissionsData?.submissions || [];
 
   const filteredSubmissions = submissions.filter((submission: Submission) => {
     const matchesSearch =
       submission.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         submission.user?.email?.toLowerCase().includes(searchTerm.toLowerCase());
+      submission.user?.email?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
       statusFilter === 'all' || submission.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -128,7 +124,6 @@ const SubmissionsReviewPage = () => {
     });
   };
 
-
   const getScoreColor = (score: number, maxScore: number) => {
     const percentage = (score / maxScore) * 100;
     if (percentage >= 90) return 'text-green-600';
@@ -148,256 +143,257 @@ const SubmissionsReviewPage = () => {
       submissions.filter((s: Submission) => s.score !== null).length > 0
         ? submissions
             .filter((s: Submission) => s.score !== null)
-          .reduce((sum: number, s: Submission) => sum + (s.score || 0), 0) /
-        submissions.filter((s: Submission) => s.score !== null).length
-      : 0,
+            .reduce((sum: number, s: Submission) => sum + (s.score || 0), 0) /
+          submissions.filter((s: Submission) => s.score !== null).length
+        : 0,
   };
 
   return (
     <AdminLayout title="Review Submissions">
       <WrapperLoading isLoading={assignmentLoading || submissionsLoading}>
-      <div className="container mx-auto px-4 py-6">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Back
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold">Assignment Submissions</h1>
+        <div className="container mx-auto px-4 py-6">
+          {/* Header */}
+          <div className="flex items-center gap-4 mb-6">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Back
+            </Button>
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold">Assignment Submissions</h1>
               <p className="text-muted-foreground">{assignment?.title}</p>
               {/* Course Title */}
               <p className="text-muted-foreground">
-                <span className="font-bold">Course:</span> {assignment?.course?.title}
+                <span className="font-bold">Course:</span>{' '}
+                {assignment?.course?.title}
               </p>
             </div>
-        </div>
+          </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-blue-500" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Total</p>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-blue-500" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total</p>
                     <p className="text-2xl font-bold">
                       {submissionStats.total}
                     </p>
                   </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-orange-500" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Submitted</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-orange-500" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Submitted</p>
                     <p className="text-2xl font-bold">
                       {submissionStats.submitted}
                     </p>
                   </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-green-500" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Graded</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Graded</p>
                     <p className="text-2xl font-bold">
                       {submissionStats.graded}
                     </p>
                   </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4 text-gray-500" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Drafts</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-gray-500" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Drafts</p>
                     <p className="text-2xl font-bold">
                       {submissionStats.draft}
                     </p>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <Star className="h-4 w-4 text-yellow-500" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Avg Score</p>
+                    <p className="text-2xl font-bold">
+                      {submissionStats.averageScore.toFixed(1)}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Filters */}
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Input
+                      placeholder="Search by student name or email..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="DRAFT">Draft</SelectItem>
+                      <SelectItem value="SUBMITTED">Submitted</SelectItem>
+                      <SelectItem value="GRADED">Graded</SelectItem>
+                      <SelectItem value="RESUBMITTED">Resubmitted</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </CardContent>
           </Card>
+
+          {/* Submissions Table */}
           <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <Star className="h-4 w-4 text-yellow-500" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Avg Score</p>
-                  <p className="text-2xl font-bold">
-                    {submissionStats.averageScore.toFixed(1)}
-                  </p>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Submissions ({filteredSubmissions.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {filteredSubmissions.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>No submissions found matching your criteria.</p>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Filters */}
-        <Card className="mb-6">
-          <CardContent className="pt-6">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input
-                    placeholder="Search by student name or email..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-[140px]">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="DRAFT">Draft</SelectItem>
-                    <SelectItem value="SUBMITTED">Submitted</SelectItem>
-                    <SelectItem value="GRADED">Graded</SelectItem>
-                    <SelectItem value="RESUBMITTED">Resubmitted</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Submissions Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Submissions ({filteredSubmissions.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {filteredSubmissions.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>No submissions found matching your criteria.</p>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Student</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Submitted At</TableHead>
-                    <TableHead>Score</TableHead>
-                    <TableHead>Graded At</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredSubmissions.map((submission: Submission) => (
-                    <TableRow key={submission.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-gray-500" />
-                          <div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Student</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Submitted At</TableHead>
+                      <TableHead>Score</TableHead>
+                      <TableHead>Graded At</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredSubmissions.map((submission: Submission) => (
+                      <TableRow key={submission.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <User className="h-4 w-4 text-gray-500" />
+                            <div>
                               <p className="font-medium">
                                 {submission.user?.name || 'Unknown'}
                               </p>
-                            <p className="text-sm text-muted-foreground">
-                              {submission.user?.email || 'No email'}
-                            </p>
+                              <p className="text-sm text-muted-foreground">
+                                {submission.user?.email || 'No email'}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {getStatusIcon(submission.status)}
-                          {getStatusBadge(submission.status)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {submission.submitted_at ? (
+                        </TableCell>
+                        <TableCell>
                           <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-gray-500" />
-                            {formatDate(submission.submitted_at)}
+                            {getStatusIcon(submission.status)}
+                            {getStatusBadge(submission.status)}
                           </div>
-                        ) : (
+                        </TableCell>
+                        <TableCell>
+                          {submission.submitted_at ? (
+                            <div className="flex items-center gap-2">
+                              <Calendar className="h-4 w-4 text-gray-500" />
+                              {formatDate(submission.submitted_at)}
+                            </div>
+                          ) : (
                             <span className="text-muted-foreground">
                               Not submitted
                             </span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {submission.score !== null ? (
-                          <div className="flex items-center gap-2">
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {submission.score !== null ? (
+                            <div className="flex items-center gap-2">
                               <span
                                 className={`font-medium ${getScoreColor(submission.score, assignment?.max_score || 100)}`}
                               >
                                 {submission.score}/
                                 {assignment?.max_score || 100}
-                            </span>
-                            <span className="text-sm text-muted-foreground">
-                              ({submission.score_percentage}%)
-                            </span>
-                          </div>
-                        ) : (
+                              </span>
+                              <span className="text-sm text-muted-foreground">
+                                ({submission.score_percentage}%)
+                              </span>
+                            </div>
+                          ) : (
                             <span className="text-muted-foreground">
                               Not graded
                             </span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {submission.graded_at ? (
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {submission.graded_at ? (
+                            <div className="flex items-center gap-2">
+                              <Clock className="h-4 w-4 text-gray-500" />
+                              {formatDate(submission.graded_at)}
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground">
+                              Not graded
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell>
                           <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-gray-500" />
-                            {formatDate(submission.graded_at)}
-                          </div>
-                        ) : (
-                            <span className="text-muted-foreground">
-                              Not graded
-                            </span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => navigate(`/admin/courses/${courseId}/assignments/${assignmentId}/submissions/${submission.id}/review`)}
+                              onClick={() =>
+                                navigate(
+                                  `/admin/courses/${courseId}/assignments/${assignmentId}/submissions/${submission.id}/review`
+                                )
+                              }
                             >
                               <Eye className="h-4 w-4 mr-1" />
                               Review & Grade
                             </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
-
-
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </WrapperLoading>
     </AdminLayout>
   );
 };
 
-
-
-export default SubmissionsReviewPage; 
+export default SubmissionsReviewPage;

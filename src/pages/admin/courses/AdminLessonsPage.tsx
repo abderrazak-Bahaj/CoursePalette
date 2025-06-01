@@ -36,7 +36,9 @@ const AdminLessonsPage = () => {
   useEffect(() => {
     const courseIdFromUrl = getParam('courseId');
     if (courseIdFromUrl && courses.length > 0) {
-      const courseExists = courses.some(course => course.id === courseIdFromUrl);
+      const courseExists = courses.some(
+        (course) => course.id === courseIdFromUrl
+      );
       if (courseExists) {
         setSelectedCourseId(courseIdFromUrl);
       } else {
@@ -62,9 +64,12 @@ const AdminLessonsPage = () => {
             </p>
             {selectedCourseId && (
               <div className="mt-2">
-                <span className="text-sm text-muted-foreground">Selected Course: </span>
+                <span className="text-sm text-muted-foreground">
+                  Selected Course:{' '}
+                </span>
                 <span className="text-sm font-medium">
-                  {courses.find(c => c.id === selectedCourseId)?.title || 'Unknown Course'}
+                  {courses.find((c) => c.id === selectedCourseId)?.title ||
+                    'Unknown Course'}
                 </span>
               </div>
             )}
@@ -86,13 +91,15 @@ const AdminLessonsPage = () => {
                 ))}
               </SelectContent>
             </Select>
-            {isTeacher && <Button
-              onClick={() => setIsModalOpen(true)}
-              disabled={!selectedCourseId}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Add New Lesson
-            </Button>}
+            {isTeacher && (
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                disabled={!selectedCourseId}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add New Lesson
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -102,7 +109,8 @@ const AdminLessonsPage = () => {
           <h3 className="text-lg font-medium mb-2">Select a Course</h3>
           <p className="text-muted-foreground mb-4">
             Please select a course from the dropdown to view and manage its
-            lessons. Your selection will be saved in the URL for easy navigation.
+            lessons. Your selection will be saved in the URL for easy
+            navigation.
           </p>
         </div>
       ) : (

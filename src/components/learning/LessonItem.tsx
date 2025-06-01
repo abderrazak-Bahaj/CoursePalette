@@ -35,7 +35,7 @@ const LessonItem = ({ lesson, courseId, isActive }: LessonItemProps) => {
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <div 
+          <div
             className={`text-sm font-medium line-clamp-2 ${
               isActive ? 'text-course-blue' : 'text-gray-900'
             }`}
@@ -61,4 +61,4 @@ const LessonItem = ({ lesson, courseId, isActive }: LessonItemProps) => {
   );
 };
 
-export default LessonItem; 
+export default LessonItem;

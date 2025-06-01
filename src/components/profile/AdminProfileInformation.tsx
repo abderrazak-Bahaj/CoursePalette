@@ -18,22 +18,22 @@ import {
 } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { 
-  Edit, 
-  X, 
-  User, 
-  Mail, 
-  Phone, 
-  Home, 
-  FileText, 
-  Briefcase, 
-  Building 
+import {
+  Edit,
+  X,
+  User,
+  Mail,
+  Phone,
+  Home,
+  FileText,
+  Briefcase,
+  Building,
 } from 'lucide-react';
 import { useState } from 'react';
 
 const adminFormSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
+  name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
+  email: z.string().email({ message: 'Please enter a valid email address' }),
   phone: z.string().optional(),
   address: z.string().optional(),
   bio: z.string().optional(),
@@ -69,19 +69,19 @@ const AdminProfileInformation = () => {
     mutationFn: (data: AdminFormValues) => userService.updateProfile(data),
     onSuccess: () => {
       toast({
-        title: "Profile updated",
-        description: "Your profile has been updated successfully.",
+        title: 'Profile updated',
+        description: 'Your profile has been updated successfully.',
       });
       refreshUserData();
       setIsEditMode(false);
     },
     onError: (error) => {
       toast({
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to update profile. Please try again.',
+        variant: 'destructive',
       });
-    }
+    },
   });
 
   const onSubmit = (data: AdminFormValues) => {
@@ -107,12 +107,12 @@ const AdminProfileInformation = () => {
   };
 
   // Enhanced View mode field component with icons
-  const ViewModeField = ({ 
-    label, 
-    value, 
-    icon: Icon 
-  }: { 
-    label: string; 
+  const ViewModeField = ({
+    label,
+    value,
+    icon: Icon,
+  }: {
+    label: string;
     value?: string | number | null;
     icon: React.ComponentType<any>;
   }) => (
@@ -126,15 +126,15 @@ const AdminProfileInformation = () => {
   );
 
   // Custom form field with icon
-  const IconFormField = ({ 
-    name, 
-    label, 
+  const IconFormField = ({
+    name,
+    label,
     icon: Icon,
-    type = "text",
+    type = 'text',
     isTextarea = false,
-    hint
-  }: { 
-    name: any; 
+    hint,
+  }: {
+    name: any;
     label: string;
     icon: React.ComponentType<any>;
     type?: string;
@@ -171,10 +171,12 @@ const AdminProfileInformation = () => {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Profile Information</h2>
         <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-500">{isEditMode ? 'Edit Mode' : 'View Mode'}</span>
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <span className="text-sm text-gray-500">
+            {isEditMode ? 'Edit Mode' : 'View Mode'}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={toggleEditMode}
             disabled={isUpdating}
           >
@@ -200,14 +202,19 @@ const AdminProfileInformation = () => {
               <CardContent className="pt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <IconFormField name="name" label="Full Name" icon={User} />
-                  <IconFormField name="email" label="Email" icon={Mail} type="email" />
+                  <IconFormField
+                    name="email"
+                    label="Email"
+                    icon={Mail}
+                    type="email"
+                  />
                 </div>
 
                 <div className="mt-6">
-                  <IconFormField 
-                    name="bio" 
-                    label="Bio" 
-                    icon={FileText} 
+                  <IconFormField
+                    name="bio"
+                    label="Bio"
+                    icon={FileText}
                     isTextarea={true}
                     hint="Tell us a little about yourself."
                   />
@@ -219,15 +226,25 @@ const AdminProfileInformation = () => {
                 </div>
 
                 <Separator className="my-6" />
-                
+
                 <div className="flex items-center gap-2 mb-4">
                   <Briefcase className="h-5 w-5 text-gray-500" />
-                  <h3 className="text-lg font-medium">Administrative Information</h3>
+                  <h3 className="text-lg font-medium">
+                    Administrative Information
+                  </h3>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <IconFormField name="admin.department" label="Department" icon={Building} />
-                  <IconFormField name="admin.position" label="Position" icon={Briefcase} />
+                  <IconFormField
+                    name="admin.department"
+                    label="Department"
+                    icon={Building}
+                  />
+                  <IconFormField
+                    name="admin.position"
+                    label="Position"
+                    icon={Briefcase}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -245,26 +262,44 @@ const AdminProfileInformation = () => {
           <Card>
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <ViewModeField label="Full Name" value={user?.name} icon={User} />
+                <ViewModeField
+                  label="Full Name"
+                  value={user?.name}
+                  icon={User}
+                />
                 <ViewModeField label="Email" value={user?.email} icon={Mail} />
                 <ViewModeField label="Phone" value={user?.phone} icon={Phone} />
-                <ViewModeField label="Address" value={user?.address} icon={Home} />
+                <ViewModeField
+                  label="Address"
+                  value={user?.address}
+                  icon={Home}
+                />
               </div>
-              
+
               <Separator className="my-4" />
-              
+
               <ViewModeField label="Bio" value={user?.bio} icon={FileText} />
-              
+
               <Separator className="my-4" />
-              
+
               <div className="flex items-center gap-2 mb-4">
                 <Briefcase className="h-5 w-5 text-gray-500" />
-                <h3 className="text-lg font-medium">Administrative Information</h3>
+                <h3 className="text-lg font-medium">
+                  Administrative Information
+                </h3>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <ViewModeField label="Department" value={user?.admin?.department} icon={Building} />
-                <ViewModeField label="Position" value={user?.admin?.position} icon={Briefcase} />
+                <ViewModeField
+                  label="Department"
+                  value={user?.admin?.department}
+                  icon={Building}
+                />
+                <ViewModeField
+                  label="Position"
+                  value={user?.admin?.position}
+                  icon={Briefcase}
+                />
               </div>
             </CardContent>
           </Card>

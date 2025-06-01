@@ -16,7 +16,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Eye, Edit, Trash2, MoreHorizontal, PlusCircle, BookOpen } from 'lucide-react';
+import {
+  Eye,
+  Edit,
+  Trash2,
+  MoreHorizontal,
+  PlusCircle,
+  BookOpen,
+} from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
@@ -204,21 +211,25 @@ const AdminCourseList = ({
                             </Link>
                           </DropdownMenuItem>
                           {isTeacher && (
-                            <> 
-                            <DropdownMenuItem
-                              onClick={() => navigate(`/admin/courses/${course.id}/assignments`)}
-                              className="flex items-center"
-                            >
-                              <BookOpen className="mr-2 h-4 w-4" />
-                              <span>Assignments</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleEdit(course)}
-                              className="flex items-center"
-                            >
-                              <Edit className="mr-2 h-4 w-4" />
-                              <span>Edit</span>
-                            </DropdownMenuItem>
+                            <>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  navigate(
+                                    `/admin/courses/${course.id}/assignments`
+                                  )
+                                }
+                                className="flex items-center"
+                              >
+                                <BookOpen className="mr-2 h-4 w-4" />
+                                <span>Assignments</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleEdit(course)}
+                                className="flex items-center"
+                              >
+                                <Edit className="mr-2 h-4 w-4" />
+                                <span>Edit</span>
+                              </DropdownMenuItem>
                             </>
                           )}
                           <DropdownMenuItem

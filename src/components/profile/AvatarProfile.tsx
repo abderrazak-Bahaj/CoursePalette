@@ -29,7 +29,12 @@ import { Card, CardContent } from '@/components/ui/card';
 
 // Max 3MB file size
 const MAX_FILE_SIZE = 3 * 1024 * 1024;
-const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/gif',
+];
 
 const avatarFormSchema = z.object({
   avatar: z
@@ -49,14 +54,14 @@ const AvatarProfile = () => {
   const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  
+
   const form = useForm<AvatarFormValues>({
     resolver: zodResolver(avatarFormSchema),
     defaultValues: {
       avatar: undefined,
     },
   });
-  
+
   const { mutate: updateAvatar, isPending: isUpdatingAvatar } = useMutation({
     mutationFn: (file: File) => {
       const formData = new FormData();
@@ -65,13 +70,13 @@ const AvatarProfile = () => {
     },
     onSuccess: () => {
       toast({
-        title: "Avatar updated",
-        description: "Your profile avatar has been updated successfully.",
+        title: 'Avatar updated',
+        description: 'Your profile avatar has been updated successfully.',
       });
-      
+
       // Refresh user data to get the new avatar URL
       refreshUserData();
-      
+
       // Close modal and reset form
       setIsModalOpen(false);
       setPreviewUrl(null);
@@ -79,18 +84,18 @@ const AvatarProfile = () => {
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to update avatar. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to update avatar. Please try again.',
+        variant: 'destructive',
       });
-    }
+    },
   });
 
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       const file = acceptedFiles[0];
       form.setValue('avatar', file);
-      
+
       // Create preview URL
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
@@ -131,11 +136,14 @@ const AvatarProfile = () => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="relative group">
-                    <Avatar 
+                    <Avatar
                       className="h-24 w-24 cursor-pointer border-2 border-transparent group-hover:border-primary/50 transition-all"
                       onClick={handleOpenModal}
                     >
-                      <AvatarImage src={user?.avatar || ''} alt={user?.name || 'User'} />
+                      <AvatarImage
+                        src={user?.avatar || ''}
+                        alt={user?.name || 'User'}
+                      />
                       <AvatarFallback className="bg-primary text-white text-lg">
                         {user?.name?.charAt(0) || 'U'}
                       </AvatarFallback>
@@ -156,9 +164,9 @@ const AvatarProfile = () => {
               <h3 className="text-lg font-medium">{user?.name}</h3>
               <p className="text-sm text-gray-500">{user?.email}</p>
               <p className="text-sm text-gray-500">{user?.role}</p>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={handleOpenModal}
                 className="mt-2"
               >
@@ -178,26 +186,29 @@ const AvatarProfile = () => {
             <DialogHeader>
               <DialogTitle>Update Profile Picture</DialogTitle>
               <DialogDescription>
-                Upload a new profile picture. The image should be square for best results.
+                Upload a new profile picture. The image should be square for
+                best results.
               </DialogDescription>
             </DialogHeader>
-            
+
             <Form {...form}>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div 
-                  {...getRootProps()} 
+                <div
+                  {...getRootProps()}
                   className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-                    isDragActive ? 'border-primary bg-primary/5' : 'border-gray-300 hover:border-primary/50'
+                    isDragActive
+                      ? 'border-primary bg-primary/5'
+                      : 'border-gray-300 hover:border-primary/50'
                   }`}
                 >
                   <input {...getInputProps()} />
-                  
+
                   {previewUrl ? (
                     <div className="flex flex-col items-center">
                       <div className="relative mb-4">
-                        <img 
-                          src={previewUrl} 
-                          alt="Preview" 
+                        <img
+                          src={previewUrl}
+                          alt="Preview"
                           className="w-32 h-32 rounded-full object-cover mx-auto"
                         />
                         <Button
@@ -214,13 +225,19 @@ const AvatarProfile = () => {
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
-                      <p className="text-sm text-gray-500">Click or drag to replace</p>
+                      <p className="text-sm text-gray-500">
+                        Click or drag to replace
+                      </p>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center">
                       <Camera className="h-10 w-10 text-gray-400 mb-2" />
-                      <p className="text-sm font-medium mb-1">Drag and drop or click to upload</p>
-                      <p className="text-xs text-gray-500">JPG, GIF or PNG (max. 3MB)</p>
+                      <p className="text-sm font-medium mb-1">
+                        Drag and drop or click to upload
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        JPG, GIF or PNG (max. 3MB)
+                      </p>
                     </div>
                   )}
                 </div>
@@ -232,15 +249,15 @@ const AvatarProfile = () => {
                 )}
 
                 <DialogFooter className="flex justify-between sm:justify-between">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={handleCloseModal}
                   >
                     Cancel
                   </Button>
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={isUpdatingAvatar || !previewUrl}
                   >
                     {isUpdatingAvatar ? 'Uploading...' : 'Update Avatar'}

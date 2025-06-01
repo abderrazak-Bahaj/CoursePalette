@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 
 interface SidebarContextType {
   isCollapsed: boolean;
@@ -12,7 +18,9 @@ interface SidebarProviderProps {
   children: ReactNode;
 }
 
-export const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) => {
+export const SidebarProvider: React.FC<SidebarProviderProps> = ({
+  children,
+}) => {
   // Initialize from localStorage or default to false
   const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
     const saved = localStorage.getItem('sidebar-collapsed');
@@ -25,7 +33,7 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) =>
   }, [isCollapsed]);
 
   const toggleSidebar = () => {
-    setIsCollapsed(prev => !prev);
+    setIsCollapsed((prev) => !prev);
   };
 
   const setSidebarCollapsed = (collapsed: boolean) => {
@@ -39,9 +47,7 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) =>
   };
 
   return (
-    <SidebarContext.Provider value={value}>
-      {children}
-    </SidebarContext.Provider>
+    <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>
   );
 };
 
@@ -53,4 +59,4 @@ export const useSidebar = (): SidebarContextType => {
   return context;
 };
 
-export default SidebarContext; 
+export default SidebarContext;

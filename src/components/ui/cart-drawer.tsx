@@ -27,8 +27,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
       {/* Backdrop */}
       <div
         className={cn(
-          "fixed inset-0 bg-black/50 z-40 transition-opacity duration-300",
-          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          'fixed inset-0 bg-black/50 z-40 transition-opacity duration-300',
+          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         )}
         onClick={onClose}
       />
@@ -36,8 +36,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
       {/* Drawer */}
       <div
         className={cn(
-          "fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out",
-          isOpen ? "translate-x-0" : "translate-x-full"
+          'fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out',
+          isOpen ? 'translate-x-0' : 'translate-x-full'
         )}
       >
         <div className="flex flex-col h-full">
@@ -48,22 +48,28 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                 <ShoppingBag className="h-5 w-5 text-course-blue" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Shopping Cart</h2>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Shopping Cart
+                </h2>
                 {items.length > 0 && (
                   <p className="text-sm text-gray-500">
-                    {items.length} {items.length === 1 ? 'course' : 'courses'} selected
+                    {items.length} {items.length === 1 ? 'course' : 'courses'}{' '}
+                    selected
                   </p>
                 )}
               </div>
               {items.length > 0 && (
-                <Badge variant="secondary" className="ml-2 bg-course-blue text-white">
+                <Badge
+                  variant="secondary"
+                  className="ml-2 bg-course-blue text-white"
+                >
                   {items.length}
                 </Badge>
               )}
             </div>
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={onClose}
               className="hover:bg-gray-100"
             >
@@ -78,9 +84,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                 <div className="w-20 h-20 bg-gradient-to-br from-course-blue/10 to-purple-100 rounded-full flex items-center justify-center mb-4">
                   <ShoppingBag className="h-10 w-10 text-course-blue" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Your cart is empty</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Your cart is empty
+                </h3>
                 <p className="text-gray-500 mb-6 max-w-sm">
-                  Discover our amazing courses and start your learning journey today!
+                  Discover our amazing courses and start your learning journey
+                  today!
                 </p>
                 <Link to="/courses" onClick={onClose}>
                   <Button className="bg-course-blue hover:bg-blue-700">
@@ -92,11 +101,11 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
             ) : (
               <div className="p-6 space-y-4">
                 {items.map((item, index) => (
-                  <div 
-                    key={item.id} 
+                  <div
+                    key={item.id}
                     className={cn(
-                      "bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all duration-200 hover:border-course-blue/30",
-                      "animate-in slide-in-from-right-2 duration-300",
+                      'bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all duration-200 hover:border-course-blue/30',
+                      'animate-in slide-in-from-right-2 duration-300'
                     )}
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
@@ -122,14 +131,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                           <Clock className="w-3 h-3 mr-1" />
                           <span>Lifetime access</span>
                         </p>
-                        
+
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <span className="text-lg font-bold text-course-blue">
                               {formatPrice(item.price)}
                             </span>
                           </div>
-                          
+
                           <Button
                             variant="ghost"
                             size="sm"
@@ -153,7 +162,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
               <div className="p-6 space-y-4">
                 {/* Total */}
                 <div className="flex items-center justify-between py-2">
-                  <span className="text-base font-medium text-gray-900">Total:</span>
+                  <span className="text-base font-medium text-gray-900">
+                    Total:
+                  </span>
                   <span className="text-2xl font-bold text-course-blue">
                     {formatPrice(total)}
                   </span>
@@ -164,18 +175,21 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                 {/* Action Buttons */}
                 <div className="space-y-3">
                   <Link to="/checkout" onClick={onClose} className="block">
-                    <Button 
-                      className="w-full bg-gradient-to-r from-course-blue to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all duration-200" 
+                    <Button
+                      className="w-full bg-gradient-to-r from-course-blue to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all duration-200"
                       size="lg"
                     >
                       Proceed to Checkout
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
-                  
+
                   <div className="flex space-x-3">
                     <Link to="/courses" onClick={onClose} className="flex-1">
-                      <Button variant="outline" className="w-full border-course-blue text-course-blue hover:bg-course-blue/5">
+                      <Button
+                        variant="outline"
+                        className="w-full border-course-blue text-course-blue hover:bg-course-blue/5"
+                      >
                         Continue Shopping
                       </Button>
                     </Link>
@@ -203,4 +217,4 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
       </div>
     </>
   );
-}; 
+};

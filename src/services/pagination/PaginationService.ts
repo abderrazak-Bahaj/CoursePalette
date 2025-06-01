@@ -60,4 +60,4 @@ export class PaginationService {
   static getPageSizeOptions(): number[] {
     return [10, 25, 50, 100];
   }
-} 
+}

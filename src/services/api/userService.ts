@@ -57,7 +57,10 @@ export const userService = {
   updatePassword: (data: any) => {
     return put('/profile/password', data);
   },
-  updateStatusByAdmin: (user_id: string, data: { status: 'ACTIVE' |'INACTIVE'| 'SUSPENDED' }) => {
+  updateStatusByAdmin: (
+    user_id: string,
+    data: { status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' }
+  ) => {
     return put(`/admin/users/${user_id}/status`, data);
   },
   updatePasswordByAdmin: (user_id: string, data: any) => {
@@ -96,8 +99,6 @@ export const userService = {
 
     return put(`/users/${id}`, formData);
   },
-
- 
 
   getCurrentUser: () => {
     return get('/users/me');

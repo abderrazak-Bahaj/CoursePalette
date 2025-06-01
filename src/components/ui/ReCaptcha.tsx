@@ -22,7 +22,7 @@ const ReCaptcha = ({
   onExpired,
   onError,
   version = 'v2',
-  action = 'register'
+  action = 'register',
 }: ReCaptchaProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<number | null>(null);
@@ -35,11 +35,11 @@ const ReCaptcha = ({
   // Load the reCAPTCHA script with the appropriate API version
   useEffect(() => {
     isMountedRef.current = true;
-    
+
     // Add reCAPTCHA script if it hasn't been added yet
     if (!document.querySelector('script[src*="recaptcha"]')) {
       const script = document.createElement('script');
-      
+
       if (version === 'v3') {
         script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
       } else {
@@ -54,10 +54,10 @@ const ReCaptcha = ({
           }
         };
       }
-      
+
       script.async = true;
       script.defer = true;
-      
+
       // For v3, we'll use the onload event of the script
       if (version === 'v3') {
         script.onload = () => {
@@ -67,7 +67,7 @@ const ReCaptcha = ({
           }
         };
       }
-      
+
       document.head.appendChild(script);
     } else if (window.grecaptcha) {
       // If script is already loaded
@@ -82,15 +82,19 @@ const ReCaptcha = ({
     return () => {
       // Mark component as unmounted
       isMountedRef.current = false;
-      
+
       // Clear any intervals
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
-      
+
       // Cleanup v2 widget
-      if (widgetIdRef.current !== null && window.grecaptcha && version === 'v2') {
+      if (
+        widgetIdRef.current !== null &&
+        window.grecaptcha &&
+        version === 'v2'
+      ) {
         try {
           window.grecaptcha.reset(widgetIdRef.current);
           // Also try to remove the widget entirely
@@ -102,12 +106,12 @@ const ReCaptcha = ({
         }
         widgetIdRef.current = null;
       }
-      
+
       // Clean up global callback
       if (window.onReCaptchaLoad) {
         delete window.onReCaptchaLoad;
       }
-      
+
       // Reset container content
       if (containerRef.current) {
         containerRef.current.innerHTML = '';
@@ -141,7 +145,12 @@ const ReCaptcha = ({
 
   // For v3, execute reCAPTCHA and get token
   const executeReCaptchaV3 = async () => {
-    if (!window.grecaptcha || !window.grecaptcha.execute || !isMountedRef.current) return;
+    if (
+      !window.grecaptcha ||
+      !window.grecaptcha.execute ||
+      !isMountedRef.current
+    )
+      return;
 
     try {
       const token = await window.grecaptcha.execute(siteKey, { action });
@@ -158,8 +167,14 @@ const ReCaptcha = ({
 
   // For v2, render the reCAPTCHA widget
   const renderReCaptchaV2 = () => {
-    if (!containerRef.current || !window.grecaptcha || !window.grecaptcha.render || !isMountedRef.current) return;
-    
+    if (
+      !containerRef.current ||
+      !window.grecaptcha ||
+      !window.grecaptcha.render ||
+      !isMountedRef.current
+    )
+      return;
+
     // Reset if already rendered
     if (widgetIdRef.current !== null) {
       try {
@@ -168,7 +183,7 @@ const ReCaptcha = ({
         console.error('Error resetting reCAPTCHA:', error);
       }
     }
-    
+
     try {
       widgetIdRef.current = window.grecaptcha.render(containerRef.current, {
         sitekey: siteKey,
@@ -186,7 +201,7 @@ const ReCaptcha = ({
           if (onError && isMountedRef.current) {
             onError(error);
           }
-        }
+        },
       });
     } catch (error) {
       console.error('Error rendering reCAPTCHA v2:', error);
@@ -205,4 +220,4 @@ const ReCaptcha = ({
   );
 };
 
-export default ReCaptcha; 
+export default ReCaptcha;

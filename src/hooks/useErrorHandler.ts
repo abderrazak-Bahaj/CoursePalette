@@ -19,10 +19,7 @@ export const useErrorHandler = () => {
   const { toast } = useToast();
 
   const handleError = useCallback(
-    (
-      error: Error | ApiError | any,
-      options: ErrorHandlerOptions = {}
-    ) => {
+    (error: Error | ApiError | any, options: ErrorHandlerOptions = {}) => {
       const {
         showToast = true,
         logToConsole = true,
@@ -51,7 +48,10 @@ export const useErrorHandler = () => {
         errorTitle = 'Client Error';
       } else if (error?.status >= 500) {
         errorTitle = 'Server Error';
-      } else if (error?.name === 'NetworkError' || error?.code === 'NETWORK_ERROR') {
+      } else if (
+        error?.name === 'NetworkError' ||
+        error?.code === 'NETWORK_ERROR'
+      ) {
         errorTitle = 'Network Error';
         errorMessage = 'Please check your internet connection';
       }
@@ -125,7 +125,8 @@ export const useErrorHandler = () => {
   const handleNetworkError = useCallback(
     (error: any) => {
       return handleError(error, {
-        customMessage: 'Network error. Please check your connection and try again',
+        customMessage:
+          'Network error. Please check your connection and try again',
       });
     },
     [handleError]
@@ -149,4 +150,4 @@ export const useErrorHandler = () => {
   };
 };
 
-export default useErrorHandler; 
+export default useErrorHandler;

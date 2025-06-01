@@ -25,7 +25,12 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { courseService, submissionService } from '@/services/api';
-import { Assignment, Submission, AssignmentQuestion, SubmissionAnswer } from '@/types/course';
+import {
+  Assignment,
+  Submission,
+  AssignmentQuestion,
+  SubmissionAnswer,
+} from '@/types/course';
 import AdminLayout from '@/components/layout/AdminLayout';
 import WrapperLoading from '@/components/ui/wrapper-loading';
 import { formatTimeLimit } from '@/utils/dateLimit';
@@ -60,7 +65,11 @@ const SubmissionReviewDetailPage = () => {
   const { data: submissionData, isLoading: submissionLoading } = useQuery({
     queryKey: ['submission', courseId, assignmentId, submissionId],
     queryFn: async () =>
-      await submissionService.getSubmission(courseId!, assignmentId!, submissionId!),
+      await submissionService.getSubmission(
+        courseId!,
+        assignmentId!,
+        submissionId!
+      ),
   });
 
   const gradeSubmissionMutation = useMutation({
@@ -109,7 +118,8 @@ const SubmissionReviewDetailPage = () => {
   useEffect(() => {
     if (submission) {
       const hasScoreChanged = gradingData.score !== (submission.score || 0);
-      const hasFeedbackChanged = gradingData.feedback !== (submission.feedback || '');
+      const hasFeedbackChanged =
+        gradingData.feedback !== (submission.feedback || '');
       setHasChanges(hasScoreChanged || hasFeedbackChanged);
     }
   }, [gradingData, submission]);
@@ -268,12 +278,16 @@ const SubmissionReviewDetailPage = () => {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Max Score</p>
-                    <p className="font-medium">{assignment.max_score || 100} points</p>
+                    <p className="font-medium">
+                      {assignment.max_score || 100} points
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Date Limit</p>
                     <p className="font-medium">
-                      {assignment.date_limit ? formatTimeLimit(assignment.date_limit) : 'No date limit'}
+                      {assignment.date_limit
+                        ? formatTimeLimit(assignment.date_limit)
+                        : 'No date limit'}
                     </p>
                   </div>
                 </div>
@@ -295,64 +309,79 @@ const SubmissionReviewDetailPage = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                {submission.answers?.map((answer: SubmissionAnswer, index: number) => {
-                  const question = assignment.questions?.find(
-                    (q: AssignmentQuestion) => q.id === answer.question_id
-                  );
-                  return (
-                    <div key={answer.id} className="border-l-4 border-l-blue-500 pl-4">
-                      <div className="space-y-3">
-                        <div>
-                          <p className="font-medium text-lg">Question {index + 1}</p>
-                          <p className="text-muted-foreground mt-1">
-                            {question?.question || question?.question_text}
-                          </p>
-                          {question?.points && (
-                            <p className="text-sm text-muted-foreground">
-                              Points: {question.points}
+                {submission.answers?.map(
+                  (answer: SubmissionAnswer, index: number) => {
+                    const question = assignment.questions?.find(
+                      (q: AssignmentQuestion) => q.id === answer.question_id
+                    );
+                    return (
+                      <div
+                        key={answer.id}
+                        className="border-l-4 border-l-blue-500 pl-4"
+                      >
+                        <div className="space-y-3">
+                          <div>
+                            <p className="font-medium text-lg">
+                              Question {index + 1}
                             </p>
-                          )}
-                        </div>
-
-                        {/* Show options for multiple choice questions */}
-                        {question?.options && question.options.length > 0 && (
-                          <div className="space-y-2">
-                            <p className="text-sm font-medium text-muted-foreground">Options:</p>
-                            {question.options.map((option, optIndex) => (
-                              <div
-                                key={option.id}
-                                className={`p-2 rounded border ${
-                                  option.is_correct
-                                    ? 'bg-green-50 border-green-200'
-                                    : 'bg-gray-50 border-gray-200'
-                                }`}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <span className="font-medium">
-                                    {String.fromCharCode(65 + optIndex)}.
-                                  </span>
-                                  <span>{option.text || option.option_text}</span>
-                                  {option.is_correct && (
-                                    <CheckCircle className="h-4 w-4 text-green-600 ml-auto" />
-                                  )}
-                                </div>
-                              </div>
-                            ))}
+                            <p className="text-muted-foreground mt-1">
+                              {question?.question || question?.question_text}
+                            </p>
+                            {question?.points && (
+                              <p className="text-sm text-muted-foreground">
+                                Points: {question.points}
+                              </p>
+                            )}
                           </div>
-                        )}
 
-                        <div className="bg-blue-50 p-4 rounded-lg">
-                          <p className="text-sm font-medium text-blue-900 mb-2">
-                            Student's Answer:
-                          </p>
-                          <p className="text-blue-800">{
-                            question?.options?.length > 0 ? question.options.find(option => option.id === answer.answer)?.text || answer.answer : answer.answer
-                            }</p>
+                          {/* Show options for multiple choice questions */}
+                          {question?.options && question.options.length > 0 && (
+                            <div className="space-y-2">
+                              <p className="text-sm font-medium text-muted-foreground">
+                                Options:
+                              </p>
+                              {question.options.map((option, optIndex) => (
+                                <div
+                                  key={option.id}
+                                  className={`p-2 rounded border ${
+                                    option.is_correct
+                                      ? 'bg-green-50 border-green-200'
+                                      : 'bg-gray-50 border-gray-200'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-medium">
+                                      {String.fromCharCode(65 + optIndex)}.
+                                    </span>
+                                    <span>
+                                      {option.text || option.option_text}
+                                    </span>
+                                    {option.is_correct && (
+                                      <CheckCircle className="h-4 w-4 text-green-600 ml-auto" />
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          <div className="bg-blue-50 p-4 rounded-lg">
+                            <p className="text-sm font-medium text-blue-900 mb-2">
+                              Student's Answer:
+                            </p>
+                            <p className="text-blue-800">
+                              {question?.options?.length > 0
+                                ? question.options.find(
+                                    (option) => option.id === answer.answer
+                                  )?.text || answer.answer
+                                : answer.answer}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  }
+                )}
 
                 {(!submission.answers || submission.answers.length === 0) && (
                   <div className="text-center py-8 text-muted-foreground">
@@ -378,11 +407,15 @@ const SubmissionReviewDetailPage = () => {
                 <div className="space-y-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Name</p>
-                    <p className="font-medium">{submission.user?.name || 'Unknown'}</p>
+                    <p className="font-medium">
+                      {submission.user?.name || 'Unknown'}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Email</p>
-                    <p className="font-medium">{submission.user?.email || 'No email'}</p>
+                    <p className="font-medium">
+                      {submission.user?.email || 'No email'}
+                    </p>
                   </div>
                   <Separator />
                   <div>
@@ -394,10 +427,14 @@ const SubmissionReviewDetailPage = () => {
                   </div>
                   {submission.submitted_at && (
                     <div>
-                      <p className="text-sm text-muted-foreground">Submitted At</p>
+                      <p className="text-sm text-muted-foreground">
+                        Submitted At
+                      </p>
                       <div className="flex items-center gap-2 mt-1">
                         <Calendar className="h-4 w-4 text-gray-500" />
-                        <p className="font-medium">{formatDate(submission.submitted_at)}</p>
+                        <p className="font-medium">
+                          {formatDate(submission.submitted_at)}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -406,7 +443,9 @@ const SubmissionReviewDetailPage = () => {
                       <p className="text-sm text-muted-foreground">Graded At</p>
                       <div className="flex items-center gap-2 mt-1">
                         <Clock className="h-4 w-4 text-gray-500" />
-                        <p className="font-medium">{formatDate(submission.graded_at)}</p>
+                        <p className="font-medium">
+                          {formatDate(submission.graded_at)}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -426,19 +465,26 @@ const SubmissionReviewDetailPage = () => {
                 {/* Current Score Display */}
                 {submission.score !== null && (
                   <div className="p-4 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-muted-foreground mb-2">Current Score</p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Current Score
+                    </p>
                     <div className="flex items-center gap-2">
-                                             <span
-                         className={`text-2xl font-bold ${getScoreColor(
-                           submission.score,
-                           assignment.max_score || 100
-                         )}`}
-                       >
-                         {submission.score}/{assignment.max_score || 100}
-                       </span>
-                       <span className="text-lg text-muted-foreground">
-                         ({getScorePercentage(submission.score, assignment.max_score || 100)}%)
-                       </span>
+                      <span
+                        className={`text-2xl font-bold ${getScoreColor(
+                          submission.score,
+                          assignment.max_score || 100
+                        )}`}
+                      >
+                        {submission.score}/{assignment.max_score || 100}
+                      </span>
+                      <span className="text-lg text-muted-foreground">
+                        (
+                        {getScorePercentage(
+                          submission.score,
+                          assignment.max_score || 100
+                        )}
+                        %)
+                      </span>
                     </div>
                   </div>
                 )}
@@ -463,7 +509,12 @@ const SubmissionReviewDetailPage = () => {
                     className="text-lg font-medium"
                   />
                   <p className="text-sm text-muted-foreground">
-                    Percentage: {getScorePercentage(gradingData.score, assignment.max_score || 100)}%
+                    Percentage:{' '}
+                    {getScorePercentage(
+                      gradingData.score,
+                      assignment.max_score || 100
+                    )}
+                    %
                   </p>
                 </div>
 
@@ -496,7 +547,9 @@ const SubmissionReviewDetailPage = () => {
                   size="lg"
                 >
                   <Save className="h-4 w-4" />
-                  {gradeSubmissionMutation.isPending ? 'Saving...' : 'Save Grade'}
+                  {gradeSubmissionMutation.isPending
+                    ? 'Saving...'
+                    : 'Save Grade'}
                 </Button>
 
                 {hasChanges && (
@@ -530,4 +583,4 @@ const SubmissionReviewDetailPage = () => {
   );
 };
 
-export default SubmissionReviewDetailPage; 
+export default SubmissionReviewDetailPage;

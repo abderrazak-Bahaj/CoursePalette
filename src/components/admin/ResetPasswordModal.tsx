@@ -58,15 +58,21 @@ export function ResetPasswordModal({
         )}
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading || isConfirming}>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isLoading || isConfirming}
+          >
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={isLoading || isConfirming}>
-            {(isLoading || isConfirming) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {(isLoading || isConfirming) && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
             Send Reset Link
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-} 
+}

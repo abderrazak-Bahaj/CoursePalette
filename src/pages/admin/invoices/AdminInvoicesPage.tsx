@@ -131,7 +131,7 @@ export default function AdminInvoicesPage() {
             </Button>
           </div>
         </div>
-        <WrapperLoading isLoading={isLoading} skeletonCount={2} >
+        <WrapperLoading isLoading={isLoading} skeletonCount={2}>
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               <div className="bg-white rounded-lg shadow p-6">

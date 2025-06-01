@@ -68,14 +68,19 @@ interface ResourceFormData {
 }
 
 const ResourceManagementPage = () => {
-  const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
+  const { courseId, lessonId } = useParams<{
+    courseId: string;
+    lessonId: string;
+  }>();
   const { getParam } = useUrlParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const [editingResource, setEditingResource] = useState<Resource | null>(null);
-  const [resourceToDelete, setResourceToDelete] = useState<Resource | null>(null);
+  const [resourceToDelete, setResourceToDelete] = useState<Resource | null>(
+    null
+  );
   const [formData, setFormData] = useState<ResourceFormData>({
     title: '',
     type: 'PDF',
@@ -84,7 +89,7 @@ const ResourceManagementPage = () => {
 
   // Get course context from query params for better navigation
   const courseIdFromQuery = getParam('courseId');
-  const backUrl = courseIdFromQuery 
+  const backUrl = courseIdFromQuery
     ? `/admin/lessons?courseId=${courseIdFromQuery}`
     : '/admin/lessons';
 
@@ -102,7 +107,8 @@ const ResourceManagementPage = () => {
     error,
   } = useQuery({
     queryKey: ['resources', courseId, lessonId],
-    queryFn: async () => await resourceService.getLessonResources(courseId!, lessonId!),
+    queryFn: async () =>
+      await resourceService.getLessonResources(courseId!, lessonId!),
     enabled: !!courseId && !!lessonId,
   });
 
@@ -124,7 +130,8 @@ const ResourceManagementPage = () => {
     onError: (error: any) => {
       toast({
         title: 'Error',
-        description: error.response?.data?.message || 'Failed to create resource',
+        description:
+          error.response?.data?.message || 'Failed to create resource',
         variant: 'destructive',
       });
     },
@@ -146,7 +153,8 @@ const ResourceManagementPage = () => {
     onError: (error: any) => {
       toast({
         title: 'Error',
-        description: error.response?.data?.message || 'Failed to update resource',
+        description:
+          error.response?.data?.message || 'Failed to update resource',
         variant: 'destructive',
       });
     },
@@ -167,7 +175,8 @@ const ResourceManagementPage = () => {
     onError: (error: any) => {
       toast({
         title: 'Error',
-        description: error.response?.data?.message || 'Failed to delete resource',
+        description:
+          error.response?.data?.message || 'Failed to delete resource',
         variant: 'destructive',
       });
     },
@@ -186,7 +195,7 @@ const ResourceManagementPage = () => {
 
     // Create FormData for proper file upload handling
     const submitData = new FormData();
-    
+
     submitData.append('title', formData.title);
     submitData.append('type', formData.type);
     submitData.append('course_id', courseId!);
@@ -202,7 +211,10 @@ const ResourceManagementPage = () => {
     }
 
     if (editingResource) {
-      updateMutation.mutate({ resourceId: editingResource.id, data: submitData });
+      updateMutation.mutate({
+        resourceId: editingResource.id,
+        data: submitData,
+      });
     } else {
       createMutation.mutate(submitData);
     }
@@ -267,9 +279,7 @@ const ResourceManagementPage = () => {
     resetForm();
   }, [resources.length]);
 
-
   console.log(resources);
-
 
   if (!courseId || !lessonId) {
     return (
@@ -300,7 +310,7 @@ const ResourceManagementPage = () => {
               <div className="flex items-center gap-2 text-muted-foreground">
                 <span>Lesson:</span>
                 <span className="font-medium">
-                {lesson?.lesson?.title || 'Loading lesson...'}
+                  {lesson?.lesson?.title || 'Loading lesson...'}
                 </span>
               </div>
             </div>
@@ -345,9 +355,9 @@ const ResourceManagementPage = () => {
                   <Label htmlFor="type">Type *</Label>
                   <Select
                     value={formData.type}
-                    onValueChange={(value: 'PDF' | 'VIDEO' | 'AUDIO' | 'LINK' | 'OTHER') =>
-                      setFormData({ ...formData, type: value })
-                    }
+                    onValueChange={(
+                      value: 'PDF' | 'VIDEO' | 'AUDIO' | 'LINK' | 'OTHER'
+                    ) => setFormData({ ...formData, type: value })}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -380,7 +390,8 @@ const ResourceManagementPage = () => {
               ) : (
                 <div className="space-y-2">
                   <Label htmlFor="file">
-                    File * {editingResource && '(Leave empty to keep current file)'}
+                    File *{' '}
+                    {editingResource && '(Leave empty to keep current file)'}
                   </Label>
                   <Input
                     id="file"
@@ -396,8 +407,8 @@ const ResourceManagementPage = () => {
                       formData.type === 'VIDEO'
                         ? 'video/*'
                         : formData.type === 'AUDIO'
-                        ? 'audio/*'
-                        : '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx'
+                          ? 'audio/*'
+                          : '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx'
                     }
                   />
                 </div>
@@ -424,7 +435,9 @@ const ResourceManagementPage = () => {
               <div className="flex justify-end space-x-2">
                 <Button
                   type="submit"
-                  disabled={createMutation.isPending || updateMutation.isPending}
+                  disabled={
+                    createMutation.isPending || updateMutation.isPending
+                  }
                   className="flex items-center"
                 >
                   {createMutation.isPending || updateMutation.isPending ? (
@@ -564,4 +577,4 @@ const ResourceManagementPage = () => {
   );
 };
 
-export default ResourceManagementPage; 
+export default ResourceManagementPage;

@@ -2,7 +2,6 @@ import { ReactElement, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { userEnrolledCourses } from '@/data/mockData';
 import CourseProgressCard from './CourseProgressCard';
 import { Course, Enrollment } from '@/types';
 
@@ -61,10 +60,6 @@ const CourseProgressTabs: React.FC<CourseProgressTabsProps> = ({
       <TabsContent value="in-progress" className="mt-0">
         {renderContent(inProgress, 'progress')}
       </TabsContent>
-
-     
-
-    
     </Tabs>
   );
 };

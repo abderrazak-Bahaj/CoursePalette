@@ -17,7 +17,11 @@ export default function StudentInvoicesPage() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const { data: invoices, isLoading, error } = useQuery<Invoice[]>({
+  const {
+    data: invoices,
+    isLoading,
+    error,
+  } = useQuery<Invoice[]>({
     queryKey: ['studentInvoices', status],
     queryFn: async () => {
       const filters: InvoiceFilters = {
@@ -25,14 +29,14 @@ export default function StudentInvoicesPage() {
       };
       const response = await invoiceApi.getInvoices(filters);
       return response.invoices;
-    }
+    },
   });
 
   const handlePrint = async (invoiceId: string) => {
     try {
       await invoiceApi.printInvoice(invoiceId);
     } catch (error) {
-      console.log("error",error);
+      console.log('error', error);
     }
   };
 
@@ -44,7 +48,7 @@ export default function StudentInvoicesPage() {
     );
   }
 
-  console.log("invoices",invoices && !isLoading, invoices);
+  console.log('invoices', invoices && !isLoading, invoices);
 
   return (
     <div className="container mx-auto py-8">
@@ -64,7 +68,7 @@ export default function StudentInvoicesPage() {
         </Select>
       </div>
 
-      {(!invoices && !isLoading) ? (
+      {!invoices && !isLoading ? (
         <div className="text-center py-8">
           <p className="text-red-500">Failed to load invoices</p>
         </div>
@@ -73,15 +77,15 @@ export default function StudentInvoicesPage() {
           <p className="text-gray-500">No invoices found</p>
         </div>
       ) : (
-        <InvoiceTable 
-          invoices={invoices} 
+        <InvoiceTable
+          invoices={invoices}
           meta={{
             current_page: 1,
             last_page: 1,
             per_page: invoices.length,
-            total: invoices.length
+            total: invoices.length,
           }}
-          onViewDetails={() =>{}}
+          onViewDetails={() => {}}
           onPrint={handlePrint}
           onPageChange={() => {}}
           onPageSizeChange={() => {}}
@@ -89,4 +93,4 @@ export default function StudentInvoicesPage() {
       )}
     </div>
   );
-} 
+}

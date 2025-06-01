@@ -125,7 +125,11 @@ const AdminCategoriesViewPage = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    {category.icon ? renderIconComponent(category.icon) : <FolderIcon className="mr-2 h-6 w-6" />}
+                    {category.icon ? (
+                      renderIconComponent(category.icon)
+                    ) : (
+                      <FolderIcon className="mr-2 h-6 w-6" />
+                    )}
                     <span className="ml-2">{category.name}</span>
                     {category.status && (
                       <Badge
@@ -284,10 +288,22 @@ const AdminCategoriesViewPage = () => {
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {category.children.map((child: any) => (
-                        <Card key={child.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/admin/categories/${child.slug}`)}>
+                        <Card
+                          key={child.id}
+                          className="hover:bg-gray-50 cursor-pointer"
+                          onClick={() =>
+                            navigate(`/admin/categories/${child.slug}`)
+                          }
+                        >
                           <CardContent className="p-4 flex items-center">
-                            {child.icon ? renderIconComponent(child.icon) : <FolderIcon className="h-5 w-5" />}
-                            <span className="ml-2 font-medium">{child.name}</span>
+                            {child.icon ? (
+                              renderIconComponent(child.icon)
+                            ) : (
+                              <FolderIcon className="h-5 w-5" />
+                            )}
+                            <span className="ml-2 font-medium">
+                              {child.name}
+                            </span>
                           </CardContent>
                         </Card>
                       ))}

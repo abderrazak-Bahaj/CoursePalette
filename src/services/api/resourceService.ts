@@ -42,7 +42,7 @@ export const resourceService = {
         if (value instanceof File) {
           formData.append(key, value);
         } else {
-        formData.append(key, value.toString());
+          formData.append(key, value.toString());
         }
       }
     });
@@ -69,7 +69,7 @@ export const resourceService = {
         if (value instanceof File) {
           formData.append(key, value);
         } else {
-        formData.append(key, value.toString());
+          formData.append(key, value.toString());
         }
       }
     });

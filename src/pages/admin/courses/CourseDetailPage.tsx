@@ -86,7 +86,9 @@ const CourseDetailPage = () => {
         </div>
         <Card className="mt-6">
           <CardContent className="flex flex-col items-center justify-center p-6">
-            <p className="text-destructive mb-4">Failed to load course details</p>
+            <p className="text-destructive mb-4">
+              Failed to load course details
+            </p>
             <Button onClick={() => navigate('/admin/courses')}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Return to Courses
@@ -102,12 +104,14 @@ const CourseDetailPage = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex items-center space-x-4">
           <h1 className="text-2xl font-bold">{course.title}</h1>
-          <Badge variant={course.status === 'PUBLISHED' ? 'default' : 'outline'}>
+          <Badge
+            variant={course.status === 'PUBLISHED' ? 'default' : 'outline'}
+          >
             {course.status === 'PUBLISHED' ? 'Published' : 'Draft'}
           </Badge>
         </div>
 
-       {/*  {isTeacher && (
+        {/*  {isTeacher && (
           <div className="flex space-x-2">
             <Button onClick={() => navigate(`/admin/courses/${courseId}/edit`)}>
               <Edit className="mr-2 h-4 w-4" />
@@ -134,9 +138,9 @@ const CourseDetailPage = () => {
             </CardHeader>
             <CardContent>
               <div className="aspect-video w-full overflow-hidden rounded-lg mb-6">
-                <img 
-                  src={course.image_url} 
-                  alt={course.title} 
+                <img
+                  src={course.image_url}
+                  alt={course.title}
                   className="w-full aspect-video object-cover"
                 />
               </div>
@@ -177,7 +181,8 @@ const CourseDetailPage = () => {
                           <div>
                             <p className="font-medium">{lesson.title}</p>
                             <p className="text-sm text-muted-foreground">
-                              Section {lesson.section} • {lesson.duration_readable}
+                              Section {lesson.section} •{' '}
+                              {lesson.duration_readable}
                             </p>
                           </div>
                         </div>
@@ -186,7 +191,9 @@ const CourseDetailPage = () => {
                           <Button
                             variant="ghost"
                             onClick={() =>
-                              navigate(`/admin/courses/${courseId}/lessons/${lesson.id}`)
+                              navigate(
+                                `/admin/courses/${courseId}/lessons/${lesson.id}`
+                              )
                             }
                           >
                             View Lesson
@@ -212,7 +219,9 @@ const CourseDetailPage = () => {
                             <p className="font-medium">{assignment.title}</p>
                             <p className="text-sm text-muted-foreground">
                               {assignment.type} • Due{' '}
-                              {new Date(assignment.due_date).toLocaleDateString()}
+                              {new Date(
+                                assignment.due_date
+                              ).toLocaleDateString()}
                             </p>
                           </div>
                         </div>
@@ -409,13 +418,17 @@ const CourseDetailPage = () => {
 
               {course.instructor.teacher.certifications && (
                 <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">Certifications</p>
+                  <p className="text-sm text-muted-foreground">
+                    Certifications
+                  </p>
                   <ul className="space-y-1">
-                    {course.instructor.teacher.certifications.map((cert, index) => (
-                      <li key={index} className="text-sm">
-                        {cert.name} ({cert.year})
-                      </li>
-                    ))}
+                    {course.instructor.teacher.certifications.map(
+                      (cert, index) => (
+                        <li key={index} className="text-sm">
+                          {cert.name} ({cert.year})
+                        </li>
+                      )
+                    )}
                   </ul>
                 </div>
               )}
@@ -427,4 +440,4 @@ const CourseDetailPage = () => {
   );
 };
 
-export default CourseDetailPage; 
+export default CourseDetailPage;

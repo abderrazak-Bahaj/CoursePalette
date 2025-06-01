@@ -39,14 +39,14 @@ const StudentProfileInformation = () => {
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
-    
+
     try {
       // API call would go here
       console.log('Submitting profile data:', data);
-      
+
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       toast({
         title: 'Profile Updated',
         description: 'Your profile information has been updated successfully',
@@ -84,7 +84,7 @@ const StudentProfileInformation = () => {
                 </p>
               )}
             </div>
-            
+
             <div>
               <Label htmlFor="email">Email Address</Label>
               <div className="relative">
@@ -102,7 +102,7 @@ const StudentProfileInformation = () => {
                 </p>
               )}
             </div>
-            
+
             <div>
               <Label htmlFor="phone">Phone Number</Label>
               <div className="relative">
@@ -115,7 +115,7 @@ const StudentProfileInformation = () => {
                 />
               </div>
             </div>
-            
+
             <div>
               <Label htmlFor="address">Address</Label>
               <div className="relative">
@@ -129,7 +129,7 @@ const StudentProfileInformation = () => {
               </div>
             </div>
           </div>
-          
+
           <div>
             <Label htmlFor="bio">Bio</Label>
             <Textarea
@@ -139,13 +139,16 @@ const StudentProfileInformation = () => {
               rows={4}
             />
             <p className="text-sm text-gray-500 mt-1">
-              Share a brief description about yourself, your learning goals, and interests.
+              Share a brief description about yourself, your learning goals, and
+              interests.
             </p>
           </div>
-          
+
           <div className="flex justify-end">
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {isSubmitting ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>
@@ -155,4 +158,4 @@ const StudentProfileInformation = () => {
   );
 };
 
-export default StudentProfileInformation; 
+export default StudentProfileInformation;

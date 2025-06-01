@@ -58,28 +58,28 @@ export const invoiceApi = {
     const response = await fetch(`${API_BASE_URL}/invoices/${id}/print`, {
       method: 'GET',
       headers: {
-        'Accept': 'application/pdf',
-        'Authorization': `Bearer ${getAuthToken()}`,
+        Accept: 'application/pdf',
+        Authorization: `Bearer ${getAuthToken()}`,
       },
     });
-    
+
     if (!response.ok) {
       throw new Error('Failed to generate PDF');
     }
 
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
-    
+
     // Create a temporary link element
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', `invoice-${id}.pdf`);
-    
+
     // Append to body, click, and remove
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     // Clean up the URL
     window.URL.revokeObjectURL(url);
   },
@@ -106,4 +106,4 @@ export const invoiceApi = {
     });
     return response;
   },
-}; 
+};

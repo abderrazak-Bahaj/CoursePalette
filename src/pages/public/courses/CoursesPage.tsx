@@ -1,6 +1,5 @@
 import MainLayout from '@/components/layout/MainLayout';
 import CourseList from '@/components/course/CourseList';
-import { mockCourses } from '@/data/mockData';
 
 const CoursesPage = () => {
   return (

@@ -23,8 +23,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { MoreHorizontal, Eye, Printer, ChevronLeft, ChevronRight } from 'lucide-react';
-import { PaginationMeta, PaginationService } from '@/services/pagination/PaginationService';
+import {
+  MoreHorizontal,
+  Eye,
+  Printer,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
+import {
+  PaginationMeta,
+  PaginationService,
+} from '@/services/pagination/PaginationService';
 
 export interface Invoice {
   id: string;
@@ -86,7 +95,10 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({
     return `$${num.toFixed(2)}`;
   };
 
-  const pageNumbers = PaginationService.getPageNumbers(meta.current_page, meta.last_page);
+  const pageNumbers = PaginationService.getPageNumbers(
+    meta.current_page,
+    meta.last_page
+  );
   const pageSizeOptions = PaginationService.getPageSizeOptions();
 
   return (
@@ -128,7 +140,7 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                   {/*    <DropdownMenuItem onClick={() => onViewDetails(invoice.id)}>
+                      {/*    <DropdownMenuItem onClick={() => onViewDetails(invoice.id)}>
                         <Eye className="mr-2 h-4 w-4" />
                         View Details
                       </DropdownMenuItem> */}
@@ -206,4 +218,4 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({
       </div>
     </div>
   );
-}; 
+};

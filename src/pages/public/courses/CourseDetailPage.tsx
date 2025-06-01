@@ -123,9 +123,7 @@ const CourseDetailPage = () => {
                 </TabsContent>
 
                 <TabsContent value="instructor">
-                  <CourseInstructor
-                    instructor={course.instructor}
-                  />
+                  <CourseInstructor instructor={course.instructor} />
                 </TabsContent>
 
                 <TabsContent value="reviews">

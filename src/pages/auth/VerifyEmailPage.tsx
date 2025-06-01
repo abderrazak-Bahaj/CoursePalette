@@ -18,15 +18,17 @@ const VerifyEmailPage = () => {
   const [email, setEmail] = useState('');
   const [resendLoading, setResendLoading] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
-  
+
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { resendVerificationEmail } = useAuth();
-  
+
   // Create a mutation for email verification
   const verifyEmailMutation = useMutation({
-    mutationFn: async (params: { id: string, hash: string } | { url: string }) => {
+    mutationFn: async (
+      params: { id: string; hash: string } | { url: string }
+    ) => {
       try {
         if ('url' in params) {
           // Direct verification URL
@@ -39,7 +41,9 @@ const VerifyEmailPage = () => {
         console.error('Verification request failed:', err);
         // Extract detailed error message if available
         if (err.response?.data?.message) {
-          throw new Error(`${err.response.data.message} ${JSON.stringify(err.response.data.debug_info || {})}`);
+          throw new Error(
+            `${err.response.data.message} ${JSON.stringify(err.response.data.debug_info || {})}`
+          );
         }
         throw err;
       }
@@ -48,9 +52,10 @@ const VerifyEmailPage = () => {
       setVerified(true);
       toast({
         title: 'Email verified',
-        description: 'Your email has been verified successfully. You can now log in.',
+        description:
+          'Your email has been verified successfully. You can now log in.',
       });
-      
+
       // Redirect to login after 3 seconds
       setTimeout(() => {
         navigate('/login');
@@ -58,14 +63,17 @@ const VerifyEmailPage = () => {
     },
     onError: (error: any) => {
       console.error('Email verification failed:', error);
-      setError(error.message || 'Verification failed. Please try again or contact support.');
-      
+      setError(
+        error.message ||
+          'Verification failed. Please try again or contact support.'
+      );
+
       // Don't automatically retry verification when it fails
       // The user will need to use the resend button instead
     },
     onSettled: () => {
       setVerifying(false);
-    }
+    },
   });
 
   // Parse parameters from URL query parameters
@@ -74,34 +82,45 @@ const VerifyEmailPage = () => {
     if (verified || error) {
       return;
     }
-    
+
     const params = new URLSearchParams(location.search);
     const id = params.get('id');
     const hash = params.get('hash');
     const emailParam = params.get('email');
     const expires = params.get('expires');
     const signature = params.get('signature');
-    
+
     if (emailParam) setEmail(emailParam);
-    
+
     console.log('URL Search Params:', {
-      id, hash, email: emailParam, expires, signature,
-      fullSearch: location.search
+      id,
+      hash,
+      email: emailParam,
+      expires,
+      signature,
+      fullSearch: location.search,
     });
-    
+
     // Check if we're dealing with a direct verification URL from the email
     if (expires && signature) {
-      console.log('Received direct verification URL with expires and signature');
+      console.log(
+        'Received direct verification URL with expires and signature'
+      );
       verifyWithFullUrl();
     }
     // If we have id and hash, attempt to verify with those
     else if (id && hash) {
       console.log('Received id and hash for verification');
       verifyWithIdAndHash(id, hash);
-    } 
+    }
     // Special case for the URL format like: http://localhost:5173/verify-email?expires=1745789593&signature=32604500e45984
-    else if (location.search.includes('expires=') && location.search.includes('signature=')) {
-      console.log('Received verification URL with expires and signature only (no parameters detected)');
+    else if (
+      location.search.includes('expires=') &&
+      location.search.includes('signature=')
+    ) {
+      console.log(
+        'Received verification URL with expires and signature only (no parameters detected)'
+      );
       verifyWithFullUrl();
     }
   }, [location, verified, error]);
@@ -112,7 +131,7 @@ const VerifyEmailPage = () => {
     console.log('Verifying email with id:', id, 'and hash:', hash);
     verifyEmailMutation.mutate({ id, hash });
   };
-  
+
   const verifyWithFullUrl = () => {
     setVerifying(true);
     setError('');
@@ -127,10 +146,10 @@ const VerifyEmailPage = () => {
       setError('Email is required to resend verification');
       return;
     }
-    
+
     setResendLoading(true);
     setError('');
-    
+
     try {
       await resendVerificationEmail(email);
       setResendSuccess(true);
@@ -159,19 +178,15 @@ const VerifyEmailPage = () => {
             <CardContent className="pt-6">
               {verifying ? (
                 <div className="text-center py-12">
-                  <LoadingFallback 
-                    size="lg" 
-                    text="Verifying your email..."
-                  />
-                  
+                  <LoadingFallback size="lg" text="Verifying your email..." />
                 </div>
               ) : verified ? (
                 <div className="text-center py-8">
                   <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
                   <h3 className="text-xl font-bold mb-2">Email Verified!</h3>
                   <p className="mb-6 text-gray-600">
-                    Your email has been verified successfully.
-                    You'll be redirected to login.
+                    Your email has been verified successfully. You'll be
+                    redirected to login.
                   </p>
                   <Button asChild>
                     <Link to="/login">Continue to Login</Link>
@@ -180,38 +195,48 @@ const VerifyEmailPage = () => {
               ) : error ? (
                 <div className="text-center py-8">
                   <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-                  <h3 className="text-xl font-bold mb-2">Verification Failed</h3>
+                  <h3 className="text-xl font-bold mb-2">
+                    Verification Failed
+                  </h3>
                   <p className="mb-6 text-red-600">{error}</p>
-                  
+
                   {email && (
                     <div className="mt-6">
                       <p className="mb-4 text-gray-600">
                         Need a new verification link?
                       </p>
                       <div className="space-y-4">
-                        <Button 
+                        <Button
                           onClick={handleResendVerification}
                           disabled={resendLoading || resendSuccess}
                           variant="outline"
                           className="mb-2"
                         >
-                          {resendLoading ? 'Sending...' : 
-                           resendSuccess ? 'Email Sent' : 'Resend Verification Email'}
+                          {resendLoading
+                            ? 'Sending...'
+                            : resendSuccess
+                              ? 'Email Sent'
+                              : 'Resend Verification Email'}
                         </Button>
-                        
+
                         {resendSuccess && (
                           <p className="text-green-600 text-sm">
                             A new verification link has been sent to your email.
                           </p>
                         )}
-                        
+
                         <div className="mt-2">
                           <Button
                             onClick={() => {
                               // Clear error state and attempt verification again
                               setError('');
-                              if (location.search.includes('id=') && location.search.includes('hash=')) {
-                                const params = new URLSearchParams(location.search);
+                              if (
+                                location.search.includes('id=') &&
+                                location.search.includes('hash=')
+                              ) {
+                                const params = new URLSearchParams(
+                                  location.search
+                                );
                                 const id = params.get('id');
                                 const hash = params.get('hash');
                                 if (id && hash) {
@@ -229,9 +254,12 @@ const VerifyEmailPage = () => {
                       </div>
                     </div>
                   )}
-                  
+
                   <div className="mt-4">
-                    <Link to="/login" className="text-course-blue hover:underline">
+                    <Link
+                      to="/login"
+                      className="text-course-blue hover:underline"
+                    >
                       Back to Login
                     </Link>
                   </div>
@@ -243,31 +271,38 @@ const VerifyEmailPage = () => {
                   <p className="mb-6 text-gray-600">
                     {email ? (
                       <>
-                        We've sent a verification link to <strong>{email}</strong>.
-                        Click the link in the email to verify your account.
+                        We've sent a verification link to{' '}
+                        <strong>{email}</strong>. Click the link in the email to
+                        verify your account.
                       </>
                     ) : (
                       <>
-                        Please check your email for a verification link,
-                        or enter your email below to resend the verification link.
+                        Please check your email for a verification link, or
+                        enter your email below to resend the verification link.
                       </>
                     )}
                   </p>
-                  
+
                   {email && (
-                    <Button 
+                    <Button
                       onClick={handleResendVerification}
                       disabled={resendLoading || resendSuccess}
                       variant="outline"
                       className="mb-4"
                     >
-                      {resendLoading ? 'Sending...' : 
-                       resendSuccess ? 'Email Sent' : 'Resend Verification Email'}
+                      {resendLoading
+                        ? 'Sending...'
+                        : resendSuccess
+                          ? 'Email Sent'
+                          : 'Resend Verification Email'}
                     </Button>
                   )}
-                  
+
                   <div className="mt-4">
-                    <Link to="/login" className="text-course-blue hover:underline">
+                    <Link
+                      to="/login"
+                      className="text-course-blue hover:underline"
+                    >
                       Back to Login
                     </Link>
                   </div>
@@ -281,4 +316,4 @@ const VerifyEmailPage = () => {
   );
 };
 
-export default VerifyEmailPage; 
+export default VerifyEmailPage;

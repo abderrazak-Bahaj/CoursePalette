@@ -29,7 +29,10 @@ const CourseProgressCard = ({ enrollment }: CourseProgressCardProps) => {
               <span>Your progress</span>
               <span>{enrollment?.progress_percentage}%</span>
             </div>
-            <Progress value={Number(enrollment?.progress_percentage)} className={`h-2 ${course?.is_completed ? 'bg-green-500' : 'bg-blue-100'}`} />
+            <Progress
+              value={Number(enrollment?.progress_percentage)}
+              className={`h-2 ${course?.is_completed ? 'bg-green-500' : 'bg-blue-100'}`}
+            />
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -48,15 +51,14 @@ const CourseProgressCard = ({ enrollment }: CourseProgressCardProps) => {
                   </Link>
                 </Button>
               ) : (
-                
-                  <Button asChild>
-                    <Link
-                      to={`/courses/${enrollment?.last_Lesson?.course_id}/learn/${enrollment?.last_Lesson?.lesson_id}`}
-                    >
-                      Continue
-                      <ArrowRight className="h-4 w-4 ml-1" />
-                    </Link>
-                  </Button>
+                <Button asChild>
+                  <Link
+                    to={`/courses/${enrollment?.last_Lesson?.course_id}/learn/${enrollment?.last_Lesson?.lesson_id}`}
+                  >
+                    Continue
+                    <ArrowRight className="h-4 w-4 ml-1" />
+                  </Link>
+                </Button>
               )}
             </div>
           </div>

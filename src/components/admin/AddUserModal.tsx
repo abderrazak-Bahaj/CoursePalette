@@ -81,7 +81,8 @@ export function AddUserModal({
         <DialogHeader>
           <DialogTitle>Add New User</DialogTitle>
           <DialogDescription>
-            Create a new user account. The user will receive an email with login instructions.
+            Create a new user account. The user will receive an email with login
+            instructions.
           </DialogDescription>
         </DialogHeader>
 
@@ -114,7 +115,11 @@ export function AddUserModal({
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="john.doe@example.com" {...field} />
+                    <Input
+                      type="email"
+                      placeholder="john.doe@example.com"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -148,7 +153,12 @@ export function AddUserModal({
             />
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                disabled={isLoading}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={isLoading}>
@@ -161,4 +171,4 @@ export function AddUserModal({
       </DialogContent>
     </Dialog>
   );
-} 
+}

@@ -23,7 +23,7 @@ const ResetPasswordPage = () => {
     password?: string;
     passwordConfirmation?: string;
   }>({});
-  
+
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -34,7 +34,7 @@ const ResetPasswordPage = () => {
     const params = new URLSearchParams(location.search);
     const tokenParam = params.get('token');
     const emailParam = params.get('email');
-    
+
     if (tokenParam) setToken(tokenParam);
     if (emailParam) setEmail(emailParam);
   }, [location]);
@@ -50,9 +50,9 @@ const ResetPasswordPage = () => {
     if (!token) newErrors.token = 'Token is required';
     if (!email) newErrors.email = 'Email is required';
     if (!password) newErrors.password = 'Password is required';
-    if (password.length < 8) 
+    if (password.length < 8)
       newErrors.password = 'Password must be at least 8 characters';
-    if (password !== passwordConfirmation) 
+    if (password !== passwordConfirmation)
       newErrors.passwordConfirmation = 'Passwords must match';
 
     setErrors(newErrors);
@@ -69,7 +69,7 @@ const ResetPasswordPage = () => {
     try {
       await resetPassword(token, email, password, passwordConfirmation);
       setIsSubmitted(true);
-      
+
       // Redirect to login after 3 seconds
       setTimeout(() => {
         navigate('/login');
@@ -93,9 +93,7 @@ const ResetPasswordPage = () => {
               </h1>
             </Link>
             <h2 className="text-2xl font-bold">Reset Your Password</h2>
-            <p className="text-gray-600">
-              Enter your new password below
-            </p>
+            <p className="text-gray-600">Enter your new password below</p>
           </div>
 
           <Card>
@@ -125,7 +123,9 @@ const ResetPasswordPage = () => {
                       disabled={!!email}
                     />
                     {errors.email && (
-                      <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.email}
+                      </p>
                     )}
                   </div>
                   <div>
@@ -143,15 +143,23 @@ const ResetPasswordPage = () => {
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                        {showPassword ? (
+                          <EyeOff size={16} />
+                        ) : (
+                          <Eye size={16} />
+                        )}
                       </button>
                     </div>
                     {errors.password && (
-                      <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.password}
+                      </p>
                     )}
                   </div>
                   <div>
-                    <Label htmlFor="passwordConfirmation">Confirm Password</Label>
+                    <Label htmlFor="passwordConfirmation">
+                      Confirm Password
+                    </Label>
                     <Input
                       id="passwordConfirmation"
                       type="password"
@@ -160,7 +168,9 @@ const ResetPasswordPage = () => {
                       onChange={(e) => setPasswordConfirmation(e.target.value)}
                     />
                     {errors.passwordConfirmation && (
-                      <p className="text-red-500 text-xs mt-1">{errors.passwordConfirmation}</p>
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.passwordConfirmation}
+                      </p>
                     )}
                   </div>
                   <Button
@@ -186,4 +196,4 @@ const ResetPasswordPage = () => {
   );
 };
 
-export default ResetPasswordPage; 
+export default ResetPasswordPage;

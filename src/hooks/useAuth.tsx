@@ -19,17 +19,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const USER_QUERY_KEY = 'currentUser';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem('token')
+  );
   const [isInitializing, setIsInitializing] = useState(true);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   // User data query with enabled/disabled based on token existence
-  const { 
+  const {
     data: user,
     isLoading: isLoadingUser,
     error: userError,
-    refetch: refetchUser
+    refetch: refetchUser,
   } = useQuery({
     queryKey: [USER_QUERY_KEY],
     queryFn: async () => {
@@ -73,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (email: string, password: string): Promise<User> => {
     try {
       const response = await authService.login({ email, password });
-      
+
       // Check if email is not verified
       if (response.email_verified === false) {
         toast({
@@ -83,29 +85,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         });
         throw new Error('Email not verified');
       }
-      
+
       if (!response?.token) {
         throw new Error('Login failed: No token returned');
       }
-      
+
       // Store token and trigger user data fetch
       setToken(response.token);
       localStorage.setItem('token', response.token);
-      
+
       // Manually refetch user data after login
       const userData = await refetchUser();
-      
+
       if (!userData.data) {
         throw new Error('Failed to fetch user data after login');
       }
-      
+
       toast({
         title: 'Login successful',
         description: `Welcome back, ${userData.data.name}!`,
       });
 
-      console.log("userData", userData);
-      
+      console.log('userData', userData);
+
       return userData.data;
     } catch (error) {
       console.error('Error logging in:', error);
@@ -133,9 +135,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         password,
         password_confirmation: password,
         role: 'STUDENT',
-        recaptcha_token: recaptchaToken
+        recaptcha_token: recaptchaToken,
       });
-      
+
       // In email verification flow, we won't auto-login the user
       // We'll just show a success message and redirect to login
       toast({
@@ -181,7 +183,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Clear auth state
     setToken(null);
     localStorage.removeItem('token');
-    
+
     // Clear user data from React Query cache
     queryClient.removeQueries({ queryKey: [USER_QUERY_KEY] });
 
@@ -197,14 +199,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await authService.verifyEmail(id, hash);
       toast({
         title: 'Email verified',
-        description: 'Your email has been verified successfully. You can now log in.',
+        description:
+          'Your email has been verified successfully. You can now log in.',
       });
       return response;
     } catch (error) {
       console.error('Error verifying email:', error);
       toast({
         title: 'Verification failed',
-        description: 'Unable to verify your email. Please try again or contact support.',
+        description:
+          'Unable to verify your email. Please try again or contact support.',
         variant: 'destructive',
       });
       throw error;
@@ -222,7 +226,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error('Error resending verification email:', error);
       toast({
         title: 'Failed to resend',
-        description: 'Unable to resend verification email. Please try again later.',
+        description:
+          'Unable to resend verification email. Please try again later.',
         variant: 'destructive',
       });
       throw error;
@@ -241,14 +246,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error('Error sending password reset email:', error);
       toast({
         title: 'Request failed',
-        description: 'Unable to send password reset email. Please try again later.',
+        description:
+          'Unable to send password reset email. Please try again later.',
         variant: 'destructive',
       });
       throw error;
     }
   };
 
-  const resetPassword = async (token: string, email: string, password: string, passwordConfirmation: string) => {
+  const resetPassword = async (
+    token: string,
+    email: string,
+    password: string,
+    passwordConfirmation: string
+  ) => {
     try {
       await authService.resetPassword({
         token,
@@ -256,16 +267,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         password,
         password_confirmation: passwordConfirmation,
       });
-      
+
       toast({
         title: 'Password reset successful',
-        description: 'Your password has been reset. You can now log in with your new password.',
+        description:
+          'Your password has been reset. You can now log in with your new password.',
       });
     } catch (error) {
       console.error('Error resetting password:', error);
       toast({
         title: 'Reset failed',
-        description: 'Unable to reset your password. Please try again or request a new reset link.',
+        description:
+          'Unable to reset your password. Please try again or request a new reset link.',
         variant: 'destructive',
       });
       throw error;
@@ -297,11 +310,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {isLoading && <LoadingFallback 
-        size="lg" 
-        text="Loading page..."
-        fullPage
-          />}
+      {isLoading && (
+        <LoadingFallback size="lg" text="Loading page..." fullPage />
+      )}
       {children}
     </AuthContext.Provider>
   );

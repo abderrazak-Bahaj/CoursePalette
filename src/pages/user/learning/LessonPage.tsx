@@ -8,12 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import {
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  Award,
-} from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Award } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { Lesson } from '@/types/course';
 import { courseService, lessonService } from '@/services/api';
@@ -124,9 +119,10 @@ const LessonPage = () => {
     }
 
     // Check if all assignments are submitted
-    const unsubmittedAssignments = lesson?.assignments?.filter(
-      assignment => assignment.is_active && !assignment.is_submitted
-    ) || [];
+    const unsubmittedAssignments =
+      lesson?.assignments?.filter(
+        (assignment) => assignment.is_active && !assignment.is_submitted
+      ) || [];
 
     if (unsubmittedAssignments.length > 0) {
       toast({
@@ -228,10 +224,10 @@ const LessonPage = () => {
                     </h3>
                     <div className="space-y-4">
                       {lesson.assignments.map((assignment) => (
-                        <AssignmentItem 
-                          key={assignment.id} 
-                          assignment={assignment} 
-                          courseId={courseId!} 
+                        <AssignmentItem
+                          key={assignment.id}
+                          assignment={assignment}
+                          courseId={courseId!}
                         />
                       ))}
                     </div>
@@ -256,48 +252,52 @@ const LessonPage = () => {
                   ) : (
                     <div></div>
                   )}
-                  
+
                   {/* Completion Status */}
                   {(() => {
-                    const unsubmittedAssignments = lesson?.assignments?.filter(
-                      assignment => assignment.is_active && !assignment.is_submitted
-                    ) || [];
-                    
-                    const hasUnsubmittedAssignments = unsubmittedAssignments.length > 0;
+                    const unsubmittedAssignments =
+                      lesson?.assignments?.filter(
+                        (assignment) =>
+                          assignment.is_active && !assignment.is_submitted
+                      ) || [];
+
+                    const hasUnsubmittedAssignments =
+                      unsubmittedAssignments.length > 0;
                     const isCompleted = lesson?.is_completed;
-                    
+
                     return (
                       <div className="flex flex-col items-center">
                         {hasUnsubmittedAssignments && !isCompleted && (
                           <div className="text-xs text-orange-600 mb-2 text-center">
-                            Complete {unsubmittedAssignments.length} assignment(s) first
+                            Complete {unsubmittedAssignments.length}{' '}
+                            assignment(s) first
                           </div>
-                  )}
-                  <Button
-                    onClick={markAsCompleted}
+                        )}
+                        <Button
+                          onClick={markAsCompleted}
                           disabled={isCompleted || hasUnsubmittedAssignments}
                           className={`flex items-center ${
-                            hasUnsubmittedAssignments 
-                              ? 'bg-gray-400 cursor-not-allowed' 
+                            hasUnsubmittedAssignments
+                              ? 'bg-gray-400 cursor-not-allowed'
                               : 'bg-course-blue'
                           }`}
-                  >
+                        >
                           {isCompleted ? (
-                      <>
-                        <Check className="h-5 w-5 mr-1" />
-                        Completed
-                      </>
-                    ) : (
-                      <>
-                        <Check className="h-5 w-5 mr-1" />
-                        Mark as Completed
-                      </>
-                    )}
-                  </Button>
+                            <>
+                              <Check className="h-5 w-5 mr-1" />
+                              Completed
+                            </>
+                          ) : (
+                            <>
+                              <Check className="h-5 w-5 mr-1" />
+                              Mark as Completed
+                            </>
+                          )}
+                        </Button>
                       </div>
                     );
                   })()}
-                  
+
                   {nextLesson ? (
                     <Button
                       asChild
@@ -334,7 +334,8 @@ const LessonPage = () => {
                     }`}
                   />
                   <div className="text-xs text-gray-500 mt-1">
-                    {completedLessons} of {course?.lessons?.length || 0} lessons completed
+                    {completedLessons} of {course?.lessons?.length || 0} lessons
+                    completed
                   </div>
                 </div>
 

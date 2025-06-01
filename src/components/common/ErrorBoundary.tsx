@@ -1,7 +1,13 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 interface Props {
   children: ReactNode;
@@ -33,7 +39,7 @@ class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Error Boundary caught an error:', error, errorInfo);
-    
+
     this.setState({
       error,
       errorInfo,
@@ -82,7 +88,8 @@ class ErrorBoundary extends Component<Props, State> {
                 Oops! Something went wrong
               </CardTitle>
               <CardDescription className="text-gray-600">
-                We encountered an unexpected error. This has been logged and we'll look into it.
+                We encountered an unexpected error. This has been logged and
+                we'll look into it.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -94,7 +101,9 @@ class ErrorBoundary extends Component<Props, State> {
                     </summary>
                     <div className="mt-2 text-red-700">
                       <p className="font-medium">Error:</p>
-                      <p className="font-mono text-xs break-all">{this.state.error.message}</p>
+                      <p className="font-mono text-xs break-all">
+                        {this.state.error.message}
+                      </p>
                       {this.state.error.stack && (
                         <>
                           <p className="font-medium mt-2">Stack Trace:</p>
@@ -115,18 +124,18 @@ class ErrorBoundary extends Component<Props, State> {
                   </details>
                 </div>
               )}
-              
+
               <div className="flex flex-col sm:flex-row gap-2">
-                <Button 
-                  onClick={this.handleRetry} 
+                <Button
+                  onClick={this.handleRetry}
                   className="flex-1"
                   variant="default"
                 >
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Try Again
                 </Button>
-                <Button 
-                  onClick={this.handleGoHome} 
+                <Button
+                  onClick={this.handleGoHome}
                   variant="outline"
                   className="flex-1"
                 >
@@ -144,4 +153,4 @@ class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-export default ErrorBoundary; 
+export default ErrorBoundary;

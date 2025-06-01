@@ -79,7 +79,9 @@ export const courseService = {
   },
 
   getTimeRemaining: (courseId: string, assignmentId: string) => {
-    return get(`/courses/${courseId}/assignments/${assignmentId}/time-remaining`);
+    return get(
+      `/courses/${courseId}/assignments/${assignmentId}/time-remaining`
+    );
   },
 
   gradeSubmission: (courseId: string, assignmentId: string, data: any) => {

@@ -43,10 +43,10 @@ export function DeleteUserModal({
             disabled={isLoading}
             className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
           >
-            {isLoading ? "Deleting..." : "Delete"}
+            {isLoading ? 'Deleting...' : 'Delete'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
-} 
+}

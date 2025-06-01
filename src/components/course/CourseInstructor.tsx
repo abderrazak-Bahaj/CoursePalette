@@ -37,23 +37,32 @@ export const CourseInstructor = ({ instructor }: CourseInstructorProps) => {
       <div className="flex flex-col md:flex-row md:items-start gap-6">
         <div className="flex-shrink-0">
           <img
-            src={instructor.avatar || `https://ui-avatars.com/api/?name=${instructor.name}&size=128&background=random`}
+            src={
+              instructor.avatar ||
+              `https://ui-avatars.com/api/?name=${instructor.name}&size=128&background=random`
+            }
             alt={instructor.name}
             className="rounded-full w-24 h-24 object-cover"
           />
         </div>
         <div className="flex-1">
           <h3 className="text-xl font-bold mb-2">{instructor.name}</h3>
-          <p className="text-gray-500 mb-4">{instructor.teacher.qualification}</p>
-          
+          <p className="text-gray-500 mb-4">
+            {instructor.teacher.qualification}
+          </p>
+
           <div className="flex flex-wrap gap-4 mb-4">
             <div className="flex items-center">
               <Star className="text-yellow-400 fill-yellow-400 h-5 w-5 mr-1" />
-              <span className="font-medium">{instructor.teacher.rating} Instructor Rating</span>
+              <span className="font-medium">
+                {instructor.teacher.rating} Instructor Rating
+              </span>
             </div>
             <div className="flex items-center">
               <User className="h-5 w-5 mr-1 text-gray-500" />
-              <span>{instructor.teacher.years_of_experience}+ Years Experience</span>
+              <span>
+                {instructor.teacher.years_of_experience}+ Years Experience
+              </span>
             </div>
             <div className="flex items-center">
               <Video className="h-5 w-5 mr-1 text-gray-500" />
@@ -69,7 +78,9 @@ export const CourseInstructor = ({ instructor }: CourseInstructorProps) => {
               {instructor.teacher.education.map((edu, index) => (
                 <div key={index} className="flex items-center">
                   <GraduationCap className="h-5 w-5 mr-2 text-gray-500" />
-                  <span>{edu.degree} from {edu.institution} ({edu.year})</span>
+                  <span>
+                    {edu.degree} from {edu.institution} ({edu.year})
+                  </span>
                 </div>
               ))}
             </div>
@@ -81,7 +92,9 @@ export const CourseInstructor = ({ instructor }: CourseInstructorProps) => {
               {instructor.teacher.certifications.map((cert, index) => (
                 <div key={index} className="flex items-center">
                   <Award className="h-5 w-5 mr-2 text-gray-500" />
-                  <span>{cert?.name} ({cert?.year})</span>
+                  <span>
+                    {cert?.name} ({cert?.year})
+                  </span>
                 </div>
               ))}
             </div>

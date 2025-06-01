@@ -135,7 +135,7 @@ const AdminStudentsPage = () => {
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [currentPage, setCurrentPage] = useState(1);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  
+
   // Modal states for user actions
   const [statusModalState, setStatusModalState] = useState({
     isOpen: false,
@@ -168,8 +168,13 @@ const AdminStudentsPage = () => {
 
   // Define mutations
   const updateStatusMutation = useMutation({
-    mutationFn: ({ userId, status }: { userId: string, status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' }) =>
-      userService.updateStatusByAdmin(userId, { status }),
+    mutationFn: ({
+      userId,
+      status,
+    }: {
+      userId: string;
+      status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+    }) => userService.updateStatusByAdmin(userId, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['students'] });
       toast({
@@ -188,10 +193,10 @@ const AdminStudentsPage = () => {
   });
 
   const updatePasswordMutation = useMutation({
-    mutationFn: ({ userId, password }: { userId: string, password: string }) =>
-      userService.updatePasswordByAdmin(userId, { 
-        password, 
-        password_confirmation: password 
+    mutationFn: ({ userId, password }: { userId: string; password: string }) =>
+      userService.updatePasswordByAdmin(userId, {
+        password,
+        password_confirmation: password,
       }),
     onSuccess: () => {
       toast({
@@ -269,9 +274,7 @@ const AdminStudentsPage = () => {
   };
 
   const countCompletedCourses = (enrollments: Enrollment[]) => {
-    return enrollments?.filter(
-      (enrollment) => enrollment.is_completed
-    ).length;
+    return enrollments?.filter((enrollment) => enrollment.is_completed).length;
   };
 
   const exportToCSV = () => {
@@ -389,7 +392,7 @@ const AdminStudentsPage = () => {
   return (
     <AdminLayout title={'Manage Students'}>
       <div className="container mx-auto px-4 py-8">
-        <Card className="mb-8 shadow-md">    
+        <Card className="mb-8 shadow-md">
           <CardContent>
             <div className="flex flex-col md:flex-row pt-8 gap-4 mb-6">
               <div className="relative flex-1">
@@ -405,7 +408,6 @@ const AdminStudentsPage = () => {
                 />
               </div>
               <div className="flex gap-2">
-            
                 <Button
                   variant="outline"
                   className="flex items-center gap-2"
@@ -416,19 +418,19 @@ const AdminStudentsPage = () => {
                 </Button>
 
                 <Button
-                className="flex items-center gap-2"
-                onClick={() => setIsCreateModalOpen(true)}
-              >
-                <UserPlus size={16} />
-                <span>Add Student</span>
-              </Button>
+                  className="flex items-center gap-2"
+                  onClick={() => setIsCreateModalOpen(true)}
+                >
+                  <UserPlus size={16} />
+                  <span>Add Student</span>
+                </Button>
               </div>
             </div>
 
             <div className="overflow-x-auto rounded-md border">
               <Table>
                 <TableHeader>
-                  <TableRow >
+                  <TableRow>
                     <TableHead>Student</TableHead>
                     <TableHead>Courses Enrolled</TableHead>
                     <TableHead>Progress</TableHead>
@@ -572,13 +574,13 @@ const AdminStudentsPage = () => {
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
                                 {actions.map((action) => (
-                                <DropdownMenuItem
+                                  <DropdownMenuItem
                                     key={action.name}
                                     onClick={() => action.onClick(student)}
                                   >
                                     {action.icon}
                                     <span>{action.name}</span>
-                                </DropdownMenuItem>
+                                  </DropdownMenuItem>
                                 ))}
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -614,7 +616,9 @@ const AdminStudentsPage = () => {
       {statusModalState.student && (
         <UserStatusModal
           isOpen={statusModalState.isOpen}
-          onOpenChange={(open) => setStatusModalState(prev => ({ ...prev, isOpen: open }))}
+          onOpenChange={(open) =>
+            setStatusModalState((prev) => ({ ...prev, isOpen: open }))
+          }
           userName={statusModalState.student.name}
           currentStatus={statusModalState.student.status || 'INACTIVE'}
           onStatusUpdate={handleUpdateStatus}
@@ -626,7 +630,9 @@ const AdminStudentsPage = () => {
       {passwordModalState.student && (
         <UserPasswordModal
           isOpen={passwordModalState.isOpen}
-          onOpenChange={(open) => setPasswordModalState(prev => ({ ...prev, isOpen: open }))}
+          onOpenChange={(open) =>
+            setPasswordModalState((prev) => ({ ...prev, isOpen: open }))
+          }
           userName={passwordModalState.student.name}
           onPasswordUpdate={handleUpdatePassword}
           isLoading={updatePasswordMutation.isPending}
@@ -637,7 +643,9 @@ const AdminStudentsPage = () => {
       {deleteModalState.student && (
         <DeleteUserModal
           isOpen={deleteModalState.isOpen}
-          onOpenChange={(open) => setDeleteModalState(prev => ({ ...prev, isOpen: open }))}
+          onOpenChange={(open) =>
+            setDeleteModalState((prev) => ({ ...prev, isOpen: open }))
+          }
           userName={deleteModalState.student.name}
           onConfirmDelete={handleDeleteUser}
           isLoading={deleteUserMutation.isPending}

@@ -22,8 +22,8 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
     }
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
-    return remainingMinutes > 0 
-      ? `${hours}h ${remainingMinutes}m` 
+    return remainingMinutes > 0
+      ? `${hours}h ${remainingMinutes}m`
       : `${hours} hour${hours > 1 ? 's' : ''}`;
   };
 
@@ -49,7 +49,7 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
         </span>
       );
     }
-    
+
     if (assignment.status === 'DRAFT') {
       return (
         <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">
@@ -57,7 +57,7 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
         </span>
       );
     }
-    
+
     if (assignment.is_expired) {
       return (
         <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
@@ -65,7 +65,7 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
         </span>
       );
     }
-    
+
     if (assignment.is_active) {
       return (
         <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
@@ -73,7 +73,7 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
         </span>
       );
     }
-    
+
     return (
       <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
         Inactive
@@ -85,7 +85,7 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
     if (assignment.is_submitted) {
       return 'View Submission';
     }
-    
+
     switch (assignment.type) {
       case 'QUIZ':
         return 'Start Quiz';
@@ -109,19 +109,23 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
           </div>
           <div className="flex-1">
             <div className="flex items-start justify-between">
-              <h4 className="font-semibold text-gray-900">{assignment.title}</h4>
+              <h4 className="font-semibold text-gray-900">
+                {assignment.title}
+              </h4>
               {assignment.date_limit && (
                 <div className="flex items-center space-x-1 text-xs text-gray-500">
                   <Timer className="h-3 w-3" />
-                  <span>Time Limit: {formatTimeLimit(assignment.date_limit)}</span>
+                  <span>
+                    Time Limit: {formatTimeLimit(assignment.date_limit)}
+                  </span>
                 </div>
               )}
             </div>
-            
+
             <p className="text-sm text-gray-600 mt-1 line-clamp-2">
               {assignment.description}
             </p>
-            
+
             <div className="flex items-center space-x-4 mt-3">
               <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
                 {assignment.type}
@@ -151,7 +155,8 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
                 <div className="flex items-center space-x-1 text-xs text-orange-500">
                   <Clock className="h-3 w-3" />
                   <span>
-                    Time remaining: {Math.floor(assignment.remaining_time / 60)}m {assignment.remaining_time % 60}s
+                    Time remaining: {Math.floor(assignment.remaining_time / 60)}
+                    m {assignment.remaining_time % 60}s
                   </span>
                 </div>
               )}
@@ -165,16 +170,16 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
           </div>
         </div>
       </div>
-      
+
       <div className="mt-4 flex justify-end">
-        <Button 
-          asChild 
-          size="sm" 
+        <Button
+          asChild
+          size="sm"
           className={`${
             assignment.is_submitted
-              ? 'bg-green-500 hover:bg-green-600' 
-              : assignment.is_expired 
-                ? 'bg-red-500 hover:bg-red-600' 
+              ? 'bg-green-500 hover:bg-green-600'
+              : assignment.is_expired
+                ? 'bg-red-500 hover:bg-red-600'
                 : 'bg-course-blue hover:bg-course-blue/90'
           }`}
           disabled={isDisabled}
@@ -188,4 +193,4 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
   );
 };
 
-export default AssignmentItem; 
+export default AssignmentItem;

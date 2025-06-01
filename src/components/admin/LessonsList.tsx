@@ -129,7 +129,9 @@ const LessonsList = ({ courseId, onAddNew }: LessonsListProps) => {
   };
 
   const handleManageResources = (lesson: Lesson) => {
-    navigate(`/admin/courses/${courseId}/lessons/${lesson.id}/resources?courseId=${courseId}`);
+    navigate(
+      `/admin/courses/${courseId}/lessons/${lesson.id}/resources?courseId=${courseId}`
+    );
   };
 
   const getStatusBadge = (status: string) => {
@@ -299,7 +301,9 @@ const LessonsList = ({ courseId, onAddNew }: LessonsListProps) => {
                                       <span>Edit</span>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
-                                      onClick={() => handleManageResources(lesson)}
+                                      onClick={() =>
+                                        handleManageResources(lesson)
+                                      }
                                       className="flex items-center"
                                     >
                                       <FolderOpen className="mr-2 h-4 w-4" />

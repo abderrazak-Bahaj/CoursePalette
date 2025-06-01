@@ -31,9 +31,9 @@ export function DeleteCategoryModal({
           <AlertDialogTitle>Delete Category</AlertDialogTitle>
           <AlertDialogDescription>
             Are you sure you want to delete the category{' '}
-            <span className="font-medium">{categoryName}</span>? This action cannot
-            be undone and will permanently remove the category and may affect
-            courses assigned to it.
+            <span className="font-medium">{categoryName}</span>? This action
+            cannot be undone and will permanently remove the category and may
+            affect courses assigned to it.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -43,10 +43,10 @@ export function DeleteCategoryModal({
             disabled={isLoading}
             className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
           >
-            {isLoading ? "Deleting..." : "Delete"}
+            {isLoading ? 'Deleting...' : 'Delete'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
-} 
+}

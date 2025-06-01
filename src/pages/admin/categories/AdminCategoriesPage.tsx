@@ -60,7 +60,9 @@ const AdminCategoriesPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isCategoryModalOpen, setCategoryModalOpen] = useState(false);
   const [editCategory, setEditCategory] = useState<Category | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const { toast } = useToast();
@@ -76,7 +78,7 @@ const AdminCategoriesPage = () => {
   // Create category mutation
   const createCategoryMutation = useMutation({
     mutationFn: (categoryData: CategoryFormData) => {
-      console.log("Create category data:", categoryData);
+      console.log('Create category data:', categoryData);
       return categoryService.createCategory(categoryData);
     },
     onSuccess: () => {
@@ -88,7 +90,7 @@ const AdminCategoriesPage = () => {
       setCategoryModalOpen(false);
     },
     onError: (error) => {
-      console.error("Create error:", error);
+      console.error('Create error:', error);
       toast({
         title: 'Error',
         description: 'Failed to create category',
@@ -100,8 +102,8 @@ const AdminCategoriesPage = () => {
   // Update category mutation
   const updateCategoryMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: CategoryFormData }) => {
-      console.log("Updating category with ID:", id);
-      console.log("Update data:", data);
+      console.log('Updating category with ID:', id);
+      console.log('Update data:', data);
       return categoryService.updateCategory(id, data);
     },
     onSuccess: () => {
@@ -114,7 +116,7 @@ const AdminCategoriesPage = () => {
       setEditCategory(null);
     },
     onError: (error) => {
-      console.error("Update category error:", error);
+      console.error('Update category error:', error);
       toast({
         title: 'Error',
         description: 'Failed to update category',
@@ -136,7 +138,7 @@ const AdminCategoriesPage = () => {
       setSelectedCategory(null);
     },
     onError: (error) => {
-      console.error("Delete error:", error);
+      console.error('Delete error:', error);
       toast({
         title: 'Error',
         description: 'Failed to delete category',
@@ -146,16 +148,16 @@ const AdminCategoriesPage = () => {
   });
 
   const handleSubmitCategory = (formData: CategoryFormData) => {
-    console.log("Form data received:", formData);
-    
+    console.log('Form data received:', formData);
+
     if (editCategory) {
-      console.log("Updating existing category:", editCategory.id);
+      console.log('Updating existing category:', editCategory.id);
       updateCategoryMutation.mutate({
         id: editCategory.id,
-        data: formData
+        data: formData,
       });
     } else {
-      console.log("Creating new category");
+      console.log('Creating new category');
       createCategoryMutation.mutate(formData);
     }
   };
@@ -167,7 +169,7 @@ const AdminCategoriesPage = () => {
   };
 
   const openEditModal = (category: Category) => {
-    console.log("Opening edit modal for category:", category);
+    console.log('Opening edit modal for category:', category);
     setEditCategory(category);
     setCategoryModalOpen(true);
   };
@@ -183,11 +185,12 @@ const AdminCategoriesPage = () => {
   };
 
   // Filter categories based on search query
-  const filteredCategories = data?.categories?.filter(
-    (category: Category) =>
-      category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.description.toLowerCase().includes(searchQuery.toLowerCase())
-  ) || [];
+  const filteredCategories =
+    data?.categories?.filter(
+      (category: Category) =>
+        category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        category.description.toLowerCase().includes(searchQuery.toLowerCase())
+    ) || [];
 
   const getVariant = (status: string) => {
     switch (status) {
@@ -221,9 +224,9 @@ const AdminCategoriesPage = () => {
                 />
               </div>
               <Button onClick={() => setCategoryModalOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Category
-            </Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Category
+              </Button>
             </div>
 
             <div className="rounded-md border">
@@ -254,7 +257,9 @@ const AdminCategoriesPage = () => {
                   ) : (
                     filteredCategories.map((category: Category) => (
                       <TableRow key={category.id}>
-                        <TableCell className="font-medium">{category.name}</TableCell>
+                        <TableCell className="font-medium">
+                          {category.name}
+                        </TableCell>
                         <TableCell>
                           <div className="max-w-xs truncate">
                             {category.description || 'No description'}
@@ -267,14 +272,14 @@ const AdminCategoriesPage = () => {
                               <span>{category.icon}</span>
                             </div>
                           ) : (
-                            <span className="text-muted-foreground">No icon</span>
+                            <span className="text-muted-foreground">
+                              No icon
+                            </span>
                           )}
                         </TableCell>
                         <TableCell>{category.order}</TableCell>
                         <TableCell>
-                          <Badge
-                            variant={getVariant(category.status)}
-                          >
+                          <Badge variant={getVariant(category.status)}>
                             {category.status}
                           </Badge>
                         </TableCell>
@@ -287,7 +292,9 @@ const AdminCategoriesPage = () => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem
-                                onClick={() => navigate(`/admin/categories/${category.slug}`)}
+                                onClick={() =>
+                                  navigate(`/admin/categories/${category.slug}`)
+                                }
                               >
                                 <FolderIcon className="mr-2 h-4 w-4" />
                                 <span>View</span>
@@ -345,4 +352,4 @@ const AdminCategoriesPage = () => {
   );
 };
 
-export default AdminCategoriesPage; 
+export default AdminCategoriesPage;

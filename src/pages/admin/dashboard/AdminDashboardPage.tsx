@@ -331,7 +331,9 @@ const AdminDashboardPage = () => {
                           />
                         ))}
                       </Pie>
-                      <Tooltip formatter={(value: number) => `${value} courses`} />
+                      <Tooltip
+                        formatter={(value: number) => `${value} courses`}
+                      />
                       <Legend />
                     </RechartsPieChart>
                   </ResponsiveContainer>
@@ -398,7 +400,8 @@ const AdminDashboardPage = () => {
                             {course.title}
                           </Link>
                           <p className="text-sm text-muted-foreground">
-                            {course.category?.name || 'Uncategorized'} • {course.enrollments_count} enrollments
+                            {course.category?.name || 'Uncategorized'} •{' '}
+                            {course.enrollments_count} enrollments
                           </p>
                         </div>
                       </div>

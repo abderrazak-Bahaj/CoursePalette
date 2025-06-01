@@ -15,8 +15,8 @@ export interface User {
     specialization: string;
     qualification: string;
     expertise: string;
-    education: Array<{degree: string, institution: string, year: number}>;
-    certifications: Array<{name: string, year: number}>;
+    education: Array<{ degree: string; institution: string; year: number }>;
+    certifications: Array<{ name: string; year: number }>;
     years_of_experience: number;
   };
   admin?: {

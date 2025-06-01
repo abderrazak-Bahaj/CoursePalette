@@ -134,7 +134,9 @@ const SecuritySettings = () => {
 
             <div>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isSubmitting && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 {isSubmitting ? 'Updating...' : 'Update Password'}
               </Button>
             </div>
@@ -143,7 +145,7 @@ const SecuritySettings = () => {
 
         <Separator />
 
-      {/*   <div>
+        {/*   <div>
           <h3 className="text-lg font-medium flex items-center">
             <Smartphone className="mr-2 h-5 w-5 text-gray-500" />
             Two-Factor Authentication
@@ -171,4 +173,4 @@ const SecuritySettings = () => {
   );
 };
 
-export default SecuritySettings; 
+export default SecuritySettings;

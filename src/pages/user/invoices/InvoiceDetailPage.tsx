@@ -156,12 +156,16 @@ export default function InvoiceDetailPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-500">Payment Method</p>
-                  <p className="font-medium">{invoice.payment.payment_method}</p>
+                  <p className="font-medium">
+                    {invoice.payment.payment_method}
+                  </p>
                 </div>
                 {invoice.payment.transaction_id && (
                   <div>
                     <p className="text-sm text-gray-500">Transaction ID</p>
-                    <p className="font-medium">{invoice.payment.transaction_id}</p>
+                    <p className="font-medium">
+                      {invoice.payment.transaction_id}
+                    </p>
                   </div>
                 )}
               </div>
@@ -171,4 +175,4 @@ export default function InvoiceDetailPage() {
       </div>
     </div>
   );
-} 
+}

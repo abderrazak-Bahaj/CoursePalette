@@ -12,7 +12,9 @@ import MainLayout from '@/components/layout/MainLayout';
 import ReCaptcha from '@/components/ui/ReCaptcha';
 
 // Replace with your actual site key
-const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LcxoyYrAAAAAIDW5NTKsq0YYkw0P6lypOy3edTq';
+const RECAPTCHA_SITE_KEY =
+  import.meta.env.VITE_RECAPTCHA_SITE_KEY ||
+  '6LcxoyYrAAAAAIDW5NTKsq0YYkw0P6lypOy3edTq';
 
 export const RegisterPage = () => {
   const [name, setName] = useState('');
@@ -55,11 +57,15 @@ export const RegisterPage = () => {
       // If not, we can execute again just to be sure
       if (!recaptchaToken && window.grecaptcha) {
         try {
-          const newToken = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'register' });
+          const newToken = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, {
+            action: 'register',
+          });
           setRecaptchaToken(newToken);
         } catch (error) {
           console.error('Failed to get reCAPTCHA token:', error);
-          setRecaptchaError('Failed to verify reCAPTCHA. Please try again or refresh the page.');
+          setRecaptchaError(
+            'Failed to verify reCAPTCHA. Please try again or refresh the page.'
+          );
           setIsLoading(false);
           return;
         }
@@ -68,7 +74,7 @@ export const RegisterPage = () => {
       // Register the user with reCAPTCHA token
       await register(name, email, password, recaptchaToken);
       setIsRegistered(true);
-      
+
       // Redirect to verification page
       setTimeout(() => {
         navigate(`/verify-email?email=${encodeURIComponent(email)}`);
@@ -81,14 +87,17 @@ export const RegisterPage = () => {
         setRecaptchaToken('');
         if (window.grecaptcha) {
           try {
-            const newToken = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'register' });
+            const newToken = await window.grecaptcha.execute(
+              RECAPTCHA_SITE_KEY,
+              { action: 'register' }
+            );
             setRecaptchaToken(newToken);
           } catch (err) {
             console.error('Failed to reset reCAPTCHA:', err);
           }
         }
       }
-      
+
       toast({
         title: 'Registration Failed',
         description: error?.message || 'An error occurred during registration',
@@ -141,10 +150,13 @@ export const RegisterPage = () => {
                   </div>
                   <p className="mb-4">
                     We've sent a verification link to <strong>{email}</strong>.
-                    Please check your inbox and click the link to complete your registration.
+                    Please check your inbox and click the link to complete your
+                    registration.
                   </p>
                   <Button asChild variant="outline">
-                    <Link to={`/verify-email?email=${encodeURIComponent(email)}`}>
+                    <Link
+                      to={`/verify-email?email=${encodeURIComponent(email)}`}
+                    >
                       Go to Verification Page
                     </Link>
                   </Button>
@@ -186,14 +198,18 @@ export const RegisterPage = () => {
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                        {showPassword ? (
+                          <EyeOff size={16} />
+                        ) : (
+                          <Eye size={16} />
+                        )}
                       </button>
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
                       Password must be at least 8 characters long
                     </p>
                   </div>
-                  
+
                   <div className="mt-4">
                     <ReCaptcha
                       siteKey={RECAPTCHA_SITE_KEY}
@@ -204,30 +220,34 @@ export const RegisterPage = () => {
                       action="register"
                     />
                     {recaptchaError && (
-                      <p className="text-xs text-red-500 mt-1">{recaptchaError}</p>
+                      <p className="text-xs text-red-500 mt-1">
+                        {recaptchaError}
+                      </p>
                     )}
                     <p className="text-xs text-gray-500 mt-2">
-                      This site is protected by reCAPTCHA v3. By registering, you agree to Google's 
-                      <a 
-                        href="https://policies.google.com/privacy" 
-                        target="_blank" 
+                      This site is protected by reCAPTCHA v3. By registering,
+                      you agree to Google's
+                      <a
+                        href="https://policies.google.com/privacy"
+                        target="_blank"
                         rel="noreferrer"
                         className="text-course-blue hover:underline ml-1 mr-1"
                       >
                         Privacy Policy
                       </a>
                       and
-                      <a 
-                        href="https://policies.google.com/terms" 
-                        target="_blank" 
+                      <a
+                        href="https://policies.google.com/terms"
+                        target="_blank"
                         rel="noreferrer"
                         className="text-course-blue hover:underline ml-1"
                       >
                         Terms of Service
-                      </a>.
+                      </a>
+                      .
                     </p>
                   </div>
-                  
+
                   <div className="flex items-start">
                     <Checkbox id="terms" className="mt-1" />
                     <Label htmlFor="terms" className="ml-2 text-sm">

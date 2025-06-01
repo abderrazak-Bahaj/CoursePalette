@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { mockCertificates } from '@/data/mockData';
 import CertificateCard from './CertificateCard';
 import { useQuery } from '@tanstack/react-query';
 import { certificateService } from '@/services/api';

@@ -28,18 +28,19 @@ export const LoadingFallback: React.FC<LoadingFallbackProps> = ({
   };
 
   const content = (
-    <div className={cn(
-      'flex flex-col items-center justify-center space-y-4',
-      className
-    )}>
-      <Loader2 className={cn(
-        'animate-spin text-primary',
-        sizeClasses[size]
-      )} />
-      <p className={cn(
-        'text-muted-foreground font-medium',
-        textSizeClasses[size]
-      )}>
+    <div
+      className={cn(
+        'flex flex-col items-center justify-center space-y-4',
+        className
+      )}
+    >
+      <Loader2 className={cn('animate-spin text-primary', sizeClasses[size])} />
+      <p
+        className={cn(
+          'text-muted-foreground font-medium',
+          textSizeClasses[size]
+        )}
+      >
         {text}
       </p>
     </div>
@@ -53,37 +54,25 @@ export const LoadingFallback: React.FC<LoadingFallbackProps> = ({
     );
   }
 
-  return (
-    <div className="flex items-center justify-center p-8">
-      {content}
-    </div>
-  );
+  return <div className="flex items-center justify-center p-8">{content}</div>;
 };
 
 // Specific loading components for different contexts
 export const PageLoadingFallback = () => (
-  <LoadingFallback 
-    size="lg" 
-    text="Loading page..."
-    fullPage
-  />
+  <LoadingFallback size="lg" text="Loading page..." fullPage />
 );
 
 export const ComponentLoadingFallback = () => (
-  <LoadingFallback 
-    size="md" 
-    text="Loading..."
-    fullPage={false}
-  />
+  <LoadingFallback size="md" text="Loading..." fullPage={false} />
 );
 
 export const InlineLoadingFallback = () => (
-  <LoadingFallback 
-    size="sm" 
+  <LoadingFallback
+    size="sm"
     text="Loading..."
     fullPage={false}
     className="py-4"
   />
 );
 
-export default LoadingFallback; 
+export default LoadingFallback;

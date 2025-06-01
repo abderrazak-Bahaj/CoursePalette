@@ -45,7 +45,8 @@ const AssignmentPage = () => {
   const { data: assignmentData, isLoading } = useQuery({
     queryKey: ['assignment', courseId, assignmentId],
     retry: false,
-    queryFn: async () => await courseService.getAssignment(courseId, assignmentId),
+    queryFn: async () =>
+      await courseService.getAssignment(courseId, assignmentId),
   });
 
   const { data: courseData } = useQuery({
@@ -64,15 +65,17 @@ const AssignmentPage = () => {
       const isExpired = assignment.is_expired;
       const remainingTime = assignment.remaining_time;
 
-      setHasStarted(!!(assignment.assignment_start || isSubmitted || isExpired));
-      
+      setHasStarted(
+        !!(assignment.assignment_start || isSubmitted || isExpired)
+      );
+
       if (remainingTime && remainingTime > 0 && !isSubmitted && !isExpired) {
         setTimeRemaining(remainingTime * 1000); // Convert seconds to milliseconds
-        
+
         const timer = setInterval(() => {
-          setTimeRemaining(prev => {
+          setTimeRemaining((prev) => {
             if (!prev || prev <= 1000) {
-            clearInterval(timer);
+              clearInterval(timer);
               // Refresh assignment data when timer expires
               queryClient.invalidateQueries({
                 queryKey: ['assignment', courseId, assignmentId],
@@ -165,8 +168,11 @@ const AssignmentPage = () => {
     },
   });
 
-  const handleAnswerChange = (questionId: string, answer: string | string[]) => {
-    setAnswers(prev => ({
+  const handleAnswerChange = (
+    questionId: string,
+    answer: string | string[]
+  ) => {
+    setAnswers((prev) => ({
       ...prev,
       [questionId]: answer,
     }));
@@ -177,10 +183,12 @@ const AssignmentPage = () => {
   };
 
   const handleSaveDraft = () => {
-    const answersArray: AnswerData[] = Object.entries(answers).map(([questionId, answer]) => ({
-      question_id: questionId,
-      answer: Array.isArray(answer) ? answer.join(',') : answer,
-    }));
+    const answersArray: AnswerData[] = Object.entries(answers).map(
+      ([questionId, answer]) => ({
+        question_id: questionId,
+        answer: Array.isArray(answer) ? answer.join(',') : answer,
+      })
+    );
 
     saveSubmissionMutation.mutate({
       status: 'DRAFT',
@@ -189,10 +197,12 @@ const AssignmentPage = () => {
   };
 
   const handleSubmit = () => {
-    const answersArray: AnswerData[] = Object.entries(answers).map(([questionId, answer]) => ({
-      question_id: questionId,
-      answer: Array.isArray(answer) ? answer.join(',') : answer,
-    }));
+    const answersArray: AnswerData[] = Object.entries(answers).map(
+      ([questionId, answer]) => ({
+        question_id: questionId,
+        answer: Array.isArray(answer) ? answer.join(',') : answer,
+      })
+    );
 
     // Validate all questions are answered
     const unansweredQuestions = assignment?.questions?.filter(
@@ -218,7 +228,7 @@ const AssignmentPage = () => {
     const hours = Math.floor(ms / (1000 * 60 * 60));
     const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((ms % (1000 * 60)) / 1000);
-    
+
     if (hours > 0) {
       return `${hours}h ${minutes}m ${seconds}s`;
     } else if (minutes > 0) {
@@ -244,7 +254,9 @@ const AssignmentPage = () => {
 
   const getProgressPercentage = () => {
     if (!assignment?.questions) return 0;
-    const answeredQuestions = assignment.questions.filter((q: AssignmentQuestion) => answers[q.id]);
+    const answeredQuestions = assignment.questions.filter(
+      (q: AssignmentQuestion) => answers[q.id]
+    );
     return (answeredQuestions.length / assignment.questions.length) * 100;
   };
 
@@ -267,11 +279,15 @@ const AssignmentPage = () => {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Assignment Not Found</h1>
-            <p className="mb-6">The assignment you are looking for does not exist.</p>
-            <Button onClick={(e) => {
+            <p className="mb-6">
+              The assignment you are looking for does not exist.
+            </p>
+            <Button
+              onClick={(e) => {
                 e.preventDefault();
                 navigate(-1);
-              }}>
+              }}
+            >
               Back to Course
             </Button>
           </div>
@@ -288,7 +304,9 @@ const AssignmentPage = () => {
           <div className="max-w-4xl mx-auto p-6">
             <Card className="mt-20">
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl mb-4">{assignment.title}</CardTitle>
+                <CardTitle className="text-2xl mb-4">
+                  {assignment.title}
+                </CardTitle>
                 <p className="text-gray-600 mb-6">{assignment.description}</p>
               </CardHeader>
               <CardContent className="text-center space-y-6">
@@ -299,7 +317,9 @@ const AssignmentPage = () => {
                     {formatTimeLimit(assignment.date_limit)}
                   </p>
                   <p className="text-sm text-gray-600">
-                    Once you start, you'll have {formatTimeLimit(assignment.date_limit)} to complete and submit this assignment.
+                    Once you start, you'll have{' '}
+                    {formatTimeLimit(assignment.date_limit)} to complete and
+                    submit this assignment.
                   </p>
                 </div>
 
@@ -311,10 +331,7 @@ const AssignmentPage = () => {
                 )}
 
                 <div className="flex items-center justify-center gap-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => navigate(-1)}
-                  >
+                  <Button variant="outline" onClick={() => navigate(-1)}>
                     Back to Course
                   </Button>
                   <Button
@@ -351,12 +368,16 @@ const AssignmentPage = () => {
                 <ChevronLeft className="h-5 w-5 mr-1" />
                 <span>Back to Course</span>
               </Button>
-              
+
               {timeRemaining !== null && !isSubmitted && (
-                <div className={`flex items-center space-x-2 ${isExpired ? 'text-red-500' : timeRemaining < 300000 ? 'text-orange-500' : 'text-gray-600'}`}>
+                <div
+                  className={`flex items-center space-x-2 ${isExpired ? 'text-red-500' : timeRemaining < 300000 ? 'text-orange-500' : 'text-gray-600'}`}
+                >
                   <Clock className="h-5 w-5" />
                   <span className="font-medium">
-                    {isExpired ? 'Time Expired' : `${formatTimeRemaining(timeRemaining)} remaining`}
+                    {isExpired
+                      ? 'Time Expired'
+                      : `${formatTimeRemaining(timeRemaining)} remaining`}
                   </span>
                 </div>
               )}
@@ -371,13 +392,19 @@ const AssignmentPage = () => {
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div>
-                  <CardTitle className="text-2xl mb-2">{assignment.title}</CardTitle>
+                  <CardTitle className="text-2xl mb-2">
+                    {assignment.title}
+                  </CardTitle>
                   <p className="text-gray-600 mb-4">{assignment.description}</p>
                   <div className="flex items-center space-x-4 text-sm text-gray-500">
                     <span>Course: {course?.title}</span>
                     <span>Type: {assignment.type}</span>
-                    <span>Time Limit: {formatTimeLimit(assignment.date_limit)}</span>
-                    {assignment.max_score && <span>Max Score: {assignment.max_score}</span>}
+                    <span>
+                      Time Limit: {formatTimeLimit(assignment.date_limit)}
+                    </span>
+                    {assignment.max_score && (
+                      <span>Max Score: {assignment.max_score}</span>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -399,7 +426,7 @@ const AssignmentPage = () => {
                   )}
                 </div>
               </div>
-              
+
               {!isSubmitted && (
                 <div className="mt-4">
                   <div className="flex items-center justify-between mb-2">
@@ -416,16 +443,20 @@ const AssignmentPage = () => {
 
           {/* Questions */}
           <div className="space-y-6">
-            {assignment.questions?.map((question: AssignmentQuestion, index: number) => (
-              <QuestionCard
-                key={question.id}
-                question={question}
-                questionNumber={index + 1}
-                answer={answers[question.id]}
-                onAnswerChange={(answer) => handleAnswerChange(question.id, answer)}
-                disabled={isSubmitted || isExpired}
-              />
-            ))}
+            {assignment.questions?.map(
+              (question: AssignmentQuestion, index: number) => (
+                <QuestionCard
+                  key={question.id}
+                  question={question}
+                  questionNumber={index + 1}
+                  answer={answers[question.id]}
+                  onAnswerChange={(answer) =>
+                    handleAnswerChange(question.id, answer)
+                  }
+                  disabled={isSubmitted || isExpired}
+                />
+              )
+            )}
           </div>
 
           {/* Action Buttons */}
@@ -440,7 +471,7 @@ const AssignmentPage = () => {
                 <Save className="h-4 w-4 mr-2" />
                 Save Draft
               </Button>
-              
+
               <Button
                 onClick={handleSubmit}
                 disabled={submitAssignmentMutation.isPending}
@@ -462,13 +493,15 @@ const AssignmentPage = () => {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="font-medium">Status:</span>
-                    <span className={`ml-2 px-2 py-1 rounded text-xs ${
-                      existingSubmission.status === 'GRADED' 
-                        ? 'bg-green-100 text-green-800'
-                        : existingSubmission.status === 'SUBMITTED'
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}>
+                    <span
+                      className={`ml-2 px-2 py-1 rounded text-xs ${
+                        existingSubmission.status === 'GRADED'
+                          ? 'bg-green-100 text-green-800'
+                          : existingSubmission.status === 'SUBMITTED'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
                       {existingSubmission.status}
                     </span>
                   </div>
@@ -476,7 +509,9 @@ const AssignmentPage = () => {
                     <div>
                       <span className="font-medium">Submitted:</span>
                       <span className="ml-2">
-                        {new Date(existingSubmission.submitted_at).toLocaleString()}
+                        {new Date(
+                          existingSubmission.submitted_at
+                        ).toLocaleString()}
                       </span>
                     </div>
                   )}
@@ -491,7 +526,9 @@ const AssignmentPage = () => {
                   {existingSubmission.feedback && (
                     <div className="col-span-2">
                       <span className="font-medium">Feedback:</span>
-                      <p className="mt-1 text-gray-600">{existingSubmission.feedback}</p>
+                      <p className="mt-1 text-gray-600">
+                        {existingSubmission.feedback}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -513,12 +550,12 @@ interface QuestionCardProps {
   disabled?: boolean;
 }
 
-const QuestionCard = ({ 
-  question, 
-  questionNumber, 
-  answer, 
-  onAnswerChange, 
-  disabled = false 
+const QuestionCard = ({
+  question,
+  questionNumber,
+  answer,
+  onAnswerChange,
+  disabled = false,
 }: QuestionCardProps) => {
   const renderQuestionContent = () => {
     if (question.is_multiple_choice) {
@@ -533,7 +570,9 @@ const QuestionCard = ({
             <div key={option.id} className="flex items-center space-x-2">
               <RadioGroupItem value={option.id} id={option.id} />
               <Label htmlFor={option.id} className="flex-1 cursor-pointer">
-                {option.text || option.option_text || `Option ${option.id.slice(0, 8)}`}
+                {option.text ||
+                  option.option_text ||
+                  `Option ${option.id.slice(0, 8)}`}
               </Label>
             </div>
           ))}
@@ -542,7 +581,7 @@ const QuestionCard = ({
     } else if (question.is_essay) {
       return (
         <Textarea
-          value={answer as string || ''}
+          value={(answer as string) || ''}
           onChange={(e) => onAnswerChange(e.target.value)}
           disabled={disabled}
           placeholder="Enter your answer here..."
@@ -552,7 +591,7 @@ const QuestionCard = ({
     } else {
       return (
         <Textarea
-          value={answer as string || ''}
+          value={(answer as string) || ''}
           onChange={(e) => onAnswerChange(e.target.value)}
           disabled={disabled}
           placeholder="Enter your answer here..."
@@ -577,11 +616,9 @@ const QuestionCard = ({
           <p className="text-gray-700">{question.question}</p>
         )}
       </CardHeader>
-      <CardContent>
-        {renderQuestionContent()}
-      </CardContent>
+      <CardContent>{renderQuestionContent()}</CardContent>
     </Card>
   );
 };
 
-export default AssignmentPage; 
+export default AssignmentPage;

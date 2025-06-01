@@ -31,4 +31,4 @@ export const paymentService = {
   capturePayment: (data: CapturePaymentData): Promise<PaymentResponse> => {
     return post('/payments/capture-order', data);
   },
-}; 
+};

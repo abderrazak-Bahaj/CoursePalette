@@ -125,7 +125,6 @@ const MetaPagination = ({ meta, onPageChange }: MetaPaginationProps) => {
   );
 };
 
-
 const PaginationContent = React.forwardRef<
   HTMLUListElement,
   React.ComponentProps<'ul'>

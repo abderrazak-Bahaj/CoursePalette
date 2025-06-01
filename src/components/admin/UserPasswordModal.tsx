@@ -66,7 +66,8 @@ export function UserPasswordModal({
         <DialogHeader>
           <DialogTitle>Reset User Password</DialogTitle>
           <DialogDescription>
-            Generate a new password for <span className="font-medium">{userName}</span>
+            Generate a new password for{' '}
+            <span className="font-medium">{userName}</span>
           </DialogDescription>
         </DialogHeader>
 
@@ -109,7 +110,8 @@ export function UserPasswordModal({
             )}
           </div>
           <p className="text-sm text-muted-foreground">
-            This will reset the user's password. They will need to use this new password for their next login.
+            This will reset the user's password. They will need to use this new
+            password for their next login.
           </p>
         </div>
 
@@ -117,11 +119,14 @@ export function UserPasswordModal({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={isLoading || !password.trim()}>
-            {isLoading ? "Updating..." : "Reset Password"}
+          <Button
+            onClick={handleSubmit}
+            disabled={isLoading || !password.trim()}
+          >
+            {isLoading ? 'Updating...' : 'Reset Password'}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-} 
+}

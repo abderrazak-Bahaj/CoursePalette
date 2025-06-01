@@ -9,13 +9,23 @@ import { PageLoadingFallback } from '@/components/common/LoadingFallback';
 // Public pages
 const Home = lazy(() => import('@/pages/public/Home'));
 const CoursesPage = lazy(() => import('@/pages/public/courses/CoursesPage'));
-const CourseDetailPage = lazy(() => import('@/pages/public/courses/CourseDetailPage'));
-const CategoriesPage = lazy(() => import('@/pages/public/categories/CategoriesPage'));
-const SearchResultsPage = lazy(() => import('@/pages/public/utility/SearchResultsPage'));
-const CheckCertificatePage = lazy(() => import('@/pages/public/certificates/CheckCertificatePage'));
+const CourseDetailPage = lazy(
+  () => import('@/pages/public/courses/CourseDetailPage')
+);
+const CategoriesPage = lazy(
+  () => import('@/pages/public/categories/CategoriesPage')
+);
+const SearchResultsPage = lazy(
+  () => import('@/pages/public/utility/SearchResultsPage')
+);
+const CheckCertificatePage = lazy(
+  () => import('@/pages/public/certificates/CheckCertificatePage')
+);
 const HelpPage = lazy(() => import('@/pages/public/utility/HelpPage'));
 const ContactPage = lazy(() => import('@/pages/public/utility/ContactPage'));
-const PrivacyPolicyPage = lazy(() => import('@/pages/public/utility/PrivacyPolicyPage'));
+const PrivacyPolicyPage = lazy(
+  () => import('@/pages/public/utility/PrivacyPolicyPage')
+);
 const TermsPage = lazy(() => import('@/pages/public/utility/TermsPage'));
 const BlogPage = lazy(() => import('@/pages/public/blog/BlogPage'));
 const BlogDetailPage = lazy(() => import('@/pages/public/blog/BlogDetailPage'));
@@ -25,7 +35,9 @@ const NotFound = lazy(() => import('@/pages/public/NotFound'));
 // Auth pages
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'));
 const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'));
-const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPasswordPage'));
+const ForgotPasswordPage = lazy(
+  () => import('@/pages/auth/ForgotPasswordPage')
+);
 const ResetPasswordPage = lazy(() => import('@/pages/auth/ResetPasswordPage'));
 const VerifyEmailPage = lazy(() => import('@/pages/auth/VerifyEmailPage'));
 
@@ -33,43 +45,86 @@ const VerifyEmailPage = lazy(() => import('@/pages/auth/VerifyEmailPage'));
 const DashboardPage = lazy(() => import('@/pages/user/DashboardPage'));
 const ProfilePage = lazy(() => import('@/pages/user/ProfilePage'));
 const LessonPage = lazy(() => import('@/pages/user/learning/LessonPage'));
-const AssignmentPage = lazy(() => import('@/pages/user/learning/AssignmentPage'));
-const CertificatesPage = lazy(() => import('@/pages/user/certificates/CertificatesPage'));
-const CertificateDetailPage = lazy(() => import('@/pages/user/certificates/CertificateDetailPage'));
+const AssignmentPage = lazy(
+  () => import('@/pages/user/learning/AssignmentPage')
+);
+const CertificatesPage = lazy(
+  () => import('@/pages/user/certificates/CertificatesPage')
+);
+const CertificateDetailPage = lazy(
+  () => import('@/pages/user/certificates/CertificateDetailPage')
+);
 
 // Admin pages
-const CreateAssignmentPage = lazy(() => import('@/pages/admin/courses/CreateAssignmentPage'));
-const AssignmentManagementPage = lazy(() => import('@/pages/admin/courses/AssignmentManagementPage'));
-const SubmissionsReviewPage = lazy(() => import('@/pages/admin/courses/SubmissionsReviewPage'));
-const SubmissionReviewDetailPage = lazy(() => import('@/pages/admin/courses/SubmissionReviewDetailPage'));
-const AdminAssignmentsPage = lazy(() => import('@/pages/admin/courses/AdminAssignmentsPage'));
-const ResourceManagementPage = lazy(() => import('@/pages/admin/courses/ResourceManagementPage'));
+const CreateAssignmentPage = lazy(
+  () => import('@/pages/admin/courses/CreateAssignmentPage')
+);
+const AssignmentManagementPage = lazy(
+  () => import('@/pages/admin/courses/AssignmentManagementPage')
+);
+const SubmissionsReviewPage = lazy(
+  () => import('@/pages/admin/courses/SubmissionsReviewPage')
+);
+const SubmissionReviewDetailPage = lazy(
+  () => import('@/pages/admin/courses/SubmissionReviewDetailPage')
+);
+const AdminAssignmentsPage = lazy(
+  () => import('@/pages/admin/courses/AdminAssignmentsPage')
+);
+const ResourceManagementPage = lazy(
+  () => import('@/pages/admin/courses/ResourceManagementPage')
+);
 const AdminProfilePage = lazy(() => import('@/pages/admin/AdminProfilePage'));
-const AdminCoursesPage = lazy(() => import('@/pages/admin/courses/AdminCoursesPage'));
-const AdminLessonsPage = lazy(() => import('@/pages/admin/courses/AdminLessonsPage'));
-const CreateLessonPage = lazy(() => import('@/pages/admin/courses/CreateLessonPage'));
-const LessonDetailPage = lazy(() => import('@/pages/admin/courses/LessonDetailPage'));
-const AdminCourseDetailPage = lazy(() => import('@/pages/admin/courses/CourseDetailPage'));
+const AdminCoursesPage = lazy(
+  () => import('@/pages/admin/courses/AdminCoursesPage')
+);
+const AdminLessonsPage = lazy(
+  () => import('@/pages/admin/courses/AdminLessonsPage')
+);
+const LessonDetailPage = lazy(
+  () => import('@/pages/admin/courses/LessonDetailPage')
+);
+const AdminCourseDetailPage = lazy(
+  () => import('@/pages/admin/courses/CourseDetailPage')
+);
 const StudentsPage = lazy(() => import('@/pages/admin/users/StudentsPage'));
 const ReportsPage = lazy(() => import('@/pages/admin/analytics/ReportsPage'));
 const AdminDashboardPage = lazy(() => import('@/pages/admin/dashboard'));
-const AdminTeacherViewPage = lazy(() => import('@/pages/admin/users/AdminTeacherViewPage'));
-const AdminStudentsPage = lazy(() => import('@/pages/admin/users/AdminStudentsPage'));
-const AdminStudentViewPage = lazy(() => import('@/pages/admin/users/AdminStudentViewPage'));
-const AdminInstructorsPage = lazy(() => import('@/pages/admin/users/AdminInstructorsPage'));
-const AdminCategoriesPage = lazy(() => import('@/pages/admin/categories/AdminCategoriesPage'));
-const AdminCategoriesViewPage = lazy(() => import('@/pages/admin/categories/AdminCategoriesViewPage'));
+const AdminTeacherViewPage = lazy(
+  () => import('@/pages/admin/users/AdminTeacherViewPage')
+);
+const AdminStudentsPage = lazy(
+  () => import('@/pages/admin/users/AdminStudentsPage')
+);
+const AdminStudentViewPage = lazy(
+  () => import('@/pages/admin/users/AdminStudentViewPage')
+);
+const AdminInstructorsPage = lazy(
+  () => import('@/pages/admin/users/AdminInstructorsPage')
+);
+const AdminCategoriesPage = lazy(
+  () => import('@/pages/admin/categories/AdminCategoriesPage')
+);
+const AdminCategoriesViewPage = lazy(
+  () => import('@/pages/admin/categories/AdminCategoriesViewPage')
+);
 const Checkout = lazy(() => import('@/pages/public/checkout/Checkout'));
-const StudentInvoicesPage = lazy(() => import('@/pages/user/invoices/StudentInvoicesPage'));
-const TeacherInvoicesPage = lazy(() => import('@/pages/user/invoices/TeacherInvoicesPage'));
-const AdminInvoicesPage = lazy(() => import('@/pages/admin/invoices/AdminInvoicesPage'));
-const InvoiceDetailPage = lazy(() => import('@/pages/user/invoices/InvoiceDetailPage'));
+const StudentInvoicesPage = lazy(
+  () => import('@/pages/user/invoices/StudentInvoicesPage')
+);
+const TeacherInvoicesPage = lazy(
+  () => import('@/pages/user/invoices/TeacherInvoicesPage')
+);
+const AdminInvoicesPage = lazy(
+  () => import('@/pages/admin/invoices/AdminInvoicesPage')
+);
+const InvoiceDetailPage = lazy(
+  () => import('@/pages/user/invoices/InvoiceDetailPage')
+);
 
 // Wrapper component for Suspense
 const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
-  <Suspense fallback={<PageLoadingFallback />}>
-    {children}
-  </Suspense>
+  <Suspense fallback={<PageLoadingFallback />}>{children}</Suspense>
 );
 
 const AppRoutes = () => (
@@ -383,16 +438,7 @@ const AppRoutes = () => (
         </RouteWrapper>
       }
     />
-    <Route
-      path="/admin/courses/:courseId/lessons/create"
-      element={
-        <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
-          <SuspenseWrapper>
-            <CreateLessonPage />
-          </SuspenseWrapper>
-        </RouteWrapper>
-      }
-    />
+    
     <Route
       path="/admin/courses/:courseId/lessons/:lessonId"
       element={
@@ -424,7 +470,7 @@ const AppRoutes = () => (
       }
     />
     <Route
-        path="/admin/courses/:courseId/assignments/create"
+      path="/admin/courses/:courseId/assignments/create"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
           <SuspenseWrapper>
@@ -577,7 +623,6 @@ const AppRoutes = () => (
       }
     />
 
-
     <Route
       path="/invoices/:id"
       element={
@@ -624,13 +669,13 @@ const AppRoutes = () => (
     />
 
     {/* Catch-all for 404 */}
-    <Route 
-      path="*" 
+    <Route
+      path="*"
       element={
         <SuspenseWrapper>
           <NotFound />
         </SuspenseWrapper>
-      } 
+      }
     />
   </Routes>
 );

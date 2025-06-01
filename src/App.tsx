@@ -53,25 +53,25 @@ function App() {
       }}
     >
       <BrowserRouter>
-  <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={queryClient}>
           <AuthProvider>
-    <CartProvider>
+            <CartProvider>
               <SidebarProvider>
                 <ErrorBoundary
                   onError={(error, errorInfo) => {
                     console.error('Router-level error:', error, errorInfo);
                   }}
                 >
-            <AppRoutes />
+                  <AppRoutes />
                 </ErrorBoundary>
-            <Toaster />
+                <Toaster />
               </SidebarProvider>
             </CartProvider>
-      </AuthProvider>
-  </QueryClientProvider>
+          </AuthProvider>
+        </QueryClientProvider>
       </BrowserRouter>
     </ErrorBoundary>
-);
+  );
 }
 
 export default App;

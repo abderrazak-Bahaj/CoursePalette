@@ -171,8 +171,13 @@ const AdminInstructorsPage = () => {
 
   // New mutations for status, password and delete
   const updateStatusMutation = useMutation({
-    mutationFn: ({ userId, status }: { userId: string, status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' }) =>
-      userService.updateStatusByAdmin(userId, { status }),
+    mutationFn: ({
+      userId,
+      status,
+    }: {
+      userId: string;
+      status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+    }) => userService.updateStatusByAdmin(userId, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['teachers'] });
       toast({
@@ -191,10 +196,10 @@ const AdminInstructorsPage = () => {
   });
 
   const updatePasswordMutation = useMutation({
-    mutationFn: ({ userId, password }: { userId: string, password: string }) =>
-      userService.updatePasswordByAdmin(userId, { 
-        password, 
-        password_confirmation: password 
+    mutationFn: ({ userId, password }: { userId: string; password: string }) =>
+      userService.updatePasswordByAdmin(userId, {
+        password,
+        password_confirmation: password,
       }),
     onSuccess: () => {
       toast({
@@ -243,7 +248,6 @@ const AdminInstructorsPage = () => {
     setIsCopied({ email: false, password: false, both: false });
   };
 
-  
   const exportToCSV = () => {
     if (!data?.teachers) return;
     const headers = [
@@ -310,7 +314,7 @@ const AdminInstructorsPage = () => {
         navigate(`/admin/instructors/${teacher.id}`);
       },
     },
- /*    {
+    /*    {
       name: 'Edit',
       icon: <FileEdit className="mr-2 h-4 w-4" />,
       onClick: (teacher: Teacher) => {
@@ -377,58 +381,63 @@ const AdminInstructorsPage = () => {
 
       return (
         <TableRow key={teacher.id}>
-        <TableCell>
-          <div className="flex items-center gap-3">
-            <Avatar>
-              <AvatarImage src={teacher.avatar || undefined} alt={teacher.name} />
-              <AvatarFallback>{teacher.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div>
-              <div className="font-medium">{teacher.name}</div>
-              <div className="text-sm text-muted-foreground">{teacher.email}</div>
+          <TableCell>
+            <div className="flex items-center gap-3">
+              <Avatar>
+                <AvatarImage
+                  src={teacher.avatar || undefined}
+                  alt={teacher.name}
+                />
+                <AvatarFallback>{teacher.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div>
+                <div className="font-medium">{teacher.name}</div>
+                <div className="text-sm text-muted-foreground">
+                  {teacher.email}
+                </div>
+              </div>
             </div>
-          </div>
-        </TableCell>
+          </TableCell>
 
-        <TableCell>{specialization}</TableCell>
-        <TableCell>{coursesCount}</TableCell>
-        <TableCell>{experience}</TableCell>
-        <TableCell>{lastLogin}</TableCell>
-        <TableCell>
-          <span
-            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-              status === 'ACTIVE'
-                ? 'bg-green-100 text-green-800'
-                : status === 'SUSPENDED'
-                ? 'bg-red-100 text-red-800'
-                : 'bg-gray-100 text-gray-800'
-            }`}
-          >
-            {status}
-          </span>
-        </TableCell>
+          <TableCell>{specialization}</TableCell>
+          <TableCell>{coursesCount}</TableCell>
+          <TableCell>{experience}</TableCell>
+          <TableCell>{lastLogin}</TableCell>
+          <TableCell>
+            <span
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                status === 'ACTIVE'
+                  ? 'bg-green-100 text-green-800'
+                  : status === 'SUSPENDED'
+                    ? 'bg-red-100 text-red-800'
+                    : 'bg-gray-100 text-gray-800'
+              }`}
+            >
+              {status}
+            </span>
+          </TableCell>
 
-        <TableCell className="text-right">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {actions.map((action) => (
-                <DropdownMenuItem
-                  key={action.name}
-                  onClick={() => action.onClick(teacher)}
-                >
-                  {action.icon}
-                  <span>{action.name}</span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </TableCell>
-      </TableRow>
+          <TableCell className="text-right">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {actions.map((action) => (
+                  <DropdownMenuItem
+                    key={action.name}
+                    onClick={() => action.onClick(teacher)}
+                  >
+                    {action.icon}
+                    <span>{action.name}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </TableCell>
+        </TableRow>
       );
     });
   };
@@ -452,7 +461,6 @@ const AdminInstructorsPage = () => {
                 />
               </div>
               <div className="flex gap-2">
-                
                 <Button
                   variant="outline"
                   onClick={exportToCSV}
@@ -461,18 +469,18 @@ const AdminInstructorsPage = () => {
                   <Download size={16} /> Export
                 </Button>
                 <Button
-                className="flex items-center gap-2"
-                onClick={() => setIsCreateModalOpen(true)}
-              >
-                <UserPlus size={16} /> Add Instructor
-              </Button>
+                  className="flex items-center gap-2"
+                  onClick={() => setIsCreateModalOpen(true)}
+                >
+                  <UserPlus size={16} /> Add Instructor
+                </Button>
               </div>
             </div>
 
             <div className="overflow-x-auto rounded-md border">
               <Table>
                 <TableHeader>
-                  <TableRow >
+                  <TableRow>
                     <TableHead>Instructor</TableHead>
                     <TableHead>Specialization</TableHead>
                     <TableHead>Total Courses</TableHead>
@@ -509,7 +517,9 @@ const AdminInstructorsPage = () => {
       {statusModalState.teacher && (
         <UserStatusModal
           isOpen={statusModalState.isOpen}
-          onOpenChange={(open) => setStatusModalState(prev => ({ ...prev, isOpen: open }))}
+          onOpenChange={(open) =>
+            setStatusModalState((prev) => ({ ...prev, isOpen: open }))
+          }
           userName={statusModalState.teacher.name}
           currentStatus={statusModalState.teacher.status || 'INACTIVE'}
           onStatusUpdate={handleUpdateStatus}
@@ -521,7 +531,9 @@ const AdminInstructorsPage = () => {
       {passwordModalState.teacher && (
         <UserPasswordModal
           isOpen={passwordModalState.isOpen}
-          onOpenChange={(open) => setPasswordModalState(prev => ({ ...prev, isOpen: open }))}
+          onOpenChange={(open) =>
+            setPasswordModalState((prev) => ({ ...prev, isOpen: open }))
+          }
           userName={passwordModalState.teacher.name}
           onPasswordUpdate={handleUpdatePassword}
           isLoading={updatePasswordMutation.isPending}
@@ -532,7 +544,9 @@ const AdminInstructorsPage = () => {
       {deleteModalState.teacher && (
         <DeleteUserModal
           isOpen={deleteModalState.isOpen}
-          onOpenChange={(open) => setDeleteModalState(prev => ({ ...prev, isOpen: open }))}
+          onOpenChange={(open) =>
+            setDeleteModalState((prev) => ({ ...prev, isOpen: open }))
+          }
           userName={deleteModalState.teacher.name}
           onConfirmDelete={handleDeleteUser}
           isLoading={deleteUserMutation.isPending}

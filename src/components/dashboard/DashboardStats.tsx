@@ -1,7 +1,5 @@
 import { BookOpen, Award, Clock } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { userEnrolledCourses } from '@/data/mockData';
-import { mockCertificates } from '@/data/mockData';
 
 interface DashboardStatsProps {
   enrolledCourses: string;

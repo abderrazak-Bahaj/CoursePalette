@@ -31,9 +31,16 @@ interface User {
 
 interface UsersTableProps {
   users: User[];
-  onAddUser: (userData: { name: string; email: string; role: string }) => Promise<void>;
+  onAddUser: (userData: {
+    name: string;
+    email: string;
+    role: string;
+  }) => Promise<void>;
   onResetPassword: (userId: string) => Promise<void>;
-  onUpdateUserStatus: (userId: string, status: 'active' | 'inactive') => Promise<void>;
+  onUpdateUserStatus: (
+    userId: string,
+    status: 'active' | 'inactive'
+  ) => Promise<void>;
   isLoading: boolean;
 }
 
@@ -48,15 +55,16 @@ export function UsersTable({
   const [addUserModalOpen, setAddUserModalOpen] = useState(false);
   const [resetPasswordModalOpen, setResetPasswordModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  
-  const filteredUsers = users.filter(user => 
-    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.role.toLowerCase().includes(searchQuery.toLowerCase())
+
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handlePasswordReset = async (userId: string) => {
-    const user = users.find(u => u.id === userId);
+    const user = users.find((u) => u.id === userId);
     if (user) {
       setSelectedUser(user);
       setResetPasswordModalOpen(true);
@@ -64,7 +72,7 @@ export function UsersTable({
   };
 
   const handleStatusChange = async (userId: string) => {
-    const user = users.find(u => u.id === userId);
+    const user = users.find((u) => u.id === userId);
     if (user) {
       const newStatus = user.status === 'active' ? 'inactive' : 'active';
       await onUpdateUserStatus(userId, newStatus);
@@ -99,7 +107,7 @@ export function UsersTable({
           Add User
         </Button>
       </div>
-      
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -115,7 +123,10 @@ export function UsersTable({
           <TableBody>
             {filteredUsers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-6 text-muted-foreground">
+                <TableCell
+                  colSpan={6}
+                  className="text-center py-6 text-muted-foreground"
+                >
                   No users found
                 </TableCell>
               </TableRow>
@@ -130,7 +141,11 @@ export function UsersTable({
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={user.status === 'active' ? 'outline' : 'secondary'}>
+                    <Badge
+                      variant={
+                        user.status === 'active' ? 'outline' : 'secondary'
+                      }
+                    >
                       {user.status === 'active' ? 'Active' : 'Inactive'}
                     </Badge>
                   </TableCell>
@@ -144,11 +159,16 @@ export function UsersTable({
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handlePasswordReset(user.id)}>
+                        <DropdownMenuItem
+                          onClick={() => handlePasswordReset(user.id)}
+                        >
                           Reset password
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleStatusChange(user.id)}>
-                          {user.status === 'active' ? 'Deactivate' : 'Activate'} user
+                        <DropdownMenuItem
+                          onClick={() => handleStatusChange(user.id)}
+                        >
+                          {user.status === 'active' ? 'Deactivate' : 'Activate'}{' '}
+                          user
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -184,4 +204,4 @@ export function UsersTable({
       )}
     </div>
   );
-} 
+}

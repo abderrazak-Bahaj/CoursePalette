@@ -7,13 +7,13 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/utils';
@@ -96,12 +96,16 @@ export function UserDetailsModal({
               </Badge>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Joined</p>
+              <p className="text-sm font-medium text-muted-foreground">
+                Joined
+              </p>
               <p>{formatDate(user.createdAt)}</p>
             </div>
             {user.lastLogin && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Last Login</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Last Login
+                </p>
                 <p>{formatDate(user.lastLogin)}</p>
               </div>
             )}
@@ -140,4 +144,4 @@ export function UserDetailsModal({
       </DialogContent>
     </Dialog>
   );
-} 
+}

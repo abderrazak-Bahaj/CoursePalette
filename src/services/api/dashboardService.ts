@@ -140,11 +140,11 @@ export const dashboardService = {
           overview: {
             total_courses: 0,
             total_enrollments: 0,
-            average_rating: 0
+            average_rating: 0,
           },
           monthly_revenue: [],
           top_courses: [],
-          recent_enrollments: []
+          recent_enrollments: [],
         };
       }
       return response;
@@ -154,12 +154,12 @@ export const dashboardService = {
         overview: {
           total_courses: 0,
           total_enrollments: 0,
-          average_rating: 0
+          average_rating: 0,
         },
         monthly_revenue: [],
         top_courses: [],
-        recent_enrollments: []
+        recent_enrollments: [],
       };
     }
   },
-}; 
+};

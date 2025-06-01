@@ -34,7 +34,6 @@ import { format } from 'date-fns';
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
 const TeacherDashboardPage = () => {
-
   const { data: stats, isLoading } = useQuery({
     queryKey: ['teacher-dashboard-stats'],
     queryFn: dashboardService.getTeacherStatistics,
@@ -53,30 +52,32 @@ const TeacherDashboardPage = () => {
   };
 
   // Calculate enrollment trends data
-  const enrollmentTrends = stats?.recent_enrollments.reduce((acc: any[], enrollment) => {
-    const month = format(new Date(enrollment.enrolled_at), 'MMM yyyy');
-    const existingMonth = acc.find(item => item.month === month);
-    
-    if (existingMonth) {
-      existingMonth.enrollments += 1;
-    } else {
-      acc.push({ month, enrollments: 1 });
-    }
-    
-    return acc;
-  }, []).sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
+  const enrollmentTrends = stats?.recent_enrollments
+    .reduce((acc: any[], enrollment) => {
+      const month = format(new Date(enrollment.enrolled_at), 'MMM yyyy');
+      const existingMonth = acc.find((item) => item.month === month);
+
+      if (existingMonth) {
+        existingMonth.enrollments += 1;
+      } else {
+        acc.push({ month, enrollments: 1 });
+      }
+
+      return acc;
+    }, [])
+    .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
 
   // Calculate course categories data
   const courseCategories = stats?.top_courses.reduce((acc: any[], course) => {
     const category = course.category?.name || 'Uncategorized';
-    const existingCategory = acc.find(item => item.name === category);
-    
+    const existingCategory = acc.find((item) => item.name === category);
+
     if (existingCategory) {
       existingCategory.value += course.enrollments_count;
     } else {
       acc.push({ name: category, value: course.enrollments_count });
     }
-    
+
     return acc;
   }, []);
 
@@ -172,9 +173,7 @@ const TeacherDashboardPage = () => {
         <Card>
           <CardHeader>
             <CardTitle>Enrollment Trends</CardTitle>
-            <CardDescription>
-              Student enrollments over time
-            </CardDescription>
+            <CardDescription>Student enrollments over time</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
@@ -184,7 +183,11 @@ const TeacherDashboardPage = () => {
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
-                  <Bar dataKey="enrollments" fill="#8884d8" name="Enrollments" />
+                  <Bar
+                    dataKey="enrollments"
+                    fill="#8884d8"
+                    name="Enrollments"
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -211,10 +214,15 @@ const TeacherDashboardPage = () => {
                     fill="#8884d8"
                     dataKey="value"
                     nameKey="name"
-                    label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                    label={({ name, percent }) =>
+                      `${name} (${(percent * 100).toFixed(0)}%)`
+                    }
                   >
                     {courseCategories?.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
                     ))}
                   </Pie>
                   <Tooltip />
