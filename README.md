@@ -47,16 +47,16 @@ flowchart TD
 ## Chapters
 
 1. [Domain Data Models
-   ](01_domain_data_models_.md)
+   ](docs/01_domain_data_models_.md)
 2. [UI Component Library (Shadcn UI)
-   ](02_ui_component_library__shadcn_ui__.md)
+   ](docs/02_ui_component_library__shadcn_ui__.md)
 3. [Application Routing & Navigation
-   ](03_application_routing___navigation_.md)
+   ](docs/03_application_routing___navigation_.md)
 4. [Authentication & Authorization System
-   ](04_authentication___authorization_system_.md)
+   ](docs/04_authentication___authorization_system_.md)
 5. [API Interaction Layer
-   ](05_api_interaction_layer_.md)
+   ](docs/05_api_interaction_layer_.md)
 6. [Server State Management (React Query)
-   ](06_server_state_management__react_query__.md)
+   ](docs/06_server_state_management__react_query__.md)
 7. [Form Management & Validation
-   ](07_form_management___validation_.md)
+   ](docs/07_form_management___validation_.md)
