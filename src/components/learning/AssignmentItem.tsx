@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ds/primitives/Button';
+import { Badge } from '@/components/ds/primitives/Badge';
 import {
   Clock,
   AlertCircle,
@@ -9,6 +10,7 @@ import {
   Check,
 } from 'lucide-react';
 import { Assignment } from '@/types/course';
+import { cn } from '@/lib/utils';
 
 interface AssignmentItemProps {
   assignment: Assignment;
@@ -17,9 +19,7 @@ interface AssignmentItemProps {
 
 const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
   const formatTimeLimit = (minutes: number) => {
-    if (minutes < 60) {
-      return `${minutes} minutes`;
-    }
+    if (minutes < 60) return `${minutes} minutes`;
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
     return remainingMinutes > 0
@@ -30,62 +30,51 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
   const getAssignmentIcon = (type: string) => {
     switch (type) {
       case 'QUIZ':
-        return <CheckCircle className="h-5 w-5 text-blue-500" />;
+        return <CheckCircle className="h-5 w-5 text-violet-400" />;
       case 'ESSAY':
-        return <FileText className="h-5 w-5 text-purple-500" />;
+        return <FileText className="h-5 w-5 text-violet-400" />;
       case 'MULTIPLE_CHOICE':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
+        return <CheckCircle className="h-5 w-5 text-amber-400" />;
       default:
-        return <FileText className="h-5 w-5 text-gray-500" />;
+        return <FileText className="h-5 w-5 text-neutral-400" />;
     }
   };
 
   const getStatusBadge = () => {
-    if (assignment.is_submitted) {
+    if (assignment.is_submitted)
       return (
-        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded flex items-center gap-1">
-          <Check className="h-3 w-3" />
+        <Badge variant="success" size="sm">
+          <Check className="h-3 w-3 mr-1" />
           Submitted
-        </span>
+        </Badge>
       );
-    }
-
-    if (assignment.status === 'DRAFT') {
+    if (assignment.status === 'DRAFT')
       return (
-        <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">
+        <Badge variant="default" size="sm">
           Draft
-        </span>
+        </Badge>
       );
-    }
-
-    if (assignment.is_expired) {
+    if (assignment.is_expired)
       return (
-        <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
+        <Badge variant="error" size="sm">
           Expired
-        </span>
+        </Badge>
       );
-    }
-
-    if (assignment.is_active) {
+    if (assignment.is_active)
       return (
-        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+        <Badge variant="primary" size="sm">
           Active
-        </span>
+        </Badge>
       );
-    }
-
     return (
-      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+      <Badge variant="warning" size="sm">
         Inactive
-      </span>
+      </Badge>
     );
   };
 
   const getButtonText = () => {
-    if (assignment.is_submitted) {
-      return 'View Submission';
-    }
-
+    if (assignment.is_submitted) return 'View Submission';
     switch (assignment.type) {
       case 'QUIZ':
         return 'Start Quiz';
@@ -98,75 +87,78 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
     }
   };
 
+  const getButtonVariant = () => {
+    if (assignment.is_submitted) return 'success' as const;
+    if (assignment.is_expired) return 'danger' as const;
+    return 'primary' as const;
+  };
+
   const isDisabled = assignment.status === 'DRAFT' || assignment.is_expired;
 
   return (
-    <div className="border rounded-lg p-4 bg-white hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between">
-        <div className="flex items-start space-x-3 flex-1">
-          <div className="flex-shrink-0 mt-1">
-            {getAssignmentIcon(assignment.type)}
+    <div className="border border-neutral-700 rounded-xl p-4 bg-[#1e293b] hover:border-violet-500/50 transition-all duration-200">
+      <div className="flex items-start gap-3">
+        <div className="flex-shrink-0 mt-1">
+          {getAssignmentIcon(assignment.type)}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2 mb-1">
+            <h4 className="font-semibold text-neutral-100">
+              {assignment.title}
+            </h4>
+            {assignment.date_limit && (
+              <div className="flex items-center gap-1 text-xs text-neutral-500 flex-shrink-0">
+                <Timer className="h-3 w-3" />
+                <span>{formatTimeLimit(assignment.date_limit)}</span>
+              </div>
+            )}
           </div>
-          <div className="flex-1">
-            <div className="flex items-start justify-between">
-              <h4 className="font-semibold text-gray-900">
-                {assignment.title}
-              </h4>
-              {assignment.date_limit && (
-                <div className="flex items-center space-x-1 text-xs text-gray-500">
-                  <Timer className="h-3 w-3" />
-                  <span>
-                    Time Limit: {formatTimeLimit(assignment.date_limit)}
-                  </span>
-                </div>
-              )}
-            </div>
 
-            <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+          {assignment.description && (
+            <p className="text-sm text-neutral-400 mb-2 line-clamp-2">
               {assignment.description}
             </p>
+          )}
 
-            <div className="flex items-center space-x-4 mt-3">
-              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                {assignment.type}
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <Badge variant="outline" size="sm">
+              {assignment.type}
+            </Badge>
+            {getStatusBadge()}
+            {assignment.max_score && (
+              <span className="text-xs text-neutral-500">
+                Max: {assignment.max_score} pts
               </span>
-              {getStatusBadge()}
-              {assignment.max_score && (
-                <span className="text-xs text-gray-500">
-                  Max Score: {assignment.max_score}
-                </span>
-              )}
-              {assignment.questions_count && (
-                <span className="text-xs text-gray-500">
-                  {assignment.questions_count} Questions
-                </span>
-              )}
-            </div>
+            )}
+            {assignment.questions_count && (
+              <span className="text-xs text-neutral-500">
+                {assignment.questions_count} questions
+              </span>
+            )}
+          </div>
 
-            {/* Status indicators */}
-            <div className="flex items-center space-x-4 mt-2">
-              {assignment.is_expired && (
-                <div className="flex items-center space-x-1 text-xs text-red-500">
-                  <AlertCircle className="h-3 w-3" />
-                  <span>Time Expired</span>
-                </div>
-              )}
-              {assignment.remaining_time && !assignment.is_submitted && (
-                <div className="flex items-center space-x-1 text-xs text-orange-500">
-                  <Clock className="h-3 w-3" />
-                  <span>
-                    Time remaining: {Math.floor(assignment.remaining_time / 60)}
-                    m {assignment.remaining_time % 60}s
-                  </span>
-                </div>
-              )}
-              {assignment.is_submitted && (
-                <div className="flex items-center space-x-1 text-xs text-green-500">
-                  <CheckCircle className="h-3 w-3" />
-                  <span>Completed</span>
-                </div>
-              )}
-            </div>
+          <div className="flex flex-wrap items-center gap-3">
+            {assignment.is_expired && (
+              <div className="flex items-center gap-1 text-xs text-red-400">
+                <AlertCircle className="h-3 w-3" />
+                <span>Time Expired</span>
+              </div>
+            )}
+            {assignment.remaining_time && !assignment.is_submitted && (
+              <div className="flex items-center gap-1 text-xs text-amber-400">
+                <Clock className="h-3 w-3" />
+                <span>
+                  {Math.floor(assignment.remaining_time / 60)}m{' '}
+                  {assignment.remaining_time % 60}s remaining
+                </span>
+              </div>
+            )}
+            {assignment.is_submitted && (
+              <div className="flex items-center gap-1 text-xs text-amber-400">
+                <CheckCircle className="h-3 w-3" />
+                <span>Completed</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -175,13 +167,7 @@ const AssignmentItem = ({ assignment, courseId }: AssignmentItemProps) => {
         <Button
           asChild
           size="sm"
-          className={`${
-            assignment.is_submitted
-              ? 'bg-green-500 hover:bg-green-600'
-              : assignment.is_expired
-                ? 'bg-red-500 hover:bg-red-600'
-                : 'bg-course-blue hover:bg-course-blue/90'
-          }`}
+          variant={getButtonVariant()}
           disabled={isDisabled}
         >
           <Link to={`/courses/${courseId}/assignments/${assignment.id}`}>

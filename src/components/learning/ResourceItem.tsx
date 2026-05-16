@@ -9,6 +9,7 @@ import {
 import { Resource } from '@/types/course';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 interface ResourceItemProps {
   resource: Resource;
@@ -18,18 +19,20 @@ const ResourceItem = ({ resource }: ResourceItemProps) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const { toast } = useToast();
 
+  const resourceAny = resource as any;
+
   const getResourceIcon = (type: string) => {
     switch (type) {
       case 'PDF':
-        return <FileText className="h-5 w-5 text-red-500" />;
+        return <FileText className="h-5 w-5 text-red-400" />;
       case 'VIDEO':
-        return <Video className="h-5 w-5 text-blue-500" />;
+        return <Video className="h-5 w-5 text-violet-400" />;
       case 'AUDIO':
-        return <Headphones className="h-5 w-5 text-purple-500" />;
+        return <Headphones className="h-5 w-5 text-amber-400" />;
       case 'LINK':
-        return <LinkIcon className="h-5 w-5 text-green-500" />;
+        return <LinkIcon className="h-5 w-5 text-green-400" />;
       default:
-        return <FileText className="h-5 w-5 text-gray-500" />;
+        return <FileText className="h-5 w-5 text-neutral-400" />;
     }
   };
 
@@ -50,13 +53,12 @@ const ResourceItem = ({ resource }: ResourceItemProps) => {
 
   const isLink =
     resource.type === 'LINK' || resource.file_url?.startsWith('http');
-  const canDownload = !isLink && (resource.file_url || resource.file_path);
+  const canDownload = !isLink && (resource.file_url || resourceAny.file_path);
 
   const handleResourceClick = async () => {
     try {
       if (isLink) {
-        // Handle external links
-        const url = resource.file_url || resource.url;
+        const url = resource.file_url || resourceAny.url;
         if (url) {
           window.open(url, '_blank', 'noopener,noreferrer');
         } else {
@@ -67,12 +69,9 @@ const ResourceItem = ({ resource }: ResourceItemProps) => {
           });
         }
       } else if (canDownload) {
-        // Handle file downloads
         setIsDownloading(true);
-        const url = resource.file_url || resource.file_path;
-
+        const url = resource.file_url || resourceAny.file_path;
         if (url) {
-          // Create a temporary link element for download
           const link = document.createElement('a');
           link.href = url;
           link.download = resource.title || 'download';
@@ -80,7 +79,6 @@ const ResourceItem = ({ resource }: ResourceItemProps) => {
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-
           toast({
             title: 'Download Started',
             description: `Downloading ${resource.title}...`,
@@ -88,7 +86,7 @@ const ResourceItem = ({ resource }: ResourceItemProps) => {
         } else {
           toast({
             title: 'Error',
-            description: 'File URL is not available for download',
+            description: 'File URL is not available',
             variant: 'destructive',
           });
         }
@@ -99,7 +97,7 @@ const ResourceItem = ({ resource }: ResourceItemProps) => {
           variant: 'destructive',
         });
       }
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to access resource',
@@ -110,36 +108,14 @@ const ResourceItem = ({ resource }: ResourceItemProps) => {
     }
   };
 
-  const getActionIcon = () => {
-    if (isDownloading) {
-      return <Download className="h-4 w-4 text-gray-400 animate-bounce" />;
-    }
-
-    if (isLink) {
-      return <ExternalLink className="h-4 w-4 text-gray-400" />;
-    }
-
-    if (canDownload) {
-      return <Download className="h-4 w-4 text-gray-400" />;
-    }
-
-    return <FileText className="h-4 w-4 text-gray-400" />;
-  };
-
-  const getActionText = () => {
-    if (isDownloading) return 'Downloading...';
-    if (isLink) return 'Open Link';
-    if (canDownload) return 'Download';
-    return 'View';
-  };
-
   return (
     <div
-      className={`flex items-center p-4 border rounded-lg transition-colors cursor-pointer ${
+      className={cn(
+        'flex items-center p-4 border rounded-xl transition-all duration-200 cursor-pointer',
         isDownloading
-          ? 'bg-blue-50 border-blue-200'
-          : 'hover:bg-gray-50 hover:border-gray-300'
-      }`}
+          ? 'bg-violet-600/10 border-violet-500/50'
+          : 'bg-[#1e293b] border-neutral-700 hover:border-violet-500/50 hover:bg-[#1e293b]'
+      )}
       onClick={handleResourceClick}
       role="button"
       tabIndex={0}
@@ -152,33 +128,49 @@ const ResourceItem = ({ resource }: ResourceItemProps) => {
     >
       <div className="flex-shrink-0 mr-3">{getResourceIcon(resource.type)}</div>
 
-      <div className="flex-1">
-        <h4 className="font-medium text-gray-900">{resource.title}</h4>
-        {resource.description && (
-          <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-            {resource.description}
+      <div className="flex-1 min-w-0">
+        <h4 className="font-medium text-neutral-100">{resource.title}</h4>
+        {resourceAny.description && (
+          <p className="text-sm text-neutral-400 mt-0.5 line-clamp-2">
+            {resourceAny.description}
           </p>
         )}
-        <div className="flex items-center space-x-4 mt-2">
-          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+        <div className="flex items-center gap-3 mt-2">
+          <span className="text-xs text-neutral-500 bg-neutral-700/50 px-2 py-0.5 rounded">
             {getResourceTypeLabel(resource.type)}
           </span>
           {resource.file_size_formatted && (
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-neutral-500">
               {resource.file_size_formatted}
             </span>
           )}
           {isLink && (
-            <span className="text-xs text-blue-500 bg-blue-100 px-2 py-1 rounded">
+            <span className="text-xs text-violet-400 bg-violet-600/10 px-2 py-0.5 rounded">
               External Link
             </span>
           )}
         </div>
       </div>
 
-      <div className="flex-shrink-0 ml-3 flex flex-col items-center">
-        {getActionIcon()}
-        <span className="text-xs text-gray-500 mt-1">{getActionText()}</span>
+      <div className="flex-shrink-0 ml-3 flex flex-col items-center gap-1">
+        {isDownloading ? (
+          <Download className="h-4 w-4 text-violet-400 animate-bounce" />
+        ) : isLink ? (
+          <ExternalLink className="h-4 w-4 text-neutral-400" />
+        ) : canDownload ? (
+          <Download className="h-4 w-4 text-neutral-400" />
+        ) : (
+          <FileText className="h-4 w-4 text-neutral-400" />
+        )}
+        <span className="text-xs text-neutral-500">
+          {isDownloading
+            ? 'Downloading...'
+            : isLink
+              ? 'Open Link'
+              : canDownload
+                ? 'Download'
+                : 'View'}
+        </span>
       </div>
     </div>
   );

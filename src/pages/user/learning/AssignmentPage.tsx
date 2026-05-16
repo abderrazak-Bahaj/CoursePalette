@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ds/primitives/Button';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ds/primitives/Card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Progress } from '@/components/ui/progress';
+import { Progress } from '@/components/ds/primitives/Progress';
 import {
   ChevronLeft,
   Clock,
@@ -300,23 +305,25 @@ const AssignmentPage = () => {
   if (!hasStarted && !isSubmitted && !isExpired) {
     return (
       <MainLayout>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-[#0f172a]">
           <div className="max-w-4xl mx-auto p-6">
-            <Card className="mt-20">
+            <Card variant="elevated" className="mt-20">
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl mb-4">
+                <CardTitle className="font-serif text-2xl mb-4 text-neutral-50">
                   {assignment.title}
                 </CardTitle>
-                <p className="text-gray-600 mb-6">{assignment.description}</p>
+                <p className="text-neutral-400 mb-6">
+                  {assignment.description}
+                </p>
               </CardHeader>
               <CardContent className="text-center space-y-6">
-                <div className="bg-blue-50 p-6 rounded-lg">
-                  <Clock className="h-12 w-12 mx-auto mb-4 text-blue-600" />
+                <div className="bg-violet-600/10 border border-violet-500/30 p-6 rounded-xl">
+                  <Clock className="h-12 w-12 mx-auto mb-4 text-violet-400" />
                   <h3 className="text-lg font-medium mb-2">Time Limit</h3>
-                  <p className="text-2xl font-bold text-blue-600 mb-2">
+                  <p className="font-serif text-2xl font-bold text-violet-400 mb-2">
                     {formatTimeLimit(assignment.date_limit)}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-neutral-400">
                     Once you start, you'll have{' '}
                     {formatTimeLimit(assignment.date_limit)} to complete and
                     submit this assignment.
@@ -324,20 +331,22 @@ const AssignmentPage = () => {
                 </div>
 
                 {assignment.instructions && (
-                  <div className="bg-gray-50 p-4 rounded-lg text-left">
+                  <div className="bg-[#0f172a] border border-neutral-700 p-4 rounded-lg text-left">
                     <h4 className="font-medium mb-2">Instructions:</h4>
-                    <p className="text-gray-700">{assignment.instructions}</p>
+                    <p className="text-neutral-300">
+                      {assignment.instructions}
+                    </p>
                   </div>
                 )}
 
                 <div className="flex items-center justify-center gap-4">
-                  <Button variant="outline" onClick={() => navigate(-1)}>
+                  <Button variant="secondary" onClick={() => navigate(-1)}>
                     Back to Course
                   </Button>
                   <Button
                     onClick={handleStartAssignment}
                     disabled={startAssignmentMutation.isPending}
-                    className="bg-course-blue flex items-center gap-2"
+                    variant="primary"
                   >
                     <Play className="h-4 w-4" />
                     Start Assignment
@@ -353,9 +362,9 @@ const AssignmentPage = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#0f172a]">
         {/* Header */}
-        <div className="bg-white border-b px-4 py-4">
+        <div className="bg-[#0f172a] border-b border-neutral-700 px-4 py-4">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between">
               <Button
@@ -363,15 +372,16 @@ const AssignmentPage = () => {
                   e.preventDefault();
                   navigate(-1);
                 }}
-                className="flex bg-gray-50 hover:bg-gray-100 items-center text-gray-700 hover:text-course-blue cursor-pointer transition-colors"
+                variant="ghost"
+                className="flex items-center gap-1 text-neutral-400 hover:text-violet-400"
               >
-                <ChevronLeft className="h-5 w-5 mr-1" />
+                <ChevronLeft className="h-5 w-5" />
                 <span>Back to Course</span>
               </Button>
 
               {timeRemaining !== null && !isSubmitted && (
                 <div
-                  className={`flex items-center space-x-2 ${isExpired ? 'text-red-500' : timeRemaining < 300000 ? 'text-orange-500' : 'text-gray-600'}`}
+                  className={`flex items-center space-x-2 ${isExpired ? 'text-red-400' : timeRemaining < 300000 ? 'text-amber-400' : 'text-neutral-400'}`}
                 >
                   <Clock className="h-5 w-5" />
                   <span className="font-medium">
@@ -388,15 +398,17 @@ const AssignmentPage = () => {
         {/* Main Content */}
         <div className="max-w-4xl mx-auto p-6">
           {/* Assignment Info */}
-          <Card className="mb-6">
+          <Card variant="elevated" className="mb-6">
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div>
-                  <CardTitle className="text-2xl mb-2">
+                  <CardTitle className="font-serif text-2xl mb-2 text-neutral-50">
                     {assignment.title}
                   </CardTitle>
-                  <p className="text-gray-600 mb-4">{assignment.description}</p>
-                  <div className="flex items-center space-x-4 text-sm text-gray-500">
+                  <p className="text-neutral-400 mb-4">
+                    {assignment.description}
+                  </p>
+                  <div className="flex items-center space-x-4 text-sm text-neutral-500">
                     <span>Course: {course?.title}</span>
                     <span>Type: {assignment.type}</span>
                     <span>
@@ -409,17 +421,17 @@ const AssignmentPage = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   {isSubmitted ? (
-                    <div className="flex items-center text-green-600">
+                    <div className="flex items-center text-amber-400">
                       <CheckCircle className="h-5 w-5 mr-1" />
                       <span>Submitted</span>
                     </div>
                   ) : isExpired ? (
-                    <div className="flex items-center text-red-500">
+                    <div className="flex items-center text-red-400">
                       <AlertCircle className="h-5 w-5 mr-1" />
                       <span>Expired</span>
                     </div>
                   ) : (
-                    <div className="flex items-center text-blue-600">
+                    <div className="flex items-center text-violet-400">
                       <FileText className="h-5 w-5 mr-1" />
                       <span>In Progress</span>
                     </div>
@@ -430,12 +442,16 @@ const AssignmentPage = () => {
               {!isSubmitted && (
                 <div className="mt-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-600">Progress</span>
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-neutral-400">Progress</span>
+                    <span className="text-sm text-neutral-400">
                       {Math.round(getProgressPercentage())}% Complete
                     </span>
                   </div>
-                  <Progress value={getProgressPercentage()} className="h-2" />
+                  <Progress
+                    value={getProgressPercentage()}
+                    variant="default"
+                    size="sm"
+                  />
                 </div>
               )}
             </CardHeader>
@@ -463,7 +479,7 @@ const AssignmentPage = () => {
           {!isSubmitted && !isExpired && (
             <div className="mt-8 flex justify-between">
               <Button
-                variant="outline"
+                variant="secondary"
                 onClick={handleSaveDraft}
                 disabled={saveSubmissionMutation.isPending}
                 className="flex items-center"
@@ -475,7 +491,7 @@ const AssignmentPage = () => {
               <Button
                 onClick={handleSubmit}
                 disabled={submitAssignmentMutation.isPending}
-                className="flex items-center bg-course-blue"
+                variant="action"
               >
                 <Send className="h-4 w-4 mr-2" />
                 Submit Assignment
@@ -485,7 +501,7 @@ const AssignmentPage = () => {
 
           {/* Submission Info */}
           {existingSubmission && (
-            <Card className="mt-6">
+            <Card variant="elevated" className="mt-6">
               <CardHeader>
                 <CardTitle className="text-lg">Submission Details</CardTitle>
               </CardHeader>
@@ -496,10 +512,10 @@ const AssignmentPage = () => {
                     <span
                       className={`ml-2 px-2 py-1 rounded text-xs ${
                         existingSubmission.status === 'GRADED'
-                          ? 'bg-green-100 text-green-800'
+                          ? 'bg-amber-500/20 text-amber-300'
                           : existingSubmission.status === 'SUBMITTED'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-gray-100 text-gray-800'
+                            ? 'bg-violet-600/20 text-violet-300'
+                            : 'bg-neutral-700 text-neutral-300'
                       }`}
                     >
                       {existingSubmission.status}
@@ -526,7 +542,7 @@ const AssignmentPage = () => {
                   {existingSubmission.feedback && (
                     <div className="col-span-2">
                       <span className="font-medium">Feedback:</span>
-                      <p className="mt-1 text-gray-600">
+                      <p className="mt-1 text-neutral-400">
                         {existingSubmission.feedback}
                       </p>
                     </div>
@@ -602,18 +618,18 @@ const QuestionCard = ({
   };
 
   return (
-    <Card>
+    <Card variant="elevated">
       <CardHeader>
-        <CardTitle className="text-lg">
+        <CardTitle className="font-serif text-lg text-neutral-50">
           Question {questionNumber}
           {question.points && (
-            <span className="ml-2 text-sm font-normal text-gray-500">
+            <span className="ml-2 text-sm font-normal text-neutral-500">
               ({question.points} points)
             </span>
           )}
         </CardTitle>
         {question.question && (
-          <p className="text-gray-700">{question.question}</p>
+          <p className="text-neutral-300">{question.question}</p>
         )}
       </CardHeader>
       <CardContent>{renderQuestionContent()}</CardContent>
