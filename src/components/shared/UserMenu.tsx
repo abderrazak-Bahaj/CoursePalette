@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar } from '@/components/ds/primitives/Avatar';
 import { Separator } from '@/components/ds/primitives/Separator';
-import { User, LayoutDashboard, Award, LogOut } from 'lucide-react';
+import { User, LayoutDashboard, Award, Settings, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 export function UserMenu() {
@@ -56,6 +56,13 @@ export function UserMenu() {
         >
           <User className="w-4 h-4" />
           Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => navigate('/settings')}
+          className="flex items-center gap-2 px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700/50 rounded-md cursor-pointer"
+        >
+          <Settings className="w-4 h-4" />
+          Settings
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => navigate('/dashboard')}
