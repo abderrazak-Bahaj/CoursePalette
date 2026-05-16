@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/select';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { addDays } from 'date-fns';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ds/primitives/Button';
 import { Download } from 'lucide-react';
 import { invoiceApi, Invoice, InvoiceFilters } from '@/services/api/invoice';
 import { useQuery } from '@tanstack/react-query';
@@ -110,7 +110,9 @@ export default function AdminInvoicesPage() {
     <AdminLayout>
       <div className="container mx-auto py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">All Invoices</h1>
+          <h1 className="font-serif text-2xl font-bold text-neutral-50">
+            All Invoices
+          </h1>
           <div className="flex items-center space-x-4">
             <DateRangePicker date={dateRange} onDateChange={setDateRange} />
             <Select value={status} onValueChange={setStatus}>
@@ -125,7 +127,7 @@ export default function AdminInvoicesPage() {
                 <SelectItem value="REFUNDED">Refunded</SelectItem>
               </SelectContent>
             </Select>
-            <Button onClick={handleExportCSV}>
+            <Button onClick={handleExportCSV} variant="primary">
               <Download className="w-4 h-4 mr-2" />
               Export CSV
             </Button>
@@ -134,36 +136,42 @@ export default function AdminInvoicesPage() {
         <WrapperLoading isLoading={isLoading} skeletonCount={2}>
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-lg font-semibold mb-2">Total Revenue</h2>
-                <p className="text-2xl font-bold text-green-600">
+              <div className="bg-[#1e293b] rounded-lg border border-neutral-700 p-6">
+                <h2 className="font-serif text-lg font-semibold text-neutral-50 mb-2">
+                  Total Revenue
+                </h2>
+                <p className="font-serif text-2xl font-bold text-amber-400">
                   ${calculateTotalRevenue().toFixed(2)}
                 </p>
-                <p className="text-sm text-gray-500">From paid invoices</p>
+                <p className="text-sm text-neutral-400">From paid invoices</p>
               </div>
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-lg font-semibold mb-2">Pending Invoices</h2>
-                <p className="text-2xl font-bold text-yellow-600">
+              <div className="bg-[#1e293b] rounded-lg border border-neutral-700 p-6">
+                <h2 className="font-serif text-lg font-semibold text-neutral-50 mb-2">
+                  Pending Invoices
+                </h2>
+                <p className="font-serif text-2xl font-bold text-amber-400">
                   {invoices?.filter((i) => i.status === 'PENDING').length || 0}
                 </p>
-                <p className="text-sm text-gray-500">Awaiting payment</p>
+                <p className="text-sm text-neutral-400">Awaiting payment</p>
               </div>
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-lg font-semibold mb-2">Failed Invoices</h2>
-                <p className="text-2xl font-bold text-red-600">
+              <div className="bg-[#1e293b] rounded-lg border border-neutral-700 p-6">
+                <h2 className="font-serif text-lg font-semibold text-neutral-50 mb-2">
+                  Failed Invoices
+                </h2>
+                <p className="font-serif text-2xl font-bold text-red-400">
                   {invoices?.filter((i) => i.status === 'FAILED').length || 0}
                 </p>
-                <p className="text-sm text-gray-500">Payment failed</p>
+                <p className="text-sm text-neutral-400">Payment failed</p>
               </div>
             </div>
 
             {error ? (
               <div className="text-center py-8">
-                <p className="text-red-500">Failed to load invoices</p>
+                <p className="text-red-400">Failed to load invoices</p>
               </div>
             ) : !invoices?.length ? (
               <div className="text-center py-8">
-                <p className="text-gray-500">No invoices found</p>
+                <p className="text-neutral-400">No invoices found</p>
               </div>
             ) : (
               <InvoiceTable

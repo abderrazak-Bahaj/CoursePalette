@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import AdminLayout from '@/components/layout/AdminLayout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ds/primitives/Button';
+import { Input } from '@/components/ds/primitives/Input';
 import {
   Select,
   SelectContent,
@@ -98,7 +98,7 @@ const AdminCoursesPage = () => {
             </Select>
           </div>
           {isTeacher && (
-            <Button onClick={() => setIsModalOpen(true)}>
+            <Button onClick={() => setIsModalOpen(true)} variant="primary">
               <PlusCircle className="mr-2 h-4 w-4" />
               Add Course
             </Button>

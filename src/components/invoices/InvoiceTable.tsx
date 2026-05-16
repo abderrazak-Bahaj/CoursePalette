@@ -8,8 +8,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ds/primitives/Button';
+import { Badge } from '@/components/ds/primitives/Badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -75,13 +75,6 @@ interface InvoiceTableProps {
   onPageSizeChange: (pageSize: number) => void;
 }
 
-const statusColors = {
-  PENDING: 'bg-yellow-100 text-yellow-800',
-  PAID: 'bg-green-100 text-green-800',
-  FAILED: 'bg-red-100 text-red-800',
-  REFUNDED: 'bg-gray-100 text-gray-800',
-};
-
 export const InvoiceTable: React.FC<InvoiceTableProps> = ({
   invoices,
   meta,
@@ -126,7 +119,18 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({
                 </TableCell>
                 <TableCell>{formatCurrency(invoice.total)}</TableCell>
                 <TableCell>
-                  <Badge className={statusColors[invoice.status]}>
+                  <Badge
+                    variant={
+                      invoice.status === 'PAID'
+                        ? 'success'
+                        : invoice.status === 'PENDING'
+                          ? 'warning'
+                          : invoice.status === 'FAILED'
+                            ? 'error'
+                            : 'default'
+                    }
+                    size="sm"
+                  >
                     {invoice.status}
                   </Badge>
                 </TableCell>
@@ -134,7 +138,7 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
+                      <Button variant="ghost" size="sm">
                         <span className="sr-only">Open menu</span>
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
@@ -160,7 +164,7 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({
       {/* Pagination Controls */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-neutral-400">
             Showing {invoices.length} of {meta.total} results
           </p>
           <Select
@@ -182,7 +186,7 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({
 
         <div className="flex items-center space-x-2">
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
             onClick={() => onPageChange(meta.current_page - 1)}
             disabled={meta.current_page === 1}
@@ -196,7 +200,7 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({
                 <span className="px-2">...</span>
               ) : (
                 <Button
-                  variant={page === meta.current_page ? 'default' : 'outline'}
+                  variant={page === meta.current_page ? 'primary' : 'secondary'}
                   size="sm"
                   onClick={() => onPageChange(page)}
                 >
@@ -207,7 +211,7 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({
           ))}
 
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
             onClick={() => onPageChange(meta.current_page + 1)}
             disabled={meta.current_page === meta.last_page}

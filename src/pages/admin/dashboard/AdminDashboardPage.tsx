@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ds/primitives/Button';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card';
+} from '@/components/ds/primitives/Card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   PlusCircle,
@@ -157,62 +157,54 @@ const AdminDashboardPage = () => {
   return (
     <AdminLayout title="Admin Dashboard">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
+        <Card className="bg-gradient-to-br from-violet-900/20 to-violet-800/20 border border-violet-700/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
-            <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <BookOpen className="h-4 w-4 text-violet-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+            <div className="text-2xl font-bold text-violet-300">
               {stats?.overview?.total_courses || 0}
             </div>
-            <p className="text-xs text-blue-600 dark:text-blue-400">
-              Active courses
-            </p>
+            <p className="text-xs text-violet-400">Active courses</p>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900">
+        <Card className="bg-gradient-to-br from-amber-900/20 to-amber-800/20 border border-amber-700/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Active Students
             </CardTitle>
-            <Users className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <Users className="h-4 w-4 text-amber-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-700 dark:text-green-300">
+            <div className="text-2xl font-bold text-amber-300">
               {stats?.overview?.total_students || 0}
             </div>
-            <p className="text-xs text-green-600 dark:text-green-400">
-              Enrolled students
-            </p>
+            <p className="text-xs text-amber-400">Enrolled students</p>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900">
+        <Card className="bg-gradient-to-br from-violet-900/20 to-violet-800/20 border border-violet-700/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Enrollments</CardTitle>
-            <GraduationCap className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+            <GraduationCap className="h-4 w-4 text-violet-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">
+            <div className="text-2xl font-bold text-violet-300">
               {stats?.overview?.total_enrollments || 0}
             </div>
-            <p className="text-xs text-purple-600 dark:text-purple-400">
-              Total enrollments
-            </p>
+            <p className="text-xs text-violet-400">Total enrollments</p>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900">
+        <Card className="bg-gradient-to-br from-amber-900/20 to-amber-800/20 border border-amber-700/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+            <DollarSign className="h-4 w-4 text-amber-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">
+            <div className="text-2xl font-bold text-amber-300">
               {formatCurrency(stats?.overview?.total_revenue || 0)}
             </div>
-            <p className="text-xs text-amber-600 dark:text-amber-400">
-              Total revenue
-            </p>
+            <p className="text-xs text-amber-400">Total revenue</p>
           </CardContent>
         </Card>
       </div>
@@ -396,7 +388,7 @@ const AdminDashboardPage = () => {
                         <div>
                           <Link
                             to={`/admin/courses/${course.id}`}
-                            className="text-sm font-medium text-gray-900 hover:text-primary"
+                            className="text-sm font-medium text-neutral-100 hover:text-violet-400"
                           >
                             {course.title}
                           </Link>
@@ -451,7 +443,7 @@ const AdminDashboardPage = () => {
                       <div>
                         <Link
                           to={`/admin/courses/${enrollment.course.id}`}
-                          className="text-sm font-medium text-gray-900 hover:text-primary"
+                          className="text-sm font-medium text-neutral-100 hover:text-violet-400"
                         >
                           {enrollment.course.title}
                         </Link>
