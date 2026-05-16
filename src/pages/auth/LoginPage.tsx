@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ds/primitives/Button';
+import { Input } from '@/components/ds/primitives/Input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ds/primitives/Card';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { Eye, EyeOff } from 'lucide-react';
@@ -113,10 +118,12 @@ const LoginPage = () => {
                 </div>
                 <Button
                   type="submit"
-                  className="w-full bg-course-blue"
-                  disabled={isLoading}
+                  variant="action"
+                  size="md"
+                  className="w-full"
+                  loading={isLoading}
                 >
-                  {isLoading ? 'Logging in...' : 'Log In'}
+                  Log In
                 </Button>
               </form>
 
