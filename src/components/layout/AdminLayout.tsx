@@ -155,13 +155,13 @@ const AdminLayoutInner = ({ children, title }: AdminLayoutProps) => {
                         'hover:bg-white/10 hover:text-slate-100',
                         'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-700',
                         isActive(to) &&
-                          'bg-white/10 text-slate-100 border-l-2 border-primary'
+                          'bg-violet-600/10 text-violet-400 border-l-2 border-violet-500'
                       )}
                     >
                       <span
                         className={cn(
                           'text-slate-400',
-                          isActive(to) && 'text-primary'
+                          isActive(to) && 'text-violet-400'
                         )}
                       >
                         {icon}
@@ -192,13 +192,13 @@ const AdminLayoutInner = ({ children, title }: AdminLayoutProps) => {
                         'hover:bg-white/10 hover:text-slate-100',
                         'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-700',
                         isActive(to) &&
-                          'bg-white/10 text-slate-100 border-l-2 border-primary'
+                          'bg-violet-600/10 text-violet-400 border-l-2 border-violet-500'
                       )}
                     >
                       <span
                         className={cn(
                           'text-slate-400',
-                          isActive(to) && 'text-primary'
+                          isActive(to) && 'text-violet-400'
                         )}
                       >
                         {icon}
@@ -231,7 +231,7 @@ const AdminLayoutInner = ({ children, title }: AdminLayoutProps) => {
         </SidebarContent>
 
         <SidebarFooter className="border-t border-slate-800/50">
-          <div className="bg-white p-3 rounded-t-lg">
+          <div className="bg-[#1e293b] p-3 rounded-t-lg">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20">
                 <span className="text-xs font-medium text-primary">
@@ -239,10 +239,10 @@ const AdminLayoutInner = ({ children, title }: AdminLayoutProps) => {
                 </span>
               </div>
               <div className="group-data-[collapsible=icon]:hidden">
-                <p className="text-xs font-medium text-slate-900">
+                <p className="text-xs font-medium text-neutral-100">
                   {user?.name}
                 </p>
-                <p className="text-[10px] text-slate-500 capitalize">
+                <p className="text-[10px] text-neutral-400 capitalize">
                   {user?.role?.toLowerCase()}
                 </p>
               </div>

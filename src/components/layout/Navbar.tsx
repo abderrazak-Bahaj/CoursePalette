@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useToast } from '@/components/ui/use-toast';
+import { Button } from '@/components/ds/primitives/Button';
+import { Input } from '@/components/ds/primitives/Input';
+import { Avatar } from '@/components/ds/primitives/Avatar';
+import { Separator } from '@/components/ds/primitives/Separator';
 import { CartDrawer } from '@/components/ui/cart-drawer';
 import {
   DropdownMenu,
@@ -20,19 +20,17 @@ import {
   BookOpen,
   Award,
   Home,
-  Users,
-  PieChart,
   BookText,
   ShoppingCart,
   LayoutDashboard,
-  Receipt,
-  Settings,
   LogOut,
+  Settings,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/contexts/CartContext';
-import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/components/ui/use-toast';
+import { cn } from '@/lib/utils';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,170 +51,170 @@ const Navbar = () => {
     navigate('/');
   };
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  const navLinks = [
+    { to: '/courses', label: 'Courses' },
+    { to: '/categories', label: 'Categories' },
+    { to: '/blog', label: 'Blog' },
+    { to: '/check-certificate', label: 'Check Certificate' },
+  ];
 
-  const toggleCart = () => {
-    setIsCartOpen(!isCartOpen);
-  };
-
-  const UserMenuContent = () => {
-    if (!user) return null;
-
-    return (
-      <div className="w-56">
-        <div className="px-4 py-2">
-          <p className="text-sm font-medium">{user.name}</p>
-          <p className="text-xs text-gray-500">{user.email}</p>
-        </div>
-        <Separator />
-        <div className="py-2">
-          <DropdownMenuItem onClick={() => navigate('/profile')}>
-            <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
-          </DropdownMenuItem>
-          {user.role === 'STUDENT' && (
-            <>
-              <DropdownMenuItem onClick={() => navigate('/dashboard')}>
-                <LayoutDashboard className="mr-2 h-4 w-4" />
-                <span>Dashboard</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate('/certificates')}>
-                <Award className="mr-2 h-4 w-4" />
-                <span>Certificates</span>
-              </DropdownMenuItem>
-            </>
-          )}
-        </div>
-        <Separator />
-        <div className="py-2">
-          <DropdownMenuItem onClick={handleLogout}>
-            <LogOut className="mr-2 h-4 w-4" />
-            <span>Logout</span>
-          </DropdownMenuItem>
-        </div>
-      </div>
-    );
+  const roleMap: Record<string, 'admin' | 'teacher' | 'student'> = {
+    ADMIN: 'admin',
+    TEACHER: 'teacher',
+    STUDENT: 'student',
   };
 
   return (
     <>
-      <nav className="border-b bg-white sticky top-0 z-50">
+      <nav className="sticky top-0 z-50 bg-[#0f172a] border-b border-neutral-700">
         <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link to="/" className="flex items-center">
-                <span className="text-2xl font-bold text-course-blue">
-                  CoursePalette
-                </span>
-              </Link>
+          <div className="flex items-center justify-between gap-4">
+            {/* Logo */}
+            <Link to="/" className="flex-shrink-0">
+              <span className="font-serif text-xl font-bold text-violet-400">
+                CoursePalette
+              </span>
+            </Link>
 
-              {!isMobile && (
-                <div className="hidden md:flex space-x-4 ml-6">
-                  <Link
-                    to="/courses"
-                    className="text-gray-700 hover:text-course-blue transition-colors"
-                  >
-                    Courses
-                  </Link>
-                  <Link
-                    to="/categories"
-                    className="text-gray-700 hover:text-course-blue transition-colors"
-                  >
-                    Categories
-                  </Link>
-                  <Link
-                    to="/blog"
-                    className="text-gray-700 hover:text-course-blue transition-colors"
-                  >
-                    Blog
-                  </Link>
-                  <Link
-                    to="/check-certificate"
-                    className="text-gray-700 hover:text-course-blue transition-colors"
-                  >
-                    Check Certificate
-                  </Link>
-                </div>
-              )}
-            </div>
-
+            {/* Desktop nav links */}
             {!isMobile && (
-              <div className="hidden md:flex items-center flex-1 max-w-md mx-4">
-                <div className="relative w-full">
-                  <Search
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                    size={18}
-                  />
-                  <Input
-                    placeholder="Search for courses..."
-                    className="pl-10 w-full"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        navigate(`/search?q=${e.currentTarget.value}`);
-                      }
-                    }}
-                  />
-                </div>
+              <div className="hidden md:flex items-center gap-1">
+                {navLinks.map(({ to, label }) => (
+                  <Button key={to} variant="ghost" size="sm" asChild>
+                    <Link to={to}>{label}</Link>
+                  </Button>
+                ))}
               </div>
             )}
 
-            <div className="flex items-center space-x-4">
+            {/* Search */}
+            {!isMobile && (
+              <div className="hidden md:flex flex-1 max-w-sm">
+                <Input
+                  variant="search"
+                  placeholder="Search courses..."
+                  leadingIcon={<Search className="w-4 h-4" />}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter')
+                      navigate(`/search?q=${e.currentTarget.value}`);
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Right actions */}
+            <div className="flex items-center gap-2">
               {isAuthenticated ? (
                 <>
-                  {/* Cart Button */}
+                  {/* Cart */}
                   <Button
                     variant="ghost"
-                    size="icon"
-                    onClick={toggleCart}
-                    className="relative hover:bg-gray-100"
+                    size="sm"
+                    onClick={() => setIsCartOpen(true)}
+                    className="relative"
+                    aria-label="Cart"
                   >
-                    <ShoppingCart className="h-6 w-6" />
+                    <ShoppingCart className="w-5 h-5" />
                     {items.length > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-course-blue text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-medium">
+                      <span className="absolute -top-1 -right-1 bg-coral-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-medium">
                         {items.length}
                       </span>
                     )}
                   </Button>
 
-                  {/* User Menu */}
+                  {/* User dropdown */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Avatar className="cursor-pointer">
-                        <AvatarImage src={user?.avatar} />
-                        <AvatarFallback className="bg-course-blue text-white">
-                          {user?.name?.charAt(0) || 'U'}
-                        </AvatarFallback>
-                      </Avatar>
+                      <button
+                        className="focus-visible:outline-none focus-visible:shadow-glow-violet rounded-full"
+                        aria-label="User menu"
+                      >
+                        <Avatar
+                          src={user?.avatar ?? undefined}
+                          alt={user?.name ?? ''}
+                          fallback={user?.name?.slice(0, 2)}
+                          size="sm"
+                          role={user?.role ? roleMap[user.role] : undefined}
+                        />
+                      </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <UserMenuContent />
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-56 bg-[#1e293b] border border-neutral-700 text-neutral-100 rounded-lg shadow-lg p-1"
+                    >
+                      <div className="px-3 py-2">
+                        <p className="text-sm font-medium text-neutral-100">
+                          {user?.name}
+                        </p>
+                        <p className="text-xs text-neutral-400">
+                          {user?.email}
+                        </p>
+                      </div>
+                      <Separator className="my-1" />
+                      <DropdownMenuItem
+                        onClick={() => navigate('/profile')}
+                        className="flex items-center gap-2 px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700/50 rounded-md cursor-pointer"
+                      >
+                        <User className="w-4 h-4" /> Profile
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => navigate('/settings')}
+                        className="flex items-center gap-2 px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700/50 rounded-md cursor-pointer"
+                      >
+                        <Settings className="w-4 h-4" /> Settings
+                      </DropdownMenuItem>
+                      {isStudent && (
+                        <>
+                          <DropdownMenuItem
+                            onClick={() => navigate('/dashboard')}
+                            className="flex items-center gap-2 px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700/50 rounded-md cursor-pointer"
+                          >
+                            <LayoutDashboard className="w-4 h-4" /> Dashboard
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => navigate('/certificates')}
+                            className="flex items-center gap-2 px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700/50 rounded-md cursor-pointer"
+                          >
+                            <Award className="w-4 h-4" /> Certificates
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                      <Separator className="my-1" />
+                      <DropdownMenuItem
+                        onClick={handleLogout}
+                        className="flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-900/20 rounded-md cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4" /> Logout
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </>
               ) : (
-                <div className="flex items-center space-x-3">
-                  {!isMobile && (
-                    <>
-                      <Link to="/login">
-                        <Button variant="outline">Log In</Button>
-                      </Link>
-                      <Link to="/register">
-                        <Button>Sign Up</Button>
-                      </Link>
-                    </>
-                  )}
-                </div>
+                !isMobile && (
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link to="/login">Log In</Link>
+                    </Button>
+                    <Button variant="action" size="sm" asChild>
+                      <Link to="/register">Sign Up</Link>
+                    </Button>
+                  </div>
+                )
               )}
+
+              {/* Mobile hamburger */}
               {isMobile && (
                 <Button
                   variant="ghost"
-                  size="icon"
-                  onClick={toggleMenu}
+                  size="sm"
+                  onClick={() => setIsOpen(!isOpen)}
                   aria-label="Toggle menu"
                 >
-                  {isOpen ? <X size={24} /> : <Menu size={24} />}
+                  {isOpen ? (
+                    <X className="w-5 h-5" />
+                  ) : (
+                    <Menu className="w-5 h-5" />
+                  )}
                 </Button>
               )}
             </div>
@@ -224,15 +222,12 @@ const Navbar = () => {
 
           {/* Mobile menu */}
           {isMobile && isOpen && (
-            <div className="md:hidden mt-3 pb-3 animate-fade-in">
-              <div className="relative w-full mb-4">
-                <Search
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  size={18}
-                />
+            <div className="mt-3 pb-3 animate-slide-down border-t border-neutral-700 pt-3">
+              <div className="mb-3">
                 <Input
-                  placeholder="Search for courses..."
-                  className="pl-10 w-full"
+                  variant="search"
+                  placeholder="Search courses..."
+                  leadingIcon={<Search className="w-4 h-4" />}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       navigate(`/search?q=${e.currentTarget.value}`);
@@ -241,78 +236,53 @@ const Navbar = () => {
                   }}
                 />
               </div>
-              <div className="flex flex-col space-y-3">
-                <Link
-                  to="/"
-                  className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Home size={20} className="mr-2" />
-                  Home
-                </Link>
-                <Link
-                  to="/courses"
-                  className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <BookOpen size={20} className="mr-2" />
-                  Courses
-                </Link>
-                <Link
-                  to="/categories"
-                  className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <BookText size={20} className="mr-2" />
-                  Categories
-                </Link>
-                <Link
-                  to="/blog"
-                  className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <BookText size={20} className="mr-2" />
-                  Blog
-                </Link>
-                <Link
-                  to="/check-certificate"
-                  className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Award size={20} className="mr-2" />
-                  Check Certificate
-                </Link>
+              <div className="flex flex-col gap-1">
+                {navLinks.map(({ to, label }) => (
+                  <Button
+                    key={to}
+                    variant="ghost"
+                    size="md"
+                    asChild
+                    className="justify-start"
+                  >
+                    <Link to={to} onClick={() => setIsOpen(false)}>
+                      {label}
+                    </Link>
+                  </Button>
+                ))}
                 {isAuthenticated && (
                   <Button
                     variant="ghost"
+                    size="md"
+                    className="justify-start"
                     onClick={() => {
-                      toggleCart();
+                      setIsCartOpen(true);
                       setIsOpen(false);
                     }}
-                    className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md justify-start"
                   >
-                    <ShoppingCart size={20} className="mr-2" />
+                    <ShoppingCart className="w-4 h-4 mr-2" />
                     Cart {items.length > 0 && `(${items.length})`}
                   </Button>
                 )}
                 {!isAuthenticated && (
                   <>
-                    <Link
-                      to="/login"
-                      className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                      onClick={() => setIsOpen(false)}
+                    <Separator className="my-1" />
+                    <Button
+                      variant="ghost"
+                      size="md"
+                      asChild
+                      className="justify-start"
                     >
-                      <LogIn size={20} className="mr-2" />
-                      Log In
-                    </Link>
-                    <Link
-                      to="/register"
-                      className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <User size={20} className="mr-2" />
-                      Sign Up
-                    </Link>
+                      <Link to="/login" onClick={() => setIsOpen(false)}>
+                        <LogIn className="w-4 h-4 mr-2" />
+                        Log In
+                      </Link>
+                    </Button>
+                    <Button variant="action" size="md" asChild>
+                      <Link to="/register" onClick={() => setIsOpen(false)}>
+                        Sign Up
+                      </Link>
+                    </Button>
                   </>
                 )}
               </div>
@@ -320,8 +290,6 @@ const Navbar = () => {
           )}
         </div>
       </nav>
-
-      {/* Cart Drawer */}
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );
