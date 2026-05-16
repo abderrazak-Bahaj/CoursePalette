@@ -34,6 +34,7 @@ import { courseService } from '@/services/api';
 import AdminLayout from '@/components/layout/AdminLayout';
 import WrapperLoading from '@/components/ui/wrapper-loading';
 import { formatTimeLimit } from '@/utils/dateLimit';
+import { AssignmentPageIntegration } from '@/components/ai/Integrations/AssignmentPageIntegration';
 
 interface QuestionOption {
   id?: string;
@@ -576,6 +577,8 @@ const CreateAssignmentPage = () => {
                         key={questionIndex}
                         question={question}
                         questionIndex={questionIndex}
+                        courseId={courseId!}
+                        assignmentId={assignmentId}
                         onUpdate={updateQuestion}
                         onRemove={removeQuestion}
                         onAddOption={addOption}
@@ -625,6 +628,8 @@ const CreateAssignmentPage = () => {
 interface QuestionEditorProps {
   question: AssignmentQuestion;
   questionIndex: number;
+  courseId: string;
+  assignmentId?: string;
   onUpdate: (
     index: number,
     field: keyof AssignmentQuestion,
@@ -645,6 +650,8 @@ interface QuestionEditorProps {
 const QuestionEditor = ({
   question,
   questionIndex,
+  courseId,
+  assignmentId,
   onUpdate,
   onRemove,
   onAddOption,
@@ -660,14 +667,24 @@ const QuestionEditor = ({
             {getQuestionTypeIcon(question.type)}
             <span className="font-medium">Question {questionIndex + 1}</span>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onRemove(questionIndex)}
-            className="text-red-600 hover:text-red-700"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            {/* AI Enhancement button — only shown in edit mode when question has a saved ID (Requirement 13) */}
+            {assignmentId && question.id && (
+              <AssignmentPageIntegration
+                courseId={courseId}
+                assignmentId={assignmentId}
+                questionId={question.id}
+              />
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onRemove(questionIndex)}
+              className="text-red-600 hover:text-red-700"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">

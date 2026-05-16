@@ -41,6 +41,7 @@ import {
   Area,
 } from 'recharts';
 import { format } from 'date-fns';
+import { DashboardIntegration } from '@/components/ai/Integrations/DashboardIntegration';
 
 const COLORS = [
   '#0088FE',
@@ -220,7 +221,7 @@ const AdminDashboardPage = () => {
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="enrollments">Enrollments</TabsTrigger>
-        </TabsList>
+        </TabsList>{' '}
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
@@ -420,7 +421,6 @@ const AdminDashboardPage = () => {
             </Card>
           </div>
         </TabsContent>
-
         <TabsContent value="enrollments" className="space-y-4">
           <Card>
             <CardHeader>
@@ -475,6 +475,9 @@ const AdminDashboardPage = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* AI Usage Statistics section — renders only when authorized (Requirement 13) */}
+      <DashboardIntegration className="mt-8" />
     </AdminLayout>
   );
 };

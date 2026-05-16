@@ -20,6 +20,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import ResourceItem from '@/components/learning/ResourceItem';
 import AssignmentItem from '@/components/learning/AssignmentItem';
 import LessonItem from '@/components/learning/LessonItem';
+import { LessonPageIntegration } from '@/components/ai/Integrations/LessonPageIntegration';
 
 const LessonPage = () => {
   const { courseId, lessonId } = useParams<{
@@ -159,6 +160,10 @@ const LessonPage = () => {
 
   return (
     <MainLayout>
+      {/* AI Q&A floating assistant — renders only when authorized (Requirement 13) */}
+      {courseId && lessonId && (
+        <LessonPageIntegration courseId={courseId} lessonId={lessonId} />
+      )}
       <WrapperLoading isLoading={isLoading || courseLoading}>
         <div className="flex flex-col h-screen">
           {/* Top navigation bar */}

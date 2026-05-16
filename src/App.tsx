@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/hooks/useAuth';
 import { SidebarProvider } from '@/contexts/SidebarContext';
 import { CartProvider } from '@/contexts/CartContext';
+import { AiProvider } from '@/context/AiContext';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import AppRoutes from '@/routes';
 
@@ -55,18 +56,20 @@ function App() {
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
-            <CartProvider>
-              <SidebarProvider>
-                <ErrorBoundary
-                  onError={(error, errorInfo) => {
-                    console.error('Router-level error:', error, errorInfo);
-                  }}
-                >
-                  <AppRoutes />
-                </ErrorBoundary>
-                <Toaster />
-              </SidebarProvider>
-            </CartProvider>
+            <AiProvider>
+              <CartProvider>
+                <SidebarProvider>
+                  <ErrorBoundary
+                    onError={(error, errorInfo) => {
+                      console.error('Router-level error:', error, errorInfo);
+                    }}
+                  >
+                    <AppRoutes />
+                  </ErrorBoundary>
+                  <Toaster />
+                </SidebarProvider>
+              </CartProvider>
+            </AiProvider>
           </AuthProvider>
         </QueryClientProvider>
       </BrowserRouter>

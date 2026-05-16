@@ -34,6 +34,7 @@ import {
 import AdminLayout from '@/components/layout/AdminLayout';
 import WrapperLoading from '@/components/ui/wrapper-loading';
 import { formatTimeLimit } from '@/utils/dateLimit';
+import { SubmissionPageIntegration } from '@/components/ai/Integrations/SubmissionPageIntegration';
 
 interface GradingData {
   score: number;
@@ -576,6 +577,16 @@ const SubmissionReviewDetailPage = () => {
                 </CardContent>
               </Card>
             )}
+
+            {/* AI Pre-grade panel — renders only when authorized (Requirement 13) */}
+            <SubmissionPageIntegration
+              courseId={courseId!}
+              assignmentId={assignmentId!}
+              submissionId={submissionId!}
+              onGradeSaved={(score) => {
+                setGradingData((prev) => ({ ...prev, score }));
+              }}
+            />
           </div>
         </div>
       </div>
