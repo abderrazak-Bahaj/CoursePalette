@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { X, ShoppingBag, ArrowRight, Trash2, Star, Clock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { X, ShoppingBag, ArrowRight, Trash2, Clock } from 'lucide-react';
+import { Button } from '@/components/ds/primitives/Button';
+import { Badge } from '@/components/ds/primitives/Badge';
+import { Separator } from '@/components/ds/primitives/Separator';
 import { useCart } from '@/contexts/CartContext';
 import { cn } from '@/lib/utils';
 
@@ -15,19 +15,18 @@ interface CartDrawerProps {
 export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
   const { items, removeFromCart, total, clearCart } = useCart();
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
     }).format(price);
-  };
 
   return (
     <>
       {/* Backdrop */}
       <div
         className={cn(
-          'fixed inset-0 bg-black/50 z-40 transition-opacity duration-300',
+          'fixed inset-0 bg-black/60 z-40 transition-opacity duration-300',
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         )}
         onClick={onClose}
@@ -36,42 +35,40 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
       {/* Drawer */}
       <div
         className={cn(
-          'fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out',
+          'fixed right-0 top-0 h-full w-full max-w-md z-50 transform transition-transform duration-300 ease-in-out',
+          'bg-[#1e293b] border-l border-neutral-700 shadow-2xl',
           isOpen ? 'translate-x-0' : 'translate-x-full'
         )}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-course-blue/5 to-purple-50">
-            <div className="flex items-center space-x-2">
-              <div className="p-2 bg-course-blue/10 rounded-lg">
-                <ShoppingBag className="h-5 w-5 text-course-blue" />
+          <div className="flex items-center justify-between p-6 border-b border-neutral-700">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-violet-600/10 rounded-lg">
+                <ShoppingBag className="h-5 w-5 text-violet-400" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold text-neutral-50">
                   Shopping Cart
                 </h2>
                 {items.length > 0 && (
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-neutral-400">
                     {items.length} {items.length === 1 ? 'course' : 'courses'}{' '}
                     selected
                   </p>
                 )}
               </div>
               {items.length > 0 && (
-                <Badge
-                  variant="secondary"
-                  className="ml-2 bg-course-blue text-white"
-                >
+                <Badge variant="primary" size="sm">
                   {items.length}
                 </Badge>
               )}
             </div>
             <Button
               variant="ghost"
-              size="icon"
+              size="sm"
               onClick={onClose}
-              className="hover:bg-gray-100"
+              aria-label="Close cart"
             >
               <X className="h-5 w-5" />
             </Button>
@@ -81,71 +78,56 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
           <div className="flex-1 overflow-y-auto">
             {items.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-course-blue/10 to-purple-100 rounded-full flex items-center justify-center mb-4">
-                  <ShoppingBag className="h-10 w-10 text-course-blue" />
+                <div className="w-20 h-20 bg-violet-600/10 rounded-full flex items-center justify-center mb-4">
+                  <ShoppingBag className="h-10 w-10 text-violet-400" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="text-lg font-medium text-neutral-100 mb-2">
                   Your cart is empty
                 </h3>
-                <p className="text-gray-500 mb-6 max-w-sm">
+                <p className="text-neutral-400 mb-6 max-w-sm text-sm">
                   Discover our amazing courses and start your learning journey
                   today!
                 </p>
-                <Link to="/courses" onClick={onClose}>
-                  <Button className="bg-course-blue hover:bg-blue-700">
-                    Browse Courses
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
+                <Button variant="action" asChild>
+                  <Link to="/courses" onClick={onClose}>
+                    Browse Courses <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
               </div>
             ) : (
-              <div className="p-6 space-y-4">
-                {items.map((item, index) => (
+              <div className="p-4 space-y-3">
+                {items.map((item) => (
                   <div
                     key={item.id}
-                    className={cn(
-                      'bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all duration-200 hover:border-course-blue/30',
-                      'animate-in slide-in-from-right-2 duration-300'
-                    )}
-                    style={{ animationDelay: `${index * 100}ms` }}
+                    className="bg-[#0f172a] border border-neutral-700 rounded-xl p-4 hover:border-violet-500/50 transition-all duration-200"
                   >
-                    <div className="flex items-start space-x-4">
-                      {/* Course Image */}
-                      <div className="flex-shrink-0 relative">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0">
                         <img
-                          src={item.image_url || '/api/placeholder/80/60'}
+                          src={item.image_url || '/placeholder.svg'}
                           alt={item.title}
-                          className="w-20 h-15 object-cover rounded-lg border border-gray-200"
+                          className="w-16 h-12 object-cover rounded-lg border border-neutral-700"
                         />
-                        <div className="absolute -top-1 -right-1 bg-course-blue text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                          <Star className="w-3 h-3 fill-current" />
-                        </div>
                       </div>
-
-                      {/* Course Details */}
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-1">
+                        <h4 className="text-sm font-medium text-neutral-100 line-clamp-2 mb-1">
                           {item.title}
                         </h4>
-                        <p className="text-xs text-gray-500 mb-2 flex items-center">
-                          <Clock className="w-3 h-3 mr-1" />
-                          <span>Lifetime access</span>
+                        <p className="text-xs text-neutral-500 mb-2 flex items-center gap-1">
+                          <Clock className="w-3 h-3" /> Lifetime access
                         </p>
-
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-lg font-bold text-course-blue">
-                              {formatPrice(item.price)}
-                            </span>
-                          </div>
-
+                          <span className="text-base font-bold text-amber-400">
+                            {formatPrice(item.price)}
+                          </span>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => removeFromCart(item.id)}
-                            className="text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors"
+                            className="text-red-400 hover:text-red-300 hover:bg-red-900/20 h-7 w-7 p-0"
+                            aria-label="Remove item"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </div>
                       </div>
@@ -158,58 +140,51 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
 
           {/* Footer */}
           {items.length > 0 && (
-            <div className="border-t border-gray-200 bg-gray-50/50 backdrop-blur-sm">
-              <div className="p-6 space-y-4">
-                {/* Total */}
-                <div className="flex items-center justify-between py-2">
-                  <span className="text-base font-medium text-gray-900">
+            <div className="border-t border-neutral-700 bg-[#0f172a]/50">
+              <div className="p-5 space-y-4">
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-base font-medium text-neutral-200">
                     Total:
                   </span>
-                  <span className="text-2xl font-bold text-course-blue">
+                  <span className="text-2xl font-bold text-amber-400">
                     {formatPrice(total)}
                   </span>
                 </div>
-
                 <Separator />
-
-                {/* Action Buttons */}
-                <div className="space-y-3">
-                  <Link to="/checkout" onClick={onClose} className="block">
-                    <Button
-                      className="w-full bg-gradient-to-r from-course-blue to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all duration-200"
-                      size="lg"
-                    >
-                      Proceed to Checkout
+                <div className="space-y-2">
+                  <Button variant="action" size="lg" className="w-full" asChild>
+                    <Link to="/checkout" onClick={onClose}>
+                      Proceed to Checkout{' '}
                       <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                  </Link>
-
-                  <div className="flex space-x-3">
-                    <Link to="/courses" onClick={onClose} className="flex-1">
-                      <Button
-                        variant="outline"
-                        className="w-full border-course-blue text-course-blue hover:bg-course-blue/5"
-                      >
-                        Continue Shopping
-                      </Button>
                     </Link>
+                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="secondary"
+                      size="md"
+                      className="flex-1"
+                      asChild
+                    >
+                      <Link to="/courses" onClick={onClose}>
+                        Continue Shopping
+                      </Link>
+                    </Button>
                     {items.length > 1 && (
                       <Button
                         variant="ghost"
+                        size="md"
                         onClick={clearCart}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50 px-3"
-                        title="Clear all items"
+                        className="text-red-400 hover:text-red-300 hover:bg-red-900/20 px-3"
+                        aria-label="Clear cart"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     )}
                   </div>
                 </div>
-
-                {/* Security Note */}
-                <div className="text-xs text-gray-500 text-center bg-white/50 p-2 rounded-lg">
+                <p className="text-xs text-neutral-500 text-center">
                   🔒 Secure checkout with 256-bit SSL encryption
-                </div>
+                </p>
               </div>
             </div>
           )}
