@@ -1,6 +1,6 @@
 import { ReactElement, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ds/primitives/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CourseProgressCard from './CourseProgressCard';
 import { Course, Enrollment } from '@/types';
@@ -20,10 +20,10 @@ const CourseProgressTabs: React.FC<CourseProgressTabsProps> = ({
     if (enrollments.length === 0) {
       return (
         <div className="text-center py-8">
-          <p className="text-gray-500 mb-4">
+          <p className="text-neutral-400 mb-4">
             You don't have any courses in {type}.
           </p>
-          <Button asChild>
+          <Button asChild variant="primary">
             <Link to="/courses">Browse Courses</Link>
           </Button>
         </div>

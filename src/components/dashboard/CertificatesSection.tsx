@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ds/primitives/Button';
 import CertificateCard from './CertificateCard';
 import { useQuery } from '@tanstack/react-query';
 import { certificateService } from '@/services/api';
@@ -17,11 +17,11 @@ const CertificatesSection = ({ showTitle = true }: { showTitle?: boolean }) => {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-          <h2 className="text-2xl font-bold mb-2 text-red-600">
+        <div className="text-center py-12 bg-[#1e293b] rounded-lg border border-neutral-700">
+          <h2 className="font-serif text-2xl font-bold mb-2 text-red-400">
             Error Loading Certificates
           </h2>
-          <p className="text-gray-500 mb-6">
+          <p className="text-neutral-400 mb-6">
             There was an error loading your certificates. Please try again
             later.
           </p>
@@ -35,8 +35,10 @@ const CertificatesSection = ({ showTitle = true }: { showTitle?: boolean }) => {
       <div className="flex items-center justify-between mb-6">
         {showTitle && (
           <>
-            <h2 className="text-2xl font-bold">My Certificates</h2>
-            <Button asChild variant="outline">
+            <h2 className="font-serif text-2xl font-bold text-neutral-50">
+              My Certificates
+            </h2>
+            <Button asChild variant="secondary">
               <Link to="/certificates">View All</Link>
             </Button>
           </>
@@ -46,7 +48,7 @@ const CertificatesSection = ({ showTitle = true }: { showTitle?: boolean }) => {
       <WrapperLoading isLoading={isLoading} error={error}>
         {certificates.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray-500 mb-4">
+            <p className="text-neutral-400 mb-4">
               You haven't earned any certificates yet. Complete a course to earn
               one!
             </p>

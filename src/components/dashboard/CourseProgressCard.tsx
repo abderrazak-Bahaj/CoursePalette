@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
-import { Card } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
+import { Card } from '@/components/ds/primitives/Card';
+import { Progress } from '@/components/ds/primitives/Progress';
 import { Play, Calendar, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ds/primitives/Button';
 
 interface CourseProgressCardProps {
   enrollment: any;
@@ -11,7 +11,7 @@ interface CourseProgressCardProps {
 const CourseProgressCard = ({ enrollment }: CourseProgressCardProps) => {
   const course = enrollment?.course;
   return (
-    <Card className="overflow-hidden">
+    <Card variant="elevated" className="overflow-hidden">
       <div className="flex flex-col md:flex-row">
         <div className="md:w-64 h-40 md:h-auto">
           <img
@@ -21,17 +21,22 @@ const CourseProgressCard = ({ enrollment }: CourseProgressCardProps) => {
           />
         </div>
         <div className="flex-1 p-6">
-          <h3 className="font-semibold text-xl mb-2">{course?.title}</h3>
-          <p className="text-sm text-gray-500 mb-4">{course?.instructor}</p>
+          <h3 className="font-serif font-semibold text-xl text-neutral-50 mb-2">
+            {course?.title}
+          </h3>
+          <p className="text-sm text-neutral-400 mb-4">{course?.instructor}</p>
 
           <div className="mb-4">
             <div className="flex justify-between text-sm mb-1">
-              <span>Your progress</span>
-              <span>{enrollment?.progress_percentage}%</span>
+              <span className="text-neutral-400">Your progress</span>
+              <span className="text-neutral-300">
+                {enrollment?.progress_percentage}%
+              </span>
             </div>
             <Progress
               value={Number(enrollment?.progress_percentage)}
-              className={`h-2 ${course?.is_completed ? 'bg-green-500' : 'bg-blue-100'}`}
+              variant={course?.is_completed ? 'success' : 'default'}
+              size="md"
             />
           </div>
 
@@ -40,18 +45,14 @@ const CourseProgressCard = ({ enrollment }: CourseProgressCardProps) => {
 
             <div className="flex items-center gap-4">
               {course?.is_completed ? (
-                <Button
-                  asChild
-                  variant="default"
-                  className="bg-green-500 hover:bg-green-600"
-                >
+                <Button asChild variant="success">
                   <Link to={`/courses/${course?.id}/certificate`}>
                     View Certificate
                     <ArrowRight className="h-4 w-4 ml-1" />
                   </Link>
                 </Button>
               ) : (
-                <Button asChild>
+                <Button asChild variant="primary">
                   <Link
                     to={`/courses/${enrollment?.last_Lesson?.course_id}/learn/${enrollment?.last_Lesson?.lesson_id}`}
                   >
