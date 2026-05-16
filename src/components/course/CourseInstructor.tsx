@@ -32,8 +32,10 @@ interface CourseInstructorProps {
 
 export const CourseInstructor = ({ instructor }: CourseInstructorProps) => {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold mb-6">Your Instructor</h2>
+    <div className="bg-[#1e293b] border border-neutral-700 rounded-xl p-6">
+      <h2 className="font-serif text-2xl font-bold text-neutral-50 mb-6">
+        Your Instructor
+      </h2>
       <div className="flex flex-col md:flex-row md:items-start gap-6">
         <div className="flex-shrink-0">
           <img
@@ -42,42 +44,53 @@ export const CourseInstructor = ({ instructor }: CourseInstructorProps) => {
               `https://ui-avatars.com/api/?name=${instructor.name}&size=128&background=random`
             }
             alt={instructor.name}
-            className="rounded-full w-24 h-24 object-cover"
+            className="rounded-full w-24 h-24 object-cover ring-2 ring-violet-500/50"
           />
         </div>
         <div className="flex-1">
-          <h3 className="text-xl font-bold mb-2">{instructor.name}</h3>
-          <p className="text-gray-500 mb-4">
+          <h3 className="font-serif text-xl font-bold text-neutral-50 mb-1">
+            {instructor.name}
+          </h3>
+          <p className="text-neutral-400 text-sm mb-4">
             {instructor.teacher.qualification}
           </p>
 
-          <div className="flex flex-wrap gap-4 mb-4">
-            <div className="flex items-center">
-              <Star className="text-yellow-400 fill-yellow-400 h-5 w-5 mr-1" />
+          <div className="flex flex-wrap gap-4 mb-4 text-sm text-neutral-300">
+            <div className="flex items-center gap-1">
+              <Star className="text-amber-400 fill-amber-400 h-4 w-4" />
               <span className="font-medium">
-                {instructor.teacher.rating} Instructor Rating
+                {instructor.teacher.rating} Rating
               </span>
             </div>
-            <div className="flex items-center">
-              <User className="h-5 w-5 mr-1 text-gray-500" />
+            <div className="flex items-center gap-1">
+              <User className="h-4 w-4 text-neutral-500" />
               <span>
                 {instructor.teacher.years_of_experience}+ Years Experience
               </span>
             </div>
-            <div className="flex items-center">
-              <Video className="h-5 w-5 mr-1 text-gray-500" />
+            <div className="flex items-center gap-1">
+              <Video className="h-4 w-4 text-neutral-500" />
               <span>Expert in {instructor.teacher.expertise}</span>
             </div>
           </div>
 
-          <p className="mb-4">{instructor.bio}</p>
+          {instructor.bio && (
+            <p className="text-neutral-300 text-sm mb-5 leading-relaxed">
+              {instructor.bio}
+            </p>
+          )}
 
           <div className="mb-4">
-            <h4 className="font-semibold mb-2">Education</h4>
+            <h4 className="font-semibold text-neutral-200 mb-2 text-sm uppercase tracking-wide">
+              Education
+            </h4>
             <div className="space-y-2">
               {instructor.teacher.education.map((edu, index) => (
-                <div key={index} className="flex items-center">
-                  <GraduationCap className="h-5 w-5 mr-2 text-gray-500" />
+                <div
+                  key={index}
+                  className="flex items-center gap-2 text-sm text-neutral-300"
+                >
+                  <GraduationCap className="h-4 w-4 text-violet-400 flex-shrink-0" />
                   <span>
                     {edu.degree} from {edu.institution} ({edu.year})
                   </span>
@@ -86,12 +99,17 @@ export const CourseInstructor = ({ instructor }: CourseInstructorProps) => {
             </div>
           </div>
 
-          <div className="mb-4">
-            <h4 className="font-semibold mb-2">Certifications</h4>
+          <div>
+            <h4 className="font-semibold text-neutral-200 mb-2 text-sm uppercase tracking-wide">
+              Certifications
+            </h4>
             <div className="space-y-2">
               {instructor.teacher.certifications.map((cert, index) => (
-                <div key={index} className="flex items-center">
-                  <Award className="h-5 w-5 mr-2 text-gray-500" />
+                <div
+                  key={index}
+                  className="flex items-center gap-2 text-sm text-neutral-300"
+                >
+                  <Award className="h-4 w-4 text-amber-400 flex-shrink-0" />
                   <span>
                     {cert?.name} ({cert?.year})
                   </span>

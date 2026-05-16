@@ -101,6 +101,20 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const Comp = asChild ? Slot : 'button';
 
+    // When asChild=true, Slot requires exactly one child element.
+    // Pass children directly — icons are not supported with asChild.
+    if (asChild) {
+      return (
+        <Comp
+          ref={ref}
+          className={cn(buttonVariants({ variant, size, className }))}
+          {...props}
+        >
+          {children}
+        </Comp>
+      );
+    }
+
     const leadingIcon = loading ? (
       <Loader2 className="animate-spin" />
     ) : iconPosition === 'left' ? (
