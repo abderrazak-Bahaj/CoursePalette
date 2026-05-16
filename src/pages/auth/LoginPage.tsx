@@ -53,16 +53,16 @@ const LoginPage = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-[#0f172a] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <Link to="/" className="inline-block mb-6">
-              <h1 className="text-3xl font-bold text-course-blue">
+              <h1 className="text-3xl font-bold text-violet-400">
                 CoursePalette
               </h1>
             </Link>
             <h2 className="text-2xl font-bold">Welcome back</h2>
-            <p className="text-gray-600">
+            <p className="text-neutral-400">
               Log in to your account to continue learning
             </p>
           </div>
@@ -95,7 +95,7 @@ const LoginPage = () => {
                     />
                     <button
                       type="button"
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -111,7 +111,7 @@ const LoginPage = () => {
                   </div>
                   <Link
                     to="/forgot-password"
-                    className="text-sm text-course-blue hover:underline"
+                    className="text-sm text-violet-400 hover:text-violet-300"
                   >
                     Forgot password?
                   </Link>
@@ -130,26 +130,26 @@ const LoginPage = () => {
               <div className="mt-6">
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-300" />
+                    <div className="w-full border-t border-neutral-700" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500">
+                    <span className="px-2 bg-[#0f172a] text-neutral-500">
                       Or continue with
                     </span>
                   </div>
                 </div>
 
                 {/* <div className="mt-6 grid grid-cols-2 gap-3">
-                <Button variant="outline">Google</Button>
-                <Button variant="outline">Facebook</Button>
+                <Button variant="secondary">Google</Button>
+                <Button variant="secondary">Facebook</Button>
               </div> */}
               </div>
 
-              <div className="mt-6 text-center text-sm text-gray-600">
+              <div className="mt-6 text-center text-sm text-neutral-400">
                 Don't have an account?{' '}
                 <Link
                   to="/register"
-                  className="text-course-blue hover:underline"
+                  className="text-violet-400 hover:text-violet-300"
                 >
                   Sign up
                 </Link>

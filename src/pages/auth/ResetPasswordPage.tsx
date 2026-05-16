@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ds/primitives/Button';
+import { Input } from '@/components/ds/primitives/Input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ds/primitives/Card';
 import { useToast } from '@/components/ui/use-toast';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
@@ -84,29 +89,29 @@ const ResetPasswordPage = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-[#0f172a] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <Link to="/" className="inline-block mb-6">
-              <h1 className="text-3xl font-bold text-course-blue">
+              <h1 className="text-3xl font-bold text-violet-400">
                 CoursePalette
               </h1>
             </Link>
             <h2 className="text-2xl font-bold">Reset Your Password</h2>
-            <p className="text-gray-600">Enter your new password below</p>
+            <p className="text-neutral-400">Enter your new password below</p>
           </div>
 
           <Card>
             <CardContent className="pt-6">
               {isSubmitted ? (
                 <div className="text-center py-6">
-                  <div className="bg-green-100 text-green-800 p-3 rounded-md mb-4">
+                  <div className="bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-lg p-3 mb-4">
                     Password reset successful!
                   </div>
                   <p className="mb-4">
                     Your password has been reset. You'll be redirected to login.
                   </p>
-                  <Button asChild variant="outline">
+                  <Button asChild variant="secondary">
                     <Link to="/login">Back to Login</Link>
                   </Button>
                 </div>
@@ -123,7 +128,7 @@ const ResetPasswordPage = () => {
                       disabled={!!email}
                     />
                     {errors.email && (
-                      <p className="text-red-500 text-xs mt-1">
+                      <p className="text-red-400 text-xs mt-1">
                         {errors.email}
                       </p>
                     )}
@@ -140,7 +145,7 @@ const ResetPasswordPage = () => {
                       />
                       <button
                         type="button"
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? (
@@ -151,7 +156,7 @@ const ResetPasswordPage = () => {
                       </button>
                     </div>
                     {errors.password && (
-                      <p className="text-red-500 text-xs mt-1">
+                      <p className="text-red-400 text-xs mt-1">
                         {errors.password}
                       </p>
                     )}
@@ -168,14 +173,15 @@ const ResetPasswordPage = () => {
                       onChange={(e) => setPasswordConfirmation(e.target.value)}
                     />
                     {errors.passwordConfirmation && (
-                      <p className="text-red-500 text-xs mt-1">
+                      <p className="text-red-400 text-xs mt-1">
                         {errors.passwordConfirmation}
                       </p>
                     )}
                   </div>
                   <Button
                     type="submit"
-                    className="w-full bg-course-blue"
+                    variant="action"
+                    className="w-full"
                     disabled={isLoading}
                   >
                     {isLoading ? 'Resetting...' : 'Reset Password'}
@@ -184,7 +190,10 @@ const ResetPasswordPage = () => {
               )}
 
               <div className="mt-6 text-center text-sm">
-                <Link to="/login" className="text-course-blue hover:underline">
+                <Link
+                  to="/login"
+                  className="text-violet-400 hover:text-violet-300"
+                >
                   Back to Login
                 </Link>
               </div>

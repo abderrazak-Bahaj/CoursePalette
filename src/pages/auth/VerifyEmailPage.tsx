@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ds/primitives/Button';
+import { Card, CardContent } from '@/components/ds/primitives/Card';
 import { useToast } from '@/components/ui/use-toast';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
@@ -163,11 +163,11 @@ const VerifyEmailPage = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-[#0f172a] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <Link to="/" className="inline-block mb-6">
-              <h1 className="text-3xl font-bold text-course-blue">
+              <h1 className="text-3xl font-bold text-violet-400">
                 CoursePalette
               </h1>
             </Link>
@@ -182,34 +182,34 @@ const VerifyEmailPage = () => {
                 </div>
               ) : verified ? (
                 <div className="text-center py-8">
-                  <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                  <CheckCircle className="w-16 h-16 text-amber-400 mx-auto mb-4" />
                   <h3 className="text-xl font-bold mb-2">Email Verified!</h3>
-                  <p className="mb-6 text-gray-600">
+                  <p className="mb-6 text-neutral-400">
                     Your email has been verified successfully. You'll be
                     redirected to login.
                   </p>
-                  <Button asChild>
+                  <Button asChild variant="primary">
                     <Link to="/login">Continue to Login</Link>
                   </Button>
                 </div>
               ) : error ? (
                 <div className="text-center py-8">
-                  <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+                  <XCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
                   <h3 className="text-xl font-bold mb-2">
                     Verification Failed
                   </h3>
-                  <p className="mb-6 text-red-600">{error}</p>
+                  <p className="mb-6 text-red-400">{error}</p>
 
                   {email && (
                     <div className="mt-6">
-                      <p className="mb-4 text-gray-600">
+                      <p className="mb-4 text-neutral-400">
                         Need a new verification link?
                       </p>
                       <div className="space-y-4">
                         <Button
                           onClick={handleResendVerification}
                           disabled={resendLoading || resendSuccess}
-                          variant="outline"
+                          variant="secondary"
                           className="mb-2"
                         >
                           {resendLoading
@@ -220,7 +220,7 @@ const VerifyEmailPage = () => {
                         </Button>
 
                         {resendSuccess && (
-                          <p className="text-green-600 text-sm">
+                          <p className="text-amber-400 text-sm">
                             A new verification link has been sent to your email.
                           </p>
                         )}
@@ -246,7 +246,7 @@ const VerifyEmailPage = () => {
                                 verifyWithFullUrl();
                               }
                             }}
-                            variant="default"
+                            variant="primary"
                           >
                             Try Again
                           </Button>
@@ -258,7 +258,7 @@ const VerifyEmailPage = () => {
                   <div className="mt-4">
                     <Link
                       to="/login"
-                      className="text-course-blue hover:underline"
+                      className="text-violet-400 hover:text-violet-300"
                     >
                       Back to Login
                     </Link>
@@ -266,9 +266,9 @@ const VerifyEmailPage = () => {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <Mail className="w-16 h-16 text-blue-500 mx-auto mb-4" />
+                  <Mail className="w-16 h-16 text-violet-400 mx-auto mb-4" />
                   <h3 className="text-xl font-bold mb-2">Verify Your Email</h3>
-                  <p className="mb-6 text-gray-600">
+                  <p className="mb-6 text-neutral-400">
                     {email ? (
                       <>
                         We've sent a verification link to{' '}
@@ -287,7 +287,7 @@ const VerifyEmailPage = () => {
                     <Button
                       onClick={handleResendVerification}
                       disabled={resendLoading || resendSuccess}
-                      variant="outline"
+                      variant="secondary"
                       className="mb-4"
                     >
                       {resendLoading
@@ -301,7 +301,7 @@ const VerifyEmailPage = () => {
                   <div className="mt-4">
                     <Link
                       to="/login"
-                      className="text-course-blue hover:underline"
+                      className="text-violet-400 hover:text-violet-300"
                     >
                       Back to Login
                     </Link>

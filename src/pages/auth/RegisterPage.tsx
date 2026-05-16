@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ds/primitives/Button';
+import { Input } from '@/components/ds/primitives/Input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ds/primitives/Card';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { Eye, EyeOff } from 'lucide-react';
@@ -125,16 +130,18 @@ export const RegisterPage = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-[#0f172a] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <Link to="/" className="inline-block mb-6">
-              <h1 className="text-3xl font-bold text-course-blue">
+              <h1 className="text-3xl font-bold text-violet-400">
                 CoursePalette
               </h1>
             </Link>
             <h2 className="text-2xl font-bold">Join CoursePalette</h2>
-            <p className="text-gray-600">Create an account to start learning</p>
+            <p className="text-neutral-400">
+              Create an account to start learning
+            </p>
           </div>
 
           <Card>
@@ -144,7 +151,7 @@ export const RegisterPage = () => {
             <CardContent>
               {isRegistered ? (
                 <div className="text-center py-6">
-                  <div className="bg-green-100 text-green-800 p-4 rounded-md mb-4">
+                  <div className="bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-lg p-4 mb-4">
                     <p className="font-medium">Registration Successful!</p>
                     <p>Check your email to verify your account.</p>
                   </div>
@@ -153,7 +160,7 @@ export const RegisterPage = () => {
                     Please check your inbox and click the link to complete your
                     registration.
                   </p>
-                  <Button asChild variant="outline">
+                  <Button asChild variant="secondary">
                     <Link
                       to={`/verify-email?email=${encodeURIComponent(email)}`}
                     >
@@ -195,7 +202,7 @@ export const RegisterPage = () => {
                       />
                       <button
                         type="button"
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? (
@@ -205,7 +212,7 @@ export const RegisterPage = () => {
                         )}
                       </button>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-neutral-500 mt-1">
                       Password must be at least 8 characters long
                     </p>
                   </div>
@@ -220,18 +227,18 @@ export const RegisterPage = () => {
                       action="register"
                     />
                     {recaptchaError && (
-                      <p className="text-xs text-red-500 mt-1">
+                      <p className="text-xs text-red-400 mt-1">
                         {recaptchaError}
                       </p>
                     )}
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs text-neutral-500 mt-2">
                       This site is protected by reCAPTCHA v3. By registering,
                       you agree to Google's
                       <a
                         href="https://policies.google.com/privacy"
                         target="_blank"
                         rel="noreferrer"
-                        className="text-course-blue hover:underline ml-1 mr-1"
+                        className="text-violet-400 hover:text-violet-300 ml-1 mr-1"
                       >
                         Privacy Policy
                       </a>
@@ -240,7 +247,7 @@ export const RegisterPage = () => {
                         href="https://policies.google.com/terms"
                         target="_blank"
                         rel="noreferrer"
-                        className="text-course-blue hover:underline ml-1"
+                        className="text-violet-400 hover:text-violet-300 ml-1"
                       >
                         Terms of Service
                       </a>
@@ -254,14 +261,14 @@ export const RegisterPage = () => {
                       I agree to the{' '}
                       <Link
                         to="/terms"
-                        className="text-course-blue hover:underline"
+                        className="text-violet-400 hover:text-violet-300"
                       >
                         Terms of Service
                       </Link>{' '}
                       and{' '}
                       <Link
                         to="/privacy"
-                        className="text-course-blue hover:underline"
+                        className="text-violet-400 hover:text-violet-300"
                       >
                         Privacy Policy
                       </Link>
@@ -269,7 +276,8 @@ export const RegisterPage = () => {
                   </div>
                   <Button
                     type="submit"
-                    className="w-full bg-course-blue"
+                    variant="action"
+                    className="w-full"
                     disabled={isLoading}
                   >
                     {isLoading ? 'Creating account...' : 'Sign Up'}
@@ -277,29 +285,12 @@ export const RegisterPage = () => {
                 </form>
               )}
 
-              {/*  
-              <div className="mt-6">
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-300" />
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500">
-                      Or sign up with
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-6 grid grid-cols-2 gap-3">
-                  <Button variant="outline">Google</Button>
-                  <Button variant="outline">Facebook</Button>
-                </div>
-              </div> 
-              */}
-
-              <div className="mt-6 text-center text-sm text-gray-600">
+              <div className="mt-6 text-center text-sm text-neutral-400">
                 Already have an account?{' '}
-                <Link to="/login" className="text-course-blue hover:underline">
+                <Link
+                  to="/login"
+                  className="text-violet-400 hover:text-violet-300"
+                >
                   Log in
                 </Link>
               </div>
