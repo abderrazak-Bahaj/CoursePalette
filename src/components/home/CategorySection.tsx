@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ds/primitives/Button';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Loader2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -31,11 +31,13 @@ const CategorySection = () => {
       useSkeletonLoader={true}
       skeletonVariant="list"
     >
-      <div className="py-16 bg-gray-50">
+      <div className="py-16 bg-[#1e293b]/20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Browse Top Categories</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <h2 className="font-serif text-3xl font-bold text-neutral-50 mb-4">
+              Browse Top Categories
+            </h2>
+            <p className="text-neutral-400 max-w-2xl mx-auto">
               Explore our most popular course categories. Find the perfect
               skills to advance your career or pursue your passions.
             </p>
@@ -51,20 +53,20 @@ const CategorySection = () => {
                 onMouseLeave={() => setHoveredIndex(null)}
               >
                 <div
-                  className={`rounded-lg p-6 ${category.color} h-full course-card-shadow transition-all duration-300 ${
+                  className={`rounded-lg p-6 bg-[#1e293b] border border-neutral-700 h-full shadow-md transition-all duration-300 hover:border-violet-500 hover:shadow-glow-violet ${
                     hoveredIndex === index ? 'transform -translate-y-1' : ''
                   }`}
                 >
                   <div className="flex flex-col h-full">
                     <div className="mb-4 text-3xl">{category.icon}</div>
-                    <h3 className="text-xl font-semibold mb-2">
+                    <h3 className="text-xl font-semibold text-neutral-100 mb-2">
                       {category.title}
                     </h3>
-                    <p className="mb-3 text-sm opacity-90">
+                    <p className="mb-3 text-sm text-neutral-400">
                       {category.count} courses
                     </p>
                     <div className="mt-auto">
-                      <span className={`flex items-center text-sm font-medium`}>
+                      <span className="flex items-center text-sm font-medium text-violet-400">
                         Explore Category
                         <ChevronRight
                           size={16}

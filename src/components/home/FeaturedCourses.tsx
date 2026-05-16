@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ds/primitives/Button';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import CourseCard from '../course/CourseCard';
@@ -57,14 +57,16 @@ const FeaturedCourses = ({
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h2 className="text-3xl font-bold mb-2">{title}</h2>
-            <p className="text-gray-600 max-w-2xl mb-4 md:mb-0">
+            <h2 className="font-serif text-3xl font-bold text-neutral-50 mb-2">
+              {title}
+            </h2>
+            <p className="text-neutral-400 max-w-2xl mb-4 md:mb-0">
               {description}
             </p>
           </div>
           <div className="flex space-x-3">
             <Button
-              variant="outline"
+              variant="secondary"
               size="icon"
               onClick={() => scroll('left')}
               disabled={scrollPosition <= 0}
@@ -73,7 +75,7 @@ const FeaturedCourses = ({
               <ArrowLeft size={20} />
             </Button>
             <Button
-              variant="outline"
+              variant="secondary"
               size="icon"
               onClick={() => scroll('right')}
               disabled={scrollPosition >= maxScroll}
@@ -81,7 +83,7 @@ const FeaturedCourses = ({
             >
               <ArrowRight size={20} />
             </Button>
-            <Button asChild>
+            <Button variant="primary" asChild>
               <Link to="/courses">View All</Link>
             </Button>
           </div>
