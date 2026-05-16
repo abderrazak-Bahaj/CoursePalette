@@ -1,147 +1,66 @@
-import React, { forwardRef } from 'react';
+// src/components/ds/primitives/Card.tsx
+import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
-import { colors, shadows, transitions } from '../tokens';
 
-// ============================================================================
-// CARD VARIANTS
-// ============================================================================
-
-const cardVariants = cva(
-  cn(
-    'rounded-lg',
-    'transition-all duration-200',
-    'bg-neutral-800 text-neutral-100'
-  ),
-  {
-    variants: {
-      variant: {
-        // Elevated - Default with soft shadow
-        elevated: cn(
-          'shadow-md hover:shadow-lg',
-          'border border-neutral-700/50'
-        ),
-
-        // Flat - Minimal, no shadow
-        flat: cn('shadow-none', 'border border-neutral-700/30'),
-
-        // Interactive - Violet border + glow on hover/focus
-        interactive: cn(
-          'border border-neutral-700/50',
-          'hover:border-violet-500/50 hover:shadow-md',
-          'focus-within:border-violet-500 focus-within:shadow-lg',
-          'cursor-pointer'
-        ),
-
-        // Accent - Colored left border for semantic highlights
-        accent: cn(
-          'border-l-4',
-          'shadow-md hover:shadow-lg',
-          'border-r border-t border-b border-neutral-700/50'
-        ),
-      },
-
-      size: {
-        sm: 'p-3 rounded-md',
-        md: 'p-4 rounded-lg',
-        lg: 'p-5 rounded-lg',
-      },
-
-      accentColor: {
-        violet: 'border-l-violet-500',
-        coral: 'border-l-coral-500',
-        amber: 'border-l-amber-500',
-      },
+const cardVariants = cva('rounded-lg transition-all duration-200', {
+  variants: {
+    variant: {
+      elevated: 'bg-[#1e293b] border border-neutral-700 shadow-md',
+      flat: 'bg-transparent border border-neutral-700',
+      interactive:
+        'bg-[#1e293b] border border-neutral-700 shadow-md cursor-pointer hover:border-violet-500 hover:shadow-glow-violet focus-visible:outline-none focus-visible:border-violet-500 focus-visible:shadow-glow-violet',
+      accent:
+        'bg-[#1e293b] border-r border-t border-b border-neutral-700 shadow-md border-l-4',
     },
-
-    defaultVariants: {
-      variant: 'elevated',
-      size: 'md',
+    size: {
+      sm: 'p-3 rounded-md',
+      md: 'p-4 rounded-lg',
+      lg: 'p-6 rounded-xl',
     },
-  }
-);
+    accentColor: {
+      violet: 'border-l-violet-600',
+      coral: 'border-l-coral-500',
+      amber: 'border-l-amber-500',
+    },
+  },
+  defaultVariants: {
+    variant: 'elevated',
+    size: 'md',
+  },
+});
 
-// ============================================================================
-// CARD COMPONENT
-// ============================================================================
+export type CardVariant = 'elevated' | 'flat' | 'interactive' | 'accent';
+export type CardAccentColor = 'violet' | 'coral' | 'amber';
+export type CardSize = 'sm' | 'md' | 'lg';
 
 export interface CardProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof cardVariants> {
-  /**
-   * Whether the card is clickable/interactive
-   */
-  interactive?: boolean;
-
-  /**
-   * Callback when card is clicked (if interactive)
-   */
-  onClick?: () => void;
-
-  /**
-   * Whether to show a glow effect on hover
-   */
-  showGlow?: boolean;
+  asChild?: boolean;
 }
 
-const Card = forwardRef<HTMLDivElement, CardProps>(
-  (
-    {
-      className,
-      variant,
-      size,
-      accentColor,
-      interactive = false,
-      onClick,
-      showGlow = false,
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    // Determine if we should use interactive variant
-    const effectiveVariant = interactive ? 'interactive' : variant;
-
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          cardVariants({
-            variant: effectiveVariant,
-            size,
-            accentColor: variant === 'accent' ? accentColor : undefined,
-          }),
-          interactive && 'hover:scale-105 active:scale-95',
-          showGlow && 'hover:shadow-[0_0_20px_rgba(124,58,237,0.3)]',
-          className
-        )}
-        onClick={onClick}
-        role={interactive ? 'button' : undefined}
-        tabIndex={interactive ? 0 : undefined}
-        onKeyDown={
-          interactive
-            ? (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  onClick?.();
-                }
-              }
-            : undefined
-        }
-        {...props}
-      >
-        {children}
-      </div>
-    );
-  }
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, variant, size, accentColor, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        cardVariants({
+          variant,
+          size,
+          accentColor: variant === 'accent' ? accentColor : undefined,
+        }),
+        className
+      )}
+      tabIndex={variant === 'interactive' ? 0 : undefined}
+      role={variant === 'interactive' ? 'button' : undefined}
+      {...props}
+    />
+  )
 );
-
 Card.displayName = 'Card';
 
-// ============================================================================
-// CARD HEADER
-// ============================================================================
-
-const CardHeader = forwardRef<
+const CardHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
@@ -151,34 +70,24 @@ const CardHeader = forwardRef<
     {...props}
   />
 ));
-
 CardHeader.displayName = 'CardHeader';
 
-// ============================================================================
-// CARD TITLE
-// ============================================================================
-
-const CardTitle = forwardRef<
+const CardTitle = React.forwardRef<
   HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
-  <h2
+  <h3
     ref={ref}
     className={cn(
-      'text-lg font-semibold leading-none tracking-tight',
+      'font-serif text-lg font-semibold leading-none tracking-tight text-neutral-50',
       className
     )}
     {...props}
   />
 ));
-
 CardTitle.displayName = 'CardTitle';
 
-// ============================================================================
-// CARD DESCRIPTION
-// ============================================================================
-
-const CardDescription = forwardRef<
+const CardDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
@@ -188,27 +97,17 @@ const CardDescription = forwardRef<
     {...props}
   />
 ));
-
 CardDescription.displayName = 'CardDescription';
 
-// ============================================================================
-// CARD CONTENT
-// ============================================================================
-
-const CardContent = forwardRef<
+const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div ref={ref} className={cn('pt-0', className)} {...props} />
 ));
-
 CardContent.displayName = 'CardContent';
 
-// ============================================================================
-// CARD FOOTER
-// ============================================================================
-
-const CardFooter = forwardRef<
+const CardFooter = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
@@ -218,7 +117,6 @@ const CardFooter = forwardRef<
     {...props}
   />
 ));
-
 CardFooter.displayName = 'CardFooter';
 
 export {
