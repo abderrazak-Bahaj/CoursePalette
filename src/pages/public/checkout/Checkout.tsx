@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ds/primitives/Button';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/use-toast';
@@ -98,12 +98,18 @@ const CartPage = () => {
   return (
     <MainLayout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
+        <h1 className="font-serif text-3xl font-bold text-neutral-50 mb-8">
+          Shopping Cart
+        </h1>
 
         {items.length === 0 ? (
           <div className="text-center py-12">
-            <h2 className="text-xl font-semibold mb-4">Your cart is empty</h2>
-            <Button onClick={() => navigate('/courses')}>Browse Courses</Button>
+            <h2 className="font-serif text-xl font-semibold text-neutral-100 mb-4">
+              Your cart is empty
+            </h2>
+            <Button onClick={() => navigate('/courses')} variant="action">
+              Browse Courses
+            </Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -111,7 +117,7 @@ const CartPage = () => {
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between p-4 border-b"
+                  className="flex items-center justify-between p-4 border-b border-neutral-700"
                 >
                   <div className="flex items-center space-x-4">
                     <img
@@ -120,15 +126,19 @@ const CartPage = () => {
                       className="w-20 h-20 object-cover rounded"
                     />
                     <div>
-                      <h3 className="font-semibold">{item.title}</h3>
-                      <p className="text-gray-600">
+                      <h3 className="font-semibold text-neutral-100">
+                        {item.title}
+                      </h3>
+                      <p className="text-neutral-400">
                         {item.price === 0 ? 'Free' : `$${item.price}`}
                       </p>
                     </div>
                   </div>
                   <Button
                     variant="ghost"
+                    size="sm"
                     onClick={() => removeFromCart(item.id)}
+                    className="text-red-400 hover:text-red-300"
                   >
                     Remove
                   </Button>
@@ -136,20 +146,25 @@ const CartPage = () => {
               ))}
             </div>
 
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+            <div className="bg-[#1e293b] border border-neutral-700 p-6 rounded-xl">
+              <h2 className="font-serif text-xl font-semibold text-neutral-50 mb-4">
+                Order Summary
+              </h2>
               <div className="space-y-4">
                 <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span>${total}</span>
+                  <span className="text-neutral-300">Subtotal</span>
+                  <span className="text-amber-400">${total}</span>
                 </div>
-                <div className="border-t pt-4">
+                <div className="border-t border-neutral-700 pt-4">
                   <div className="flex justify-between font-semibold">
-                    <span>Total</span>
-                    <span>${total}</span>
+                    <span className="font-semibold text-neutral-100">
+                      Total
+                    </span>
+                    <span className="text-amber-400">${total}</span>
                   </div>
                 </div>
                 <Button
+                  variant="action"
                   className="w-full"
                   onClick={handleCheckout}
                   disabled={
