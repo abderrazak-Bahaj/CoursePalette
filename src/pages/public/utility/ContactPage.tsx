@@ -1,17 +1,19 @@
 import MainLayout from '@/components/layout/MainLayout';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ds/primitives/Card';
+import { Button } from '@/components/ds/primitives/Button';
+import { Input } from '@/components/ds/primitives/Input';
 import { Mail, MapPin, Phone, Clock, Send } from 'lucide-react';
 
 const ContactPage = () => {
   return (
     <MainLayout>
-      <div className="bg-gray-50 py-12">
+      <div className="bg-[#0f172a] py-12">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
-            <h1 className="text-3xl font-bold mb-2">Contact Us</h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <h1 className="font-serif text-3xl font-bold text-neutral-50 mb-2">
+              Contact Us
+            </h1>
+            <p className="text-neutral-400 max-w-2xl mx-auto">
               Have questions or feedback? We're here to help. Reach out to our
               team and we'll respond as soon as possible.
             </p>
@@ -19,9 +21,9 @@ const ContactPage = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <div className="lg:col-span-2">
-              <Card>
+              <Card variant="elevated">
                 <CardContent className="p-6">
-                  <h2 className="text-xl font-semibold mb-6">
+                  <h2 className="font-serif text-xl font-semibold text-neutral-50 mb-6">
                     Send us a message
                   </h2>
                   <form className="space-y-4">
@@ -29,7 +31,7 @@ const ContactPage = () => {
                       <div>
                         <label
                           htmlFor="firstName"
-                          className="block text-sm font-medium text-gray-700 mb-1"
+                          className="block text-sm font-medium text-neutral-300 mb-1"
                         >
                           First Name
                         </label>
@@ -38,7 +40,7 @@ const ContactPage = () => {
                       <div>
                         <label
                           htmlFor="lastName"
-                          className="block text-sm font-medium text-gray-700 mb-1"
+                          className="block text-sm font-medium text-neutral-300 mb-1"
                         >
                           Last Name
                         </label>
@@ -50,7 +52,7 @@ const ContactPage = () => {
                       <div>
                         <label
                           htmlFor="email"
-                          className="block text-sm font-medium text-gray-700 mb-1"
+                          className="block text-sm font-medium text-neutral-300 mb-1"
                         >
                           Email
                         </label>
@@ -63,7 +65,7 @@ const ContactPage = () => {
                       <div>
                         <label
                           htmlFor="phone"
-                          className="block text-sm font-medium text-gray-700 mb-1"
+                          className="block text-sm font-medium text-neutral-300 mb-1"
                         >
                           Phone (optional)
                         </label>
@@ -74,7 +76,7 @@ const ContactPage = () => {
                     <div>
                       <label
                         htmlFor="subject"
-                        className="block text-sm font-medium text-gray-700 mb-1"
+                        className="block text-sm font-medium text-neutral-300 mb-1"
                       >
                         Subject
                       </label>
@@ -87,19 +89,19 @@ const ContactPage = () => {
                     <div>
                       <label
                         htmlFor="message"
-                        className="block text-sm font-medium text-gray-700 mb-1"
+                        className="block text-sm font-medium text-neutral-300 mb-1"
                       >
                         Message
                       </label>
                       <textarea
                         id="message"
                         rows={6}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 bg-[#1e293b] border border-neutral-600 rounded-md text-neutral-100 placeholder:text-neutral-500 focus:outline-none focus:border-violet-500"
                         placeholder="How can we help you?"
                       ></textarea>
                     </div>
 
-                    <Button className="bg-course-blue">
+                    <Button variant="action">
                       <Send className="h-4 w-4 mr-2" />
                       Send Message
                     </Button>
@@ -109,20 +111,22 @@ const ContactPage = () => {
             </div>
 
             <div>
-              <Card className="mb-6">
+              <Card variant="elevated" className="mb-6">
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold mb-4">
+                  <h3 className="font-serif text-lg font-semibold text-neutral-50 mb-4">
                     Contact Information
                   </h3>
 
                   <div className="space-y-4">
                     <div className="flex">
                       <div className="flex-shrink-0 mt-1">
-                        <Mail className="h-5 w-5 text-course-blue" />
+                        <Mail className="h-5 w-5 text-violet-400" />
                       </div>
                       <div className="ml-3">
-                        <p className="text-sm font-medium">Email Us</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm font-medium text-neutral-200">
+                          Email Us
+                        </p>
+                        <p className="text-sm text-neutral-400">
                           support@coursepalette.com
                         </p>
                       </div>
@@ -130,11 +134,13 @@ const ContactPage = () => {
 
                     <div className="flex">
                       <div className="flex-shrink-0 mt-1">
-                        <Phone className="h-5 w-5 text-course-blue" />
+                        <Phone className="h-5 w-5 text-violet-400" />
                       </div>
                       <div className="ml-3">
-                        <p className="text-sm font-medium">Call Us</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm font-medium text-neutral-200">
+                          Call Us
+                        </p>
+                        <p className="text-sm text-neutral-400">
                           +1 (555) 123-4567
                         </p>
                       </div>
@@ -142,11 +148,13 @@ const ContactPage = () => {
 
                     <div className="flex">
                       <div className="flex-shrink-0 mt-1">
-                        <MapPin className="h-5 w-5 text-course-blue" />
+                        <MapPin className="h-5 w-5 text-violet-400" />
                       </div>
                       <div className="ml-3">
-                        <p className="text-sm font-medium">Location</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm font-medium text-neutral-200">
+                          Location
+                        </p>
+                        <p className="text-sm text-neutral-400">
                           123 Education Street
                           <br />
                           San Francisco, CA 94107
@@ -158,11 +166,13 @@ const ContactPage = () => {
 
                     <div className="flex">
                       <div className="flex-shrink-0 mt-1">
-                        <Clock className="h-5 w-5 text-course-blue" />
+                        <Clock className="h-5 w-5 text-violet-400" />
                       </div>
                       <div className="ml-3">
-                        <p className="text-sm font-medium">Business Hours</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm font-medium text-neutral-200">
+                          Business Hours
+                        </p>
+                        <p className="text-sm text-neutral-400">
                           Monday - Friday: 9:00 AM - 6:00 PM
                           <br />
                           Saturday: 10:00 AM - 4:00 PM
@@ -175,22 +185,22 @@ const ContactPage = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card variant="elevated">
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold mb-4">
+                  <h3 className="font-serif text-lg font-semibold text-neutral-50 mb-4">
                     Connect With Us
                   </h3>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <p className="text-sm text-neutral-400 mb-4">
                     Follow us on social media to stay updated with the latest
                     courses, educational resources, and community events.
                   </p>
                   <div className="flex space-x-4">
                     <a
                       href="#"
-                      className="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition-colors"
+                      className="bg-neutral-700/50 p-2 rounded-full hover:bg-neutral-700 transition-colors"
                     >
                       <svg
-                        className="h-6 w-6 text-gray-600"
+                        className="h-6 w-6 text-neutral-300"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                         aria-hidden="true"
@@ -204,10 +214,10 @@ const ContactPage = () => {
                     </a>
                     <a
                       href="#"
-                      className="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition-colors"
+                      className="bg-neutral-700/50 p-2 rounded-full hover:bg-neutral-700 transition-colors"
                     >
                       <svg
-                        className="h-6 w-6 text-gray-600"
+                        className="h-6 w-6 text-neutral-300"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                         aria-hidden="true"
@@ -217,10 +227,10 @@ const ContactPage = () => {
                     </a>
                     <a
                       href="#"
-                      className="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition-colors"
+                      className="bg-neutral-700/50 p-2 rounded-full hover:bg-neutral-700 transition-colors"
                     >
                       <svg
-                        className="h-6 w-6 text-gray-600"
+                        className="h-6 w-6 text-neutral-300"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                         aria-hidden="true"
@@ -234,10 +244,10 @@ const ContactPage = () => {
                     </a>
                     <a
                       href="#"
-                      className="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition-colors"
+                      className="bg-neutral-700/50 p-2 rounded-full hover:bg-neutral-700 transition-colors"
                     >
                       <svg
-                        className="h-6 w-6 text-gray-600"
+                        className="h-6 w-6 text-neutral-300"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                         aria-hidden="true"

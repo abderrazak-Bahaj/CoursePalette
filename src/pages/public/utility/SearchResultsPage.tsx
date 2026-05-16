@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import CourseCard from '@/components/course/CourseCard';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ds/primitives/Button';
+import { Input } from '@/components/ds/primitives/Input';
 import { Search } from 'lucide-react';
 import { courseService } from '@/services/api';
 import { useQuery } from '@tanstack/react-query';
@@ -74,9 +74,11 @@ const SearchResultsPage = () => {
 
   return (
     <MainLayout>
-      <div className="bg-gray-50 py-8">
+      <div className="bg-[#0f172a] py-8">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-6">Search Results</h1>
+          <h1 className="font-serif text-3xl font-bold text-neutral-50 mb-6">
+            Search Results
+          </h1>
 
           <form onSubmit={handleSubmit} className="mb-8">
             <div className="flex max-w-lg">
@@ -87,13 +89,18 @@ const SearchResultsPage = () => {
                 />
                 <Input
                   type="text"
+                  variant="search"
                   placeholder="Search courses, instructors, or skills..."
-                  className="pl-10 rounded-r-none"
+                  className="rounded-r-none"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <Button type="submit" className="rounded-l-none bg-course-blue">
+              <Button
+                type="submit"
+                variant="primary"
+                className="rounded-l-none"
+              >
                 Search
               </Button>
             </div>
@@ -102,7 +109,7 @@ const SearchResultsPage = () => {
           {coursesData.courses.length ? (
             <>
               <div className="mb-6">
-                <h2 className="text-xl font-semibold mb-2">
+                <h2 className="font-serif text-xl font-semibold text-neutral-50 mb-2">
                   {isLoading
                     ? 'Searching...'
                     : coursesData.courses.length === 0
@@ -110,7 +117,7 @@ const SearchResultsPage = () => {
                       : `Showing ${coursesData.meta.total} results for "${debouncedSearchTerm}"`}
                 </h2>
                 {!isLoading && coursesData.courses.length === 0 && (
-                  <p className="text-gray-600">
+                  <p className="text-neutral-400">
                     Try different keywords or browse our categories below
                   </p>
                 )}
@@ -163,18 +170,20 @@ const SearchResultsPage = () => {
             </>
           ) : (
             <div className="text-center py-8">
-              <h2 className="text-xl font-semibold mb-2">Start your search</h2>
-              <p className="text-gray-600 mb-8">
+              <h2 className="font-serif text-xl font-semibold text-neutral-50 mb-2">
+                Start your search
+              </h2>
+              <p className="text-neutral-400 mb-8">
                 Search for courses, instructors, or skills you're interested in
               </p>
               <div className="max-w-lg mx-auto">
                 <Link to="/courses">
-                  <Button variant="outline" className="mr-4">
+                  <Button variant="secondary" className="mr-4">
                     Browse All Courses
                   </Button>
                 </Link>
                 <Link to="/categories">
-                  <Button>Explore Categories</Button>
+                  <Button variant="action">Explore Categories</Button>
                 </Link>
               </div>
             </div>

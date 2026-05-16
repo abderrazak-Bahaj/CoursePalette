@@ -1,5 +1,5 @@
 import MainLayout from '@/components/layout/MainLayout';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/components/ds/primitives/Card';
 import { ChevronRight } from 'lucide-react';
 
 const PrivacyPolicyPage = () => {
@@ -18,14 +18,16 @@ const PrivacyPolicyPage = () => {
 
   return (
     <MainLayout>
-      <div className="bg-gray-50 py-12">
+      <div className="bg-[#0f172a] py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold mb-6">Privacy Policy</h1>
-            <p className="text-gray-600 mb-2">Last Updated: June 15, 2023</p>
+            <h1 className="font-serif text-3xl font-bold text-neutral-50 mb-6">
+              Privacy Policy
+            </h1>
+            <p className="text-neutral-400 mb-2">Last Updated: June 15, 2023</p>
 
-            <Card className="p-8 mb-8">
-              <p className="mb-6">
+            <Card variant="elevated" className="p-8 mb-8">
+              <p className="text-neutral-300 mb-6">
                 At CoursePalette, we respect your privacy and are committed to
                 protecting your personal data. This privacy policy explains how
                 we collect, use, and safeguard your information when you use our
@@ -33,14 +35,16 @@ const PrivacyPolicyPage = () => {
               </p>
 
               <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-4">Quick Links</h2>
-                <div className="bg-gray-50 p-4 rounded-md">
+                <h2 className="font-serif text-xl font-semibold text-neutral-50 mb-4">
+                  Quick Links
+                </h2>
+                <div className="bg-[#0f172a] border border-neutral-700 p-4 rounded-lg">
                   <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {sections.map((section) => (
                       <li key={section.id}>
                         <a
                           href={`#${section.id}`}
-                          className="flex items-center text-course-blue hover:underline"
+                          className="flex items-center text-violet-400 hover:text-violet-300 transition-colors"
                         >
                           <ChevronRight className="h-4 w-4 mr-1" />
                           {section.title}
@@ -52,14 +56,14 @@ const PrivacyPolicyPage = () => {
               </div>
 
               <section id="information" className="mb-8">
-                <h2 className="text-xl font-semibold mb-4">
+                <h2 className="font-serif text-xl font-semibold text-neutral-50 mb-4">
                   Information We Collect
                 </h2>
-                <p className="mb-4">
+                <p className="text-neutral-300 mb-4">
                   We collect several types of information from and about users
                   of our platform, including:
                 </p>
-                <ul className="list-disc pl-6 space-y-2 text-gray-700">
+                <ul className="list-disc pl-6 space-y-2 text-neutral-300">
                   <li>
                     <strong>Personal Information:</strong> Name, email address,
                     phone number, billing address, payment information, and
@@ -85,14 +89,14 @@ const PrivacyPolicyPage = () => {
               </section>
 
               <section id="usage" className="mb-8">
-                <h2 className="text-xl font-semibold mb-4">
+                <h2 className="font-serif text-xl font-semibold text-neutral-50 mb-4">
                   How We Use Your Information
                 </h2>
-                <p className="mb-4">
+                <p className="text-neutral-300 mb-4">
                   We use the information we collect for various purposes,
                   including:
                 </p>
-                <ul className="list-disc pl-6 space-y-2 text-gray-700">
+                <ul className="list-disc pl-6 space-y-2 text-neutral-300">
                   <li>Providing, operating, and maintaining our platform</li>
                   <li>
                     Processing transactions and sending related information
@@ -111,14 +115,14 @@ const PrivacyPolicyPage = () => {
               </section>
 
               <section id="sharing" className="mb-8">
-                <h2 className="text-xl font-semibold mb-4">
+                <h2 className="font-serif text-xl font-semibold text-neutral-50 mb-4">
                   Information Sharing and Disclosure
                 </h2>
-                <p className="mb-4">
+                <p className="text-neutral-300 mb-4">
                   We may share your personal information in the following
                   situations:
                 </p>
-                <ul className="list-disc pl-6 space-y-2 text-gray-700">
+                <ul className="list-disc pl-6 space-y-2 text-neutral-300">
                   <li>
                     <strong>Service Providers:</strong> With third-party vendors
                     who provide services on our behalf.
@@ -143,16 +147,16 @@ const PrivacyPolicyPage = () => {
               </section>
 
               <section id="cookies" className="mb-8">
-                <h2 className="text-xl font-semibold mb-4">
+                <h2 className="font-serif text-xl font-semibold text-neutral-50 mb-4">
                   Cookies and Tracking Technologies
                 </h2>
-                <p className="mb-4">
+                <p className="text-neutral-300 mb-4">
                   We use cookies and similar tracking technologies to track
                   activity on our platform and store certain information.
                   Cookies are files with a small amount of data that may include
                   an anonymous unique identifier.
                 </p>
-                <p className="mb-4">
+                <p className="text-neutral-300 mb-4">
                   You can instruct your browser to refuse all cookies or to
                   indicate when a cookie is being sent. However, if you do not
                   accept cookies, you may not be able to use some portions of
@@ -162,12 +166,14 @@ const PrivacyPolicyPage = () => {
 
               {/* Additional sections would continue here with similar structure */}
               <section id="contact" className="mt-8">
-                <h2 className="text-xl font-semibold mb-4">Contact Us</h2>
-                <p>
+                <h2 className="font-serif text-xl font-semibold text-neutral-50 mb-4">
+                  Contact Us
+                </h2>
+                <p className="text-neutral-300 mb-4">
                   If you have any questions about this Privacy Policy, please
                   contact us at:
                 </p>
-                <p className="mt-2">
+                <p className="text-neutral-300 mt-2">
                   <strong>Email:</strong> privacy@coursepalette.com
                   <br />
                   <strong>Address:</strong> 123 Education Street, San Francisco,
