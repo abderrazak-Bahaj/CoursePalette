@@ -18,6 +18,32 @@ export default {
     },
     extend: {
       colors: {
+        violet: {
+          400: '#a78bfa',
+          500: '#8b5cf6',
+          600: '#7c3aed',
+          700: '#6d28d9',
+          800: '#5b21b6',
+        },
+        coral: {
+          400: '#fb7185',
+          500: '#f43f5e',
+          600: '#e11d48',
+          700: '#be123c',
+        },
+        amber: {
+          300: '#fcd34d',
+          400: '#fbbf24',
+          500: '#f59e0b',
+          600: '#d97706',
+          700: '#b45309',
+        },
+        surface: {
+          base: '#0f172a',
+          card: '#1e293b',
+          elevated: '#334155',
+        },
+        // shadcn aliases — keep these so existing shadcn components still work
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -43,15 +69,24 @@ export default {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
         },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
-        },
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        'course-blue': '#2563eb',
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Playfair Display', 'Georgia', 'serif'],
+        mono: ['JetBrains Mono', 'Menlo', 'monospace'],
+      },
+      boxShadow: {
+        'glow-violet': '0 0 20px rgba(124,58,237,0.3)',
+        'glow-coral': '0 0 20px rgba(244,63,94,0.25)',
+        'glow-amber': '0 0 20px rgba(245,158,11,0.25)',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -60,27 +95,42 @@ export default {
       },
       keyframes: {
         'accordion-down': {
-          from: { height: 0 },
+          from: { height: '0' },
           to: { height: 'var(--radix-accordion-content-height)' },
         },
         'accordion-up': {
           from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: 0 },
+          to: { height: '0' },
         },
-        spin: {
-          '0%': { transform: 'rotate(0deg)' },
-          '100%': { transform: 'rotate(360deg)' },
+        'fade-in': {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
         },
-        'spin-reverse': {
-          '0%': { transform: 'rotate(360deg)' },
-          '100%': { transform: 'rotate(0deg)' },
+        'slide-up': {
+          from: { opacity: '0', transform: 'translateY(8px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        'slide-down': {
+          from: { opacity: '0', transform: 'translateY(-8px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+        'pulse-glow': {
+          '0%, 100%': { boxShadow: '0 0 10px rgba(124,58,237,0.2)' },
+          '50%': { boxShadow: '0 0 25px rgba(124,58,237,0.5)' },
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        spin: 'spin 1s linear infinite',
-        'spin-slow': 'spin-reverse 2s linear infinite',
+        'fade-in': 'fade-in 200ms ease-in-out',
+        'slide-up': 'slide-up 200ms ease-in-out',
+        'slide-down': 'slide-down 200ms ease-in-out',
+        shimmer: 'shimmer 1.5s ease-in-out infinite',
+        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
       },
     },
   },
