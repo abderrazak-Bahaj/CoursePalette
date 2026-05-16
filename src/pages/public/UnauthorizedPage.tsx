@@ -1,5 +1,5 @@
 // src/pages/UnauthorizedPage.tsx
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ds/primitives/Button';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import AdminLayout from '@/components/layout/AdminLayout';
@@ -31,7 +31,7 @@ const UnauthorizedPage = () => {
 
   const content = (
     <div className="flex flex-col items-center justify-center min-h-screen px-4">
-      <div className="text-red-600 mb-6">
+      <div className="text-red-400 mb-6">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-24 w-24 mx-auto"
@@ -47,16 +47,22 @@ const UnauthorizedPage = () => {
           />
         </svg>
       </div>
-      <h1 className="text-4xl font-bold text-red-600 mb-4">Access Denied</h1>
-      <p className="text-lg mb-2 text-center max-w-lg">{getRoleText()}</p>
-      <p className="text-sm mb-6 text-center text-gray-600">
+      <h1 className="font-serif text-4xl font-bold text-red-400 mb-4">
+        Access Denied
+      </h1>
+      <p className="text-lg mb-2 text-center max-w-lg text-neutral-300">
+        {getRoleText()}
+      </p>
+      <p className="text-sm mb-6 text-center text-neutral-400">
         Please contact an administrator if you believe this is an error.
       </p>
       <div className="flex gap-4">
         {!(user?.role === 'ADMIN' || user?.role === 'TEACHER') && (
-          <Button onClick={() => navigate('/')}>Go to Home</Button>
+          <Button onClick={() => navigate('/')} variant="primary">
+            Go to Home
+          </Button>
         )}
-        <Button onClick={goToDashboard} variant="outline">
+        <Button onClick={goToDashboard} variant="secondary">
           Go to Dashboard
         </Button>
       </div>
