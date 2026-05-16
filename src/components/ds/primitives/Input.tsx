@@ -19,9 +19,10 @@ const inputVariants = cva(
           'border-neutral-600 focus:border-violet-500 focus:shadow-glow-violet',
         search:
           'border-neutral-600 focus:border-violet-500 focus:shadow-glow-violet pl-9',
-        error: 'border-red-500 focus:border-red-500 focus:shadow-glow-violet',
+        error:
+          'border-red-500 focus:border-red-500 focus:shadow-[0_0_20px_rgba(239,68,68,0.25)]',
         success:
-          'border-amber-500 focus:border-amber-500 focus:shadow-glow-violet',
+          'border-amber-500 focus:border-amber-500 focus:shadow-glow-amber',
       },
       size: {
         sm: 'h-8 px-3 text-sm',
