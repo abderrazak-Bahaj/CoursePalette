@@ -77,7 +77,7 @@ export interface UseAssignmentGenerationReturn {
    *
    * @throws When validation fails or the API call fails.
    */
-  saveAssignment: () => Promise<void>;
+  saveAssignment: (title?: string) => Promise<void>;
   /** Reset all state back to initial values. */
   reset: () => void;
 }
@@ -248,47 +248,64 @@ export function useAssignmentGeneration(
 
   // ── saveAssignment ────────────────────────────────────────────────────────
 
-  const saveAssignment = useCallback(async (): Promise<void> => {
-    if (!generatedAssignment) {
-      throw new Error('No assignment has been generated yet.');
-    }
+  const saveAssignment = useCallback(
+    async (customTitle?: string): Promise<void> => {
+      if (!generatedAssignment) {
+        throw new Error('No assignment has been generated yet.');
+      }
 
-    // Validate points before saving
-    const isValid = validatePoints();
-    if (!isValid) {
-      // validatePoints() already set validationError in state; read it from
-      // the assignment's current points sum so we don't need validationError
-      // in the dependency array (which would cause stale-closure issues).
-      throw new Error(
-        'Points validation failed. Please ensure the sum of question points equals the assignment max score.'
+      // Validate points before saving
+      const isValid = validatePoints();
+      if (!isValid) {
+        // validatePoints() already set validationError in state; read it from
+        // the assignment's current points sum so we don't need validationError
+        // in the dependency array (which would cause stale-closure issues).
+        throw new Error(
+          'Points validation failed. Please ensure the sum of question points equals the assignment max score.'
+        );
+      }
+
+      // Map GeneratedAssignment to the shape expected by assignmentService.createAssignment
+      const totalScore = generatedAssignment.questions.reduce(
+        (sum, q) => sum + q.points,
+        0
       );
-    }
 
-    // Map GeneratedAssignment to the shape expected by assignmentService.createAssignment
-    const totalScore = generatedAssignment.questions.reduce(
-      (sum, q) => sum + q.points,
-      0
-    );
-
-    const assignmentData = {
-      title: 'AI Generated Assignment',
-      description: generatedAssignment.rubric,
-      type: 'quiz',
-      max_score: totalScore,
-      questions: generatedAssignment.questions.map((q, idx) => ({
-        question: q.text,
-        type: q.type,
-        points: q.points,
-        order: idx + 1,
-        options: q.options.map((opt) => ({
-          text: opt.text,
-          is_correct: opt.is_correct,
+      const assignmentData = {
+        title: customTitle || 'AI Generated Assignment',
+        description: generatedAssignment.rubric,
+        type: 'QUIZ',
+        status: 'DRAFT',
+        max_score: totalScore,
+        questions: generatedAssignment.questions.map((q, idx) => ({
+          question: q.text,
+          type:
+            q.type === 'multiple_choice'
+              ? 'MULTIPLE_CHOICE'
+              : q.type === 'true_false'
+                ? 'TRUE_FALSE'
+                : q.type === 'essay'
+                  ? 'ESSAY'
+                  : q.type === 'short_answer'
+                    ? 'SHORT_ANSWER'
+                    : q.type.toUpperCase(),
+          points: q.points,
+          order: idx + 1,
+          options: q.options.map((opt, optIdx) => ({
+            text: opt.text,
+            is_correct: opt.is_correct,
+            order: optIdx + 1,
+          })),
         })),
-      })),
-    };
+      };
 
-    await assignmentService.createAssignment(String(courseId), assignmentData);
-  }, [courseId, generatedAssignment, validatePoints]);
+      await assignmentService.createAssignment(
+        String(courseId),
+        assignmentData
+      );
+    },
+    [courseId, generatedAssignment, validatePoints]
+  );
 
   // ── reset ─────────────────────────────────────────────────────────────────
 

@@ -30,6 +30,7 @@
  */
 
 import { useState, useCallback, useId, memo } from 'react';
+import ReactMarkdown from 'react-markdown';
 import {
   Wand2,
   Save,
@@ -59,10 +60,20 @@ export interface AssignmentGeneratorProps {
   courseId: string | number;
   /** ID of the lesson to base the assignment on (required by GenerateAssignmentParams). */
   lessonId: string | number;
+  /** Title for the assignment. */
+  title?: string;
   /** Callback invoked when the teacher saves the generated assignment. */
   onSave?: (assignment: GeneratedAssignment) => void;
   /** Optional CSS class name for the container. */
   className?: string;
+  /** Number of multiple choice questions to generate. */
+  numMultipleChoice?: number;
+  /** Number of essay questions to generate. */
+  numEssay?: number;
+  /** Number of short answer questions to generate. */
+  numShortAnswer?: number;
+  /** Extra instructions for the AI. */
+  extraInstructions?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -75,7 +86,6 @@ const DIFFICULTY_OPTIONS: { value: AssignmentDifficulty; label: string }[] = [
   { value: 'hard', label: 'Hard' },
 ];
 
-const DEFAULT_NUM_QUESTIONS = 7;
 const DEFAULT_MAX_SCORE = 100;
 const DEFAULT_DIFFICULTY: AssignmentDifficulty = 'medium';
 
@@ -283,13 +293,15 @@ const QuestionEditor = memo(function QuestionEditor({
 export const AssignmentGenerator = memo(function AssignmentGenerator({
   courseId,
   lessonId,
+  title,
   onSave,
   className,
+  numMultipleChoice,
+  numEssay,
+  numShortAnswer,
+  extraInstructions,
 }: AssignmentGeneratorProps): JSX.Element {
   // ── Form state ─────────────────────────────────────────────────────────────
-  const [numQuestions, setNumQuestions] = useState<number>(
-    DEFAULT_NUM_QUESTIONS
-  );
   const [maxScore, setMaxScore] = useState<number>(DEFAULT_MAX_SCORE);
   const [difficulty, setDifficulty] =
     useState<AssignmentDifficulty>(DEFAULT_DIFFICULTY);
@@ -313,9 +325,8 @@ export const AssignmentGenerator = memo(function AssignmentGenerator({
   } = useAssignmentGeneration(courseId);
 
   // ── Derived ────────────────────────────────────────────────────────────────
-  const numQuestionsValid = numQuestions >= 5 && numQuestions <= 10;
   const maxScoreValid = maxScore > 0;
-  const canGenerate = numQuestionsValid && maxScoreValid && !isGenerating;
+  const canGenerate = maxScoreValid && !isGenerating;
 
   // ── Handlers ───────────────────────────────────────────────────────────────
 
@@ -327,12 +338,25 @@ export const AssignmentGenerator = memo(function AssignmentGenerator({
       setSaveSuccess(false);
       await generate({
         lesson_id: lessonId,
-        num_questions: numQuestions,
         max_score: maxScore,
         difficulty,
+        num_multiple_choice: numMultipleChoice,
+        num_essay: numEssay,
+        num_short_answer: numShortAnswer,
+        extra_instructions: extraInstructions,
       });
     },
-    [canGenerate, generate, lessonId, numQuestions, maxScore, difficulty]
+    [
+      canGenerate,
+      generate,
+      lessonId,
+      maxScore,
+      difficulty,
+      numMultipleChoice,
+      numEssay,
+      numShortAnswer,
+      extraInstructions,
+    ]
   );
 
   const handleSave = useCallback(async () => {
@@ -344,7 +368,7 @@ export const AssignmentGenerator = memo(function AssignmentGenerator({
 
     setIsSaving(true);
     try {
-      await saveAssignment();
+      await saveAssignment(title);
       setSaveSuccess(true);
       onSave?.(generatedAssignment);
     } catch {
@@ -389,46 +413,7 @@ export const AssignmentGenerator = memo(function AssignmentGenerator({
           Generate Assignment with AI
         </h2>
 
-        <div className="grid gap-4 sm:grid-cols-3">
-          {/* Number of questions */}
-          <div className="space-y-1.5">
-            <label
-              htmlFor="gen-num-questions"
-              className="text-sm font-medium text-foreground"
-            >
-              Number of questions
-            </label>
-            <input
-              id="gen-num-questions"
-              type="number"
-              min={5}
-              max={10}
-              step={1}
-              value={numQuestions}
-              onChange={(e) => setNumQuestions(Number(e.target.value))}
-              disabled={isGenerating}
-              aria-describedby="gen-num-questions-hint"
-              aria-invalid={!numQuestionsValid ? 'true' : undefined}
-              className={cn(
-                'w-full rounded-md border bg-background px-3 py-2 text-sm',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
-                'disabled:cursor-not-allowed disabled:opacity-50',
-                !numQuestionsValid ? 'border-destructive' : 'border-input'
-              )}
-            />
-            <p
-              id="gen-num-questions-hint"
-              className="text-xs text-muted-foreground"
-            >
-              Between 5 and 10
-            </p>
-            {!numQuestionsValid && (
-              <p role="alert" className="text-xs text-destructive">
-                Must be between 5 and 10.
-              </p>
-            )}
-          </div>
-
+        <div className="grid gap-4 sm:grid-cols-2">
           {/* Max score */}
           <div className="space-y-1.5">
             <label
@@ -542,7 +527,7 @@ export const AssignmentGenerator = memo(function AssignmentGenerator({
       {/* ── Loading skeletons ─────────────────────────────────────────────── */}
       {isGenerating && (
         <div aria-live="polite" aria-label="Generating assignment, please wait">
-          <LoadingSkeletons count={numQuestions} variant="question" />
+          <LoadingSkeletons count={5} variant="question" />
         </div>
       )}
 
@@ -596,12 +581,12 @@ export const AssignmentGenerator = memo(function AssignmentGenerator({
           {/* Rubric */}
           {generatedAssignment.rubric && (
             <div className="rounded-md border border-border bg-muted/30 px-4 py-3">
-              <p className="mb-1 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              <p className="mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
                 Rubric / Instructions
               </p>
-              <p className="text-sm text-foreground leading-relaxed">
-                {generatedAssignment.rubric}
-              </p>
+              <div className="prose prose-sm prose-invert max-w-none text-sm [&_p]:mb-2 [&_ul]:mb-2 [&_li]:mb-0 [&_strong]:text-foreground [&_h2]:text-base [&_h2]:mt-3 [&_h2]:mb-1">
+                <ReactMarkdown>{generatedAssignment.rubric}</ReactMarkdown>
+              </div>
             </div>
           )}
 

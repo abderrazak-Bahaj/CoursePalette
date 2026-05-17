@@ -79,7 +79,7 @@ const CreateAssignmentPage = () => {
     description: '',
     instructions: '',
     type: 'QUIZ',
-    date_limit: 60, // Default 60 minutes
+    date_limit: 60,
     max_score: 100,
     status: 'DRAFT',
     lesson_id: null,
@@ -361,7 +361,7 @@ const CreateAssignmentPage = () => {
           courseLoading || lessonsLoading || (isEditMode && assignmentLoading)
         }
       >
-        <div className="container mx-auto px-4 py-6 max-w-4xl">
+        <div className="container mx-auto px-4 py-6 ">
           {/* Header */}
           <div className="flex items-center gap-4 mb-6">
             <Button
@@ -371,7 +371,6 @@ const CreateAssignmentPage = () => {
               className="flex items-center gap-2"
             >
               <ChevronLeft className="h-4 w-4" />
-              Back
             </Button>
             <div>
               <h1 className="text-2xl font-bold">

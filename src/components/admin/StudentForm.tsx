@@ -137,7 +137,7 @@ const StudentForm = ({
     <Card>
       <CardContent className="pt-6">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="flex justify-center mb-6">
               <div className="relative">
                 <Avatar className="w-24 h-24">
@@ -224,39 +224,6 @@ const StudentForm = ({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Role</FormLabel>
-                    <Select
-                      disabled={viewOnly}
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select role" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={UserRole.ADMIN}>
-                          Administrator
-                        </SelectItem>
-                        <SelectItem value={UserRole.TEACHER}>
-                          Teacher
-                        </SelectItem>
-                        <SelectItem value={UserRole.STUDENT}>
-                          Student
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               {!editStudent && (
                 <FormField
                   control={form.control}

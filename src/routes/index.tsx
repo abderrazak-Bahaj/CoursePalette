@@ -59,6 +59,9 @@ const CertificateDetailPage = lazy(
 const CreateAssignmentPage = lazy(
   () => import('@/pages/admin/courses/CreateAssignmentPage')
 );
+const GenerateAssignmentPage = lazy(
+  () => import('@/pages/admin/courses/GenerateAssignmentPage')
+);
 const AssignmentManagementPage = lazy(
   () => import('@/pages/admin/courses/AssignmentManagementPage')
 );
@@ -438,7 +441,7 @@ const AppRoutes = () => (
         </RouteWrapper>
       }
     />
-    
+
     <Route
       path="/admin/courses/:courseId/lessons/:lessonId"
       element={
@@ -480,11 +483,21 @@ const AppRoutes = () => (
       }
     />
     <Route
+      path="/admin/courses/:courseId/assignments/generate"
+      element={
+        <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
+          <SuspenseWrapper>
+            <GenerateAssignmentPage />
+          </SuspenseWrapper>
+        </RouteWrapper>
+      }
+    />
+    <Route
       path="/admin/courses/:courseId/assignments/:assignmentId"
       element={
         <RouteWrapper accessType={['TEACHER', 'ADMIN']}>
           <SuspenseWrapper>
-            <AssignmentPage />
+            <AssignmentPage isPreview={true} />
           </SuspenseWrapper>
         </RouteWrapper>
       }

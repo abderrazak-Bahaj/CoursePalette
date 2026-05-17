@@ -158,12 +158,20 @@ export type AssignmentDifficulty = 'easy' | 'medium' | 'hard';
 export interface GenerateAssignmentParams {
   /** ID of the lesson to base the assignment on. */
   lesson_id: string | number;
-  /** Number of questions to generate (5–10). */
-  num_questions: number;
+  /** Number of questions to generate (total). Optional if type counts are provided. */
+  num_questions?: number;
   /** Maximum total score for the assignment. */
   max_score: number;
   /** Difficulty level. Defaults to 'medium'. */
   difficulty?: AssignmentDifficulty;
+  /** Number of multiple choice questions. */
+  num_multiple_choice?: number;
+  /** Number of essay questions. */
+  num_essay?: number;
+  /** Number of short answer questions. */
+  num_short_answer?: number;
+  /** Extra instructions for the AI. */
+  extra_instructions?: string;
 }
 
 /**

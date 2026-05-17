@@ -282,6 +282,14 @@ export const AiUsageStatistics = memo(function AiUsageStatistics({
     fetchStatistics(selectedDays);
   }, [fetchStatistics, selectedDays]);
 
+  // Memoize chart data — must be called unconditionally (before any returns)
+  // to satisfy React's rules of hooks.
+  const chartData = useMemo(
+    () =>
+      statistics?.data ? buildChartData(statistics.data, selectedDays) : [],
+    [statistics?.data, selectedDays]
+  );
+
   // ── Render: loading ───────────────────────────────────────────────────────
 
   if (isLoading) {
@@ -386,12 +394,6 @@ export const AiUsageStatistics = memo(function AiUsageStatistics({
   }
 
   // ── Render: statistics ────────────────────────────────────────────────────
-
-  // Memoize chart data to avoid recomputing on every render (Requirement 22.2)
-  const chartData = useMemo(
-    () => buildChartData(statistics.data, selectedDays),
-    [statistics.data, selectedDays]
-  );
 
   return (
     <div className={cn('space-y-6', className)}>

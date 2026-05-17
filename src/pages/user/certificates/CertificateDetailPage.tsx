@@ -103,12 +103,12 @@ const CertificateDetailPage = () => {
   return (
     <MainLayout>
       <WrapperLoading isLoading={isLoading}>
-        <div className="bg-gray-50 py-8 print:bg-white print:py-0">
+        <div className="py-8">
           <div className="container mx-auto px-4">
             <div className="mb-6 print:hidden">
               <Link
                 to={`/courses/${courseId}`}
-                className="inline-flex items-center text-gray-600 hover:text-course-blue"
+                className="inline-flex items-center text-muted-foreground hover:text-violet-400 transition-colors"
               >
                 <ChevronLeft className="h-4 w-4 mr-1" />
                 Back to Course
@@ -119,10 +119,10 @@ const CertificateDetailPage = () => {
               <div className="lg:w-2/3 print:w-full">
                 <Card className="p-6 mb-6 print:shadow-none print:border-0">
                   <div className="flex items-center justify-between mb-6 print:mb-2">
-                    <h1 className="text-2xl font-bold">
+                    <h1 className="text-2xl font-bold text-foreground">
                       {certificate?.course.title}
                     </h1>
-                    <Award className="h-6 w-6 text-course-blue" />
+                    <Award className="h-6 w-6 text-amber-400" />
                   </div>
                   <DisplayCertificate certificate={certificate} />
                   <div className="hidden">
@@ -132,10 +132,7 @@ const CertificateDetailPage = () => {
                     />
                   </div>
                   <div className="flex space-x-4 print:hidden mt-20">
-                    <Button
-                      className="flex-1 bg-course-blue"
-                      onClick={handleDownload}
-                    >
+                    <Button className="flex-1" onClick={handleDownload}>
                       <Download className="h-4 w-4 mr-2" />
                       Download Certificate
                     </Button>
@@ -151,69 +148,83 @@ const CertificateDetailPage = () => {
                 </Card>
               </div>
 
-              <div className="lg:w-1/3 ">
+              <div className="lg:w-1/3">
                 <Card className="p-6 mb-6">
-                  <h2 className="text-xl font-bold mb-4">
+                  <h2 className="text-xl font-bold mb-4 text-foreground">
                     Certificate Details
                   </h2>
                   <div className="space-y-4">
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">
+                      <div className="text-sm text-muted-foreground mb-1">
                         Certificate Name
                       </div>
-                      <div className="font-medium">
+                      <div className="font-medium text-foreground">
                         {certificate?.course.title}
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">Course</div>
+                      <div className="text-sm text-muted-foreground mb-1">
+                        Course
+                      </div>
                       <Link
                         to={`/courses/${certificate?.course.id}`}
-                        className="font-medium hover:text-course-blue transition-colors"
+                        className="font-medium text-violet-400 hover:text-violet-300 transition-colors"
                       >
                         {certificate?.course.title}
                       </Link>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">
+                      <div className="text-sm text-muted-foreground mb-1">
                         Issue Date
                       </div>
-                      <div>
+                      <div className="text-foreground">
                         {new Date(certificate?.issue_date).toLocaleDateString()}
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">
+                      <div className="text-sm text-muted-foreground mb-1">
                         Completion Date
                       </div>
-                      <div>{certificate?.metadata.completion_date}</div>
+                      <div className="text-foreground">
+                        {certificate?.metadata.completion_date}
+                      </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">Grade</div>
-                      <div>{certificate?.metadata.grade}</div>
+                      <div className="text-sm text-muted-foreground mb-1">
+                        Grade
+                      </div>
+                      <div className="text-amber-400 font-medium">
+                        {certificate?.metadata.grade}
+                      </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">
+                      <div className="text-sm text-muted-foreground mb-1">
                         Recipient
                       </div>
-                      <div>{certificate?.user.name}</div>
+                      <div className="text-foreground">
+                        {certificate?.user.name}
+                      </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">
+                      <div className="text-sm text-muted-foreground mb-1">
                         Certificate ID
                       </div>
-                      <div>{certificate?.certificate_number}</div>
+                      <div className="text-foreground">
+                        {certificate?.certificate_number}
+                      </div>
                     </div>
                   </div>
                 </Card>
 
                 <Card className="p-6">
-                  <h2 className="text-xl font-bold mb-4">Verification</h2>
-                  <p className="text-gray-600 mb-4">
+                  <h2 className="text-xl font-bold mb-4 text-foreground">
+                    Verification
+                  </h2>
+                  <p className="text-muted-foreground mb-4">
                     This certificate can be verified by potential employers or
                     educational institutions using the Certificate ID.
                   </p>
-                  <div className="p-3 bg-gray-100 rounded-md mb-4 font-mono text-sm">
+                  <div className="p-3 bg-muted/50 border border-border rounded-md mb-4 font-mono text-sm text-foreground">
                     {certificate?.certificate_number}
                   </div>
                   <Button variant="outline" className="w-full">

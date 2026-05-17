@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ds/primitives/Button';
 import {
@@ -11,6 +11,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ds/primitives/Progress';
+import ReactMarkdown from 'react-markdown';
 import {
   ChevronLeft,
   Clock,
@@ -34,7 +35,7 @@ interface AnswerData {
   answer: string | string[];
 }
 
-const AssignmentPage = () => {
+const AssignmentPage = ({ isPreview = false }: { isPreview: boolean }) => {
   const { courseId, assignmentId } = useParams<{
     courseId: string;
     assignmentId: string;
@@ -302,7 +303,7 @@ const AssignmentPage = () => {
   }
 
   // Show start screen if assignment hasn't been started yet
-  if (!hasStarted && !isSubmitted && !isExpired) {
+  if (!hasStarted && !isSubmitted && !isExpired && !isPreview) {
     return (
       <MainLayout>
         <div className="min-h-screen bg-[#0f172a]">
@@ -365,7 +366,7 @@ const AssignmentPage = () => {
       <div className="min-h-screen bg-[#0f172a]">
         {/* Header */}
         <div className="bg-[#0f172a] border-b border-neutral-700 px-4 py-4">
-          <div className="max-w-4xl mx-auto">
+          <div className="container mx-auto">
             <div className="flex items-center justify-between">
               <Button
                 onClick={(e) => {
@@ -396,7 +397,7 @@ const AssignmentPage = () => {
         </div>
 
         {/* Main Content */}
-        <div className="max-w-4xl mx-auto p-6">
+        <div className="container p-6">
           {/* Assignment Info */}
           <Card variant="elevated" className="mb-6">
             <CardHeader>
@@ -515,14 +516,16 @@ const AssignmentPage = () => {
                           ? 'bg-amber-500/20 text-amber-300'
                           : existingSubmission.status === 'SUBMITTED'
                             ? 'bg-violet-600/20 text-violet-300'
-                            : 'bg-neutral-700 text-neutral-300'
+                            : existingSubmission.status === 'AI_GRADED'
+                              ? 'bg-violet-600/20 text-violet-300'
+                              : 'bg-neutral-700 text-neutral-300'
                       }`}
                     >
                       {existingSubmission.status}
                     </span>
                   </div>
                   {existingSubmission.submitted_at && (
-                    <div>
+                    <div className="flex justify-end">
                       <span className="font-medium">Submitted:</span>
                       <span className="ml-2">
                         {new Date(
@@ -534,20 +537,71 @@ const AssignmentPage = () => {
                   {existingSubmission.score !== null && (
                     <div>
                       <span className="font-medium">Score:</span>
-                      <span className="ml-2">
+                      <span className="ml-2 text-amber-300 font-bold">
                         {existingSubmission.score}/{assignment.max_score || 100}
+                        <span className="ml-1 text-neutral-400 font-normal">
+                          (
+                          {Math.round(
+                            (existingSubmission.score /
+                              (assignment.max_score || 100)) *
+                              100
+                          )}
+                          %)
+                        </span>
                       </span>
                     </div>
                   )}
-                  {existingSubmission.feedback && (
-                    <div className="col-span-2">
-                      <span className="font-medium">Feedback:</span>
-                      <p className="mt-1 text-neutral-400">
-                        {existingSubmission.feedback}
-                      </p>
-                    </div>
-                  )}
                 </div>
+
+                {/* Per-question feedback (parsed from feedback field) */}
+                {existingSubmission.feedback && (
+                  <div className="mt-4 space-y-3">
+                    <p className="font-medium text-neutral-200">
+                      Teacher Feedback:
+                    </p>
+                    {existingSubmission.feedback.includes(
+                      '--- Per-Question Feedback ---'
+                    ) ? (
+                      <>
+                        {/* Overall feedback */}
+                        <div className="prose prose-sm prose-invert max-w-none [&_p]:mb-1 [&_ul]:mb-1 [&_li]:mb-0">
+                          <ReactMarkdown>
+                            {existingSubmission.feedback
+                              .split('--- Per-Question Feedback ---')[0]
+                              .trim()}
+                          </ReactMarkdown>
+                        </div>
+                        {/* Per-question feedback */}
+                        <div className="space-y-2 mt-3">
+                          <p className="text-xs font-medium text-violet-400">
+                            Per-Question Feedback:
+                          </p>
+                          {existingSubmission.feedback
+                            .split('--- Per-Question Feedback ---')[1]
+                            .trim()
+                            .split('\n')
+                            .filter((line: string) => line.trim())
+                            .map((line: string, i: number) => (
+                              <div
+                                key={i}
+                                className="bg-violet-500/10 border border-violet-500/20 p-3 rounded-lg"
+                              >
+                                <div className="prose prose-sm prose-invert max-w-none text-sm [&_p]:mb-0">
+                                  <ReactMarkdown>{line}</ReactMarkdown>
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="prose prose-sm prose-invert max-w-none [&_p]:mb-1 [&_ul]:mb-1 [&_li]:mb-0">
+                        <ReactMarkdown>
+                          {existingSubmission.feedback}
+                        </ReactMarkdown>
+                      </div>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}
@@ -573,6 +627,20 @@ const QuestionCard = ({
   onAnswerChange,
   disabled = false,
 }: QuestionCardProps) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-resize textarea on value change and initial render
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (el) {
+      // Reset to 0 to get accurate scrollHeight measurement
+      el.style.height = '0px';
+      const scrollHeight = el.scrollHeight;
+      const minH = question.is_essay ? 120 : 80;
+      el.style.height = Math.max(scrollHeight, minH) + 'px';
+    }
+  }, [answer, question.is_essay]);
+
   const renderQuestionContent = () => {
     if (question.is_multiple_choice) {
       return (
@@ -594,24 +662,16 @@ const QuestionCard = ({
           ))}
         </RadioGroup>
       );
-    } else if (question.is_essay) {
-      return (
-        <Textarea
-          value={(answer as string) || ''}
-          onChange={(e) => onAnswerChange(e.target.value)}
-          disabled={disabled}
-          placeholder="Enter your answer here..."
-          className="min-h-[120px]"
-        />
-      );
     } else {
       return (
-        <Textarea
+        <textarea
+          ref={textareaRef}
           value={(answer as string) || ''}
           onChange={(e) => onAnswerChange(e.target.value)}
           disabled={disabled}
           placeholder="Enter your answer here..."
-          className="min-h-[80px]"
+          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none overflow-hidden"
+          style={{ minHeight: question.is_essay ? '120px' : '80px' }}
         />
       );
     }

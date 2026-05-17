@@ -1,9 +1,17 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import {
   Select,
   SelectContent,
@@ -29,22 +37,23 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
   ChevronLeft,
   Plus,
   Search,
-  Filter,
   MoreVertical,
   Edit,
   Trash2,
   Eye,
   Users,
-  Clock,
-  Calendar,
-  FileText,
-  CheckCircle,
-  AlertCircle,
-  XCircle,
   BookOpen,
+  Sparkles,
+  PenLine,
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -60,6 +69,7 @@ const AssignmentManagementPage = () => {
   const { toast } = useToast();
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
 
@@ -105,52 +115,32 @@ const AssignmentManagementPage = () => {
   const filteredAssignments = assignments.filter(
     (assignment: Assignment) =>
       assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      assignment.description.toLowerCase().includes(searchTerm.toLowerCase())
+      assignment.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getStatusBadge = (assignment: Assignment) => {
-    if (assignment.status === 'DRAFT') {
-      return <Badge variant="secondary">Draft</Badge>;
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'DRAFT':
+        return <Badge variant="secondary">Draft</Badge>;
+      case 'PUBLISHED':
+        return <Badge variant="default">Published</Badge>;
+      case 'ACTIVE':
+        return (
+          <Badge variant="outline" className="border-green-500 text-green-500">
+            Active
+          </Badge>
+        );
+      default:
+        return <Badge variant="outline">{status}</Badge>;
     }
-    if (assignment.is_submitted) {
-      return <Badge variant="default">Completed</Badge>;
-    }
-    if (assignment.is_expired) {
-      return <Badge variant="destructive">Expired</Badge>;
-    }
-    return <Badge variant="outline">Available</Badge>;
-  };
-
-  const getStatusIcon = (assignment: Assignment) => {
-    if (assignment.status === 'DRAFT') {
-      return <FileText className="h-4 w-4 text-gray-500" />;
-    }
-    if (assignment.is_submitted) {
-      return <CheckCircle className="h-4 w-4 text-green-500" />;
-    }
-    if (assignment.is_expired) {
-      return <XCircle className="h-4 w-4 text-red-500" />;
-    }
-    return <AlertCircle className="h-4 w-4 text-blue-500" />;
   };
 
   const formatTimeLimit = (minutes: number) => {
-    if (!minutes) return 'No limit';
-    if (minutes < 60) {
-      return `${minutes}min`;
-    } else if (minutes === 60) {
-      return '1hr';
-    } else if (minutes % 60 === 0) {
-      return `${minutes / 60}hrs`;
-    } else {
-      const hours = Math.floor(minutes / 60);
-      const remainingMinutes = minutes % 60;
-      return `${hours}h ${remainingMinutes}m`;
-    }
-  };
-
-  const handleDeleteAssignment = (assignmentId: string) => {
-    deleteAssignmentMutation.mutate(assignmentId);
+    if (!minutes) return '—';
+    if (minutes < 60) return `${minutes}min`;
+    if (minutes === 60) return '1hr';
+    if (minutes % 60 === 0) return `${minutes / 60}hrs`;
+    return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
   };
 
   return (
@@ -163,19 +153,16 @@ const AssignmentManagementPage = () => {
               variant="ghost"
               size="sm"
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 border border-sm"
             >
               <ChevronLeft className="h-4 w-4" />
-              Back
             </Button>
             <div className="flex-1">
               <h1 className="text-2xl font-bold">Assignment Management</h1>
               <p className="text-muted-foreground">Course: {course?.title}</p>
             </div>
             <Button
-              onClick={() =>
-                navigate(`/admin/courses/${courseId}/assignments/create`)
-              }
+              onClick={() => setShowCreateModal(true)}
               className="flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />
@@ -183,24 +170,67 @@ const AssignmentManagementPage = () => {
             </Button>
           </div>
 
-          {/* Filters and Search */}
+          {/* Create Assignment Choice Modal */}
+          <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Create Assignment</DialogTitle>
+              </DialogHeader>
+              <div className="grid grid-cols-1 gap-4 py-4">
+                <button
+                  onClick={() => {
+                    setShowCreateModal(false);
+                    navigate(`/admin/courses/${courseId}/assignments/generate`);
+                  }}
+                  className="flex items-start gap-4 p-4 rounded-lg border border-violet-500/30 bg-violet-500/5 hover:bg-violet-500/10 transition-colors text-left"
+                >
+                  <div className="p-2 rounded-lg bg-violet-500/20">
+                    <Sparkles className="h-6 w-6 text-violet-500" />
+                  </div>
+                  <div>
+                    <p className="font-semibold">Generate with AI</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      AI generates questions from your lesson content.
+                    </p>
+                  </div>
+                </button>
+                <button
+                  onClick={() => {
+                    setShowCreateModal(false);
+                    navigate(`/admin/courses/${courseId}/assignments/create`);
+                  }}
+                  className="flex items-start gap-4 p-4 rounded-lg border border-border hover:bg-muted/50 transition-colors text-left"
+                >
+                  <div className="p-2 rounded-lg bg-muted">
+                    <PenLine className="h-6 w-6 text-foreground" />
+                  </div>
+                  <div>
+                    <p className="font-semibold">Create Manually</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Write your own questions and configure scoring.
+                    </p>
+                  </div>
+                </button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {/* Filters */}
           <Card className="mb-6">
             <CardContent className="pt-6">
               <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <Input
-                      placeholder="Search assignments..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input
+                    placeholder="Search assignments..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
                 </div>
                 <div className="flex gap-2">
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-[140px]">
+                    <SelectTrigger className="w-[130px]">
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -210,7 +240,7 @@ const AssignmentManagementPage = () => {
                     </SelectContent>
                   </Select>
                   <Select value={typeFilter} onValueChange={setTypeFilter}>
-                    <SelectTrigger className="w-[140px]">
+                    <SelectTrigger className="w-[150px]">
                       <SelectValue placeholder="Type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -228,209 +258,165 @@ const AssignmentManagementPage = () => {
             </CardContent>
           </Card>
 
-          {/* Assignments List */}
-          {filteredAssignments.length === 0 ? (
-            <Card>
-              <CardContent className="text-center py-12">
-                <BookOpen className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                <h3 className="text-lg font-medium mb-2">
-                  No assignments found
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  {assignments.length === 0
-                    ? "You haven't created any assignments yet."
-                    : 'No assignments match your current filters.'}
-                </p>
-                {assignments.length === 0 && (
-                  <Button
-                    onClick={() =>
-                      navigate(`/admin/courses/${courseId}/assignments/create`)
-                    }
-                    className="flex items-center gap-2"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Create Your First Assignment
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-4">
-              {filteredAssignments.map((assignment: Assignment) => (
-                <AssignmentCard
-                  key={assignment.id}
-                  assignment={assignment}
-                  courseId={courseId!}
-                  onDelete={handleDeleteAssignment}
-                  getStatusBadge={getStatusBadge}
-                  getStatusIcon={getStatusIcon}
-                  formatTimeLimit={formatTimeLimit}
-                />
-              ))}
-            </div>
-          )}
+          {/* Assignments Table */}
+          <Card>
+            <CardContent className="p-0">
+              {filteredAssignments.length === 0 ? (
+                <div className="text-center py-12">
+                  <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground/40" />
+                  <h3 className="text-lg font-medium mb-2">
+                    No assignments found
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    {assignments.length === 0
+                      ? "You haven't created any assignments yet."
+                      : 'No assignments match your filters.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/50">
+                        <TableHead>Title</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Questions</TableHead>
+                        <TableHead>Submissions</TableHead>
+                        <TableHead>Time Limit</TableHead>
+                        <TableHead>Max Score</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredAssignments.map((assignment: Assignment) => (
+                        <TableRow key={assignment.id}>
+                          <TableCell className="font-medium max-w-[200px]">
+                            <Link
+                              to={`/admin/courses/${courseId}/assignments/${assignment.id}`}
+                              className="hover:text-primary transition-colors line-clamp-1"
+                            >
+                              {assignment.title}
+                            </Link>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="text-xs">
+                              {assignment.type}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {getStatusBadge(assignment.status)}
+                          </TableCell>
+                          <TableCell>
+                            {assignment.questions_count || 0}
+                          </TableCell>
+                          <TableCell>
+                            <Link
+                              to={`/admin/courses/${courseId}/assignments/${assignment.id}/submissions`}
+                              className="text-primary hover:underline"
+                            >
+                              {assignment.submissions_count || 0}
+                            </Link>
+                          </TableCell>
+                          <TableCell>
+                            {formatTimeLimit(assignment.date_limit)}
+                          </TableCell>
+                          <TableCell>{assignment.max_score || 0} pts</TableCell>
+                          <TableCell className="text-right">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem asChild>
+                                  <Link
+                                    to={`/admin/courses/${courseId}/assignments/${assignment.id}`}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <Eye className="h-4 w-4" />
+                                    Preview
+                                  </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                  <Link
+                                    to={`/admin/courses/${courseId}/assignments/${assignment.id}/edit`}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                    Edit
+                                  </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                  <Link
+                                    to={`/admin/courses/${courseId}/assignments/${assignment.id}/submissions`}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <Users className="h-4 w-4" />
+                                    Submissions
+                                  </Link>
+                                </DropdownMenuItem>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem
+                                      onSelect={(e) => e.preventDefault()}
+                                      className="text-red-600 focus:text-red-600"
+                                    >
+                                      <Trash2 className="h-4 w-4 mr-2" />
+                                      Delete
+                                    </DropdownMenuItem>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>
+                                        Delete Assignment
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Are you sure you want to delete "
+                                        {assignment.title}"? This cannot be
+                                        undone.
+                                        {(assignment.submissions_count ?? 0) >
+                                          0 && (
+                                          <span className="block mt-2 text-red-600 font-medium">
+                                            Warning:{' '}
+                                            {assignment.submissions_count}{' '}
+                                            submission(s) exist.
+                                          </span>
+                                        )}
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>
+                                        Cancel
+                                      </AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() =>
+                                          deleteAssignmentMutation.mutate(
+                                            assignment.id
+                                          )
+                                        }
+                                        className="bg-red-600 hover:bg-red-700"
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </WrapperLoading>
     </AdminLayout>
-  );
-};
-
-interface AssignmentCardProps {
-  assignment: Assignment;
-  courseId: string;
-  onDelete: (assignmentId: string) => void;
-  getStatusBadge: (assignment: Assignment) => JSX.Element;
-  getStatusIcon: (assignment: Assignment) => JSX.Element;
-  formatTimeLimit: (minutes: number) => string;
-}
-
-const AssignmentCard = ({
-  assignment,
-  courseId,
-  onDelete,
-  getStatusBadge,
-  getStatusIcon,
-  formatTimeLimit,
-}: AssignmentCardProps) => {
-  return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              {getStatusIcon(assignment)}
-              <h3 className="text-lg font-semibold">{assignment.title}</h3>
-              {getStatusBadge(assignment)}
-              <Badge variant="outline">{assignment.type}</Badge>
-            </div>
-
-            <p className="text-muted-foreground mb-4 line-clamp-2">
-              {assignment.description}
-            </p>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-gray-500" />
-                <div>
-                  <p className="text-muted-foreground">Time Limit</p>
-                  <p className="font-medium">
-                    {formatTimeLimit(assignment.date_limit)}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4 text-gray-500" />
-                <div>
-                  <p className="text-muted-foreground">Questions</p>
-                  <p className="font-medium">
-                    {assignment.questions_count || 0}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-gray-500" />
-                <div>
-                  <p className="text-muted-foreground">Submissions</p>
-                  <p className="font-medium">
-                    {assignment.submissions_count || 0}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-gray-500" />
-                <div>
-                  <p className="text-muted-foreground">Max Score</p>
-                  <p className="font-medium">{assignment.max_score || 0} pts</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 ml-4">
-            <Button
-              variant="outline"
-              size="sm"
-              asChild
-              className="flex items-center gap-2"
-            >
-              <Link
-                to={`/admin/courses/${courseId}/assignments/${assignment.id}/submissions`}
-              >
-                <Users className="h-4 w-4" />
-                View Submissions
-              </Link>
-            </Button>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  <Link
-                    to={`/admin/courses/${courseId}/assignments/${assignment.id}`}
-                    className="flex items-center gap-2"
-                  >
-                    <Eye className="h-4 w-4" />
-                    Preview
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link
-                    to={`/admin/courses/${courseId}/assignments/${assignment.id}/edit`}
-                    className="flex items-center gap-2"
-                  >
-                    <Edit className="h-4 w-4" />
-                    Edit
-                  </Link>
-                </DropdownMenuItem>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <DropdownMenuItem
-                      onSelect={(e) => e.preventDefault()}
-                      className="text-red-600 focus:text-red-600"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </DropdownMenuItem>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Assignment</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to delete "{assignment.title}"?
-                        This action cannot be undone.
-                        {assignment.submissions_count &&
-                          assignment.submissions_count > 0 && (
-                            <span className="block mt-2 text-red-600 font-medium">
-                              Warning: This assignment has{' '}
-                              {assignment.submissions_count} submission(s).
-                            </span>
-                          )}
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => onDelete(assignment.id)}
-                        className="bg-red-600 hover:bg-red-700"
-                      >
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
   );
 };
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,6 +20,9 @@ import {
   FileEdit,
   Trash2,
   EyeIcon,
+  MoreHorizontal,
+  ShieldAlert,
+  KeyRound,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Badge } from '@/components/ui/badge';
@@ -50,10 +53,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import StudentForm from '@/components/admin/StudentForm';
+import { UserStatusModal } from '@/components/admin/UserStatusModal';
+import { UserPasswordModal } from '@/components/admin/UserPasswordModal';
 
 const StudentsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const { user } = useAuth();
+  const { user, isAdmin, isTeacher } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -62,12 +67,22 @@ const StudentsPage = () => {
   const [formMode, setFormMode] = useState<'view' | 'edit' | 'create'>(
     'create'
   );
-
-  const { data: students = [], isLoading } = useQuery({
-    queryKey: ['students'],
-    queryFn: () => userService.getStudents().then((res) => res.data || []),
-    enabled: user?.isAdmin === true || user?.role === 'admin',
+  const [statusModalState, setStatusModalState] = useState({
+    isOpen: false,
+    student: null as User | null,
   });
+  const [passwordModalState, setPasswordModalState] = useState({
+    isOpen: false,
+    student: null as User | null,
+  });
+
+  const { data: dataStudents = [], isLoading } = useQuery({
+    queryKey: ['students'],
+    queryFn: async () => await userService.getStudents(),
+    enabled: isAdmin || isTeacher,
+  });
+
+  const students = useMemo(() => dataStudents?.students || [], [dataStudents]);
 
   const filteredStudents = students.filter(
     (student: User) =>
@@ -93,6 +108,69 @@ const StudentsPage = () => {
       });
     },
   });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: ({
+      userId,
+      status,
+    }: {
+      userId: string;
+      status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+    }) => userService.updateStatusByAdmin(userId, { status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['students'] });
+      toast({
+        title: 'Status updated',
+        description: 'Student status has been updated successfully.',
+      });
+      setStatusModalState({ isOpen: false, student: null });
+    },
+    onError: () => {
+      toast({
+        title: 'Error',
+        description: 'Failed to update student status.',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const updatePasswordMutation = useMutation({
+    mutationFn: ({ userId, password }: { userId: string; password: string }) =>
+      userService.updatePasswordByAdmin(userId, {
+        password,
+        password_confirmation: password,
+      }),
+    onSuccess: () => {
+      toast({
+        title: 'Password reset',
+        description: 'Student password has been reset successfully.',
+      });
+      setPasswordModalState({ isOpen: false, student: null });
+    },
+    onError: () => {
+      toast({
+        title: 'Error',
+        description: 'Failed to reset student password.',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const exportToCSV = () => {
+    if (!filteredStudents.length) return;
+    const headers = ['Name', 'Email', 'Role', 'Status'];
+    const rows = filteredStudents.map((s: User) =>
+      [s.name, s.email, s.role, (s as any).status || 'active'].join(',')
+    );
+    const csvContent = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', 'students.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -153,29 +231,10 @@ const StudentsPage = () => {
     setShowStudentForm(true);
   };
 
-  const LayoutComponent = user?.isAdmin ? AdminLayout : 'div';
-  const layoutProps = user?.isAdmin ? { title: 'Manage Students' } : {};
-
   return (
-    <LayoutComponent {...layoutProps}>
-      <div className="container mx-auto px-4 py-8">
-        {!user?.isAdmin && (
-          <h1 className="text-3xl font-bold mb-6">Students</h1>
-        )}
-
-        <Card className="mb-8 shadow-md">
-          <CardHeader className="pb-2">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <CardTitle>Manage Students</CardTitle>
-              <Button
-                className="flex items-center gap-2"
-                onClick={handleAddStudent}
-              >
-                <UserPlus size={16} />
-                <span>Add Student</span>
-              </Button>
-            </div>
-          </CardHeader>
+    <AdminLayout title={'Manage Students'}>
+      <div className="container mx-auto px-4 ">
+        <Card className="mb-8 shadow-md py-8">
           <CardContent>
             <div className="flex flex-col md:flex-row gap-4 mb-6">
               <div className="relative flex-1">
@@ -191,13 +250,20 @@ const StudentsPage = () => {
                 />
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Filter size={16} />
-                  <span>Filter</span>
-                </Button>
-                <Button variant="outline" className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2"
+                  onClick={exportToCSV}
+                >
                   <Download size={16} />
                   <span>Export</span>
+                </Button>
+                <Button
+                  className="flex items-center gap-2"
+                  onClick={handleAddStudent}
+                >
+                  <UserPlus size={16} />
+                  <span>Add Student</span>
                 </Button>
               </div>
             </div>
@@ -277,7 +343,7 @@ const StudentsPage = () => {
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="sm">
-                                Actions
+                                <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
@@ -292,6 +358,28 @@ const StudentsPage = () => {
                               >
                                 <FileEdit className="mr-2 h-4 w-4" />
                                 <span>Edit</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  setStatusModalState({
+                                    isOpen: true,
+                                    student,
+                                  })
+                                }
+                              >
+                                <ShieldAlert className="mr-2 h-4 w-4" />
+                                <span>Change Status</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  setPasswordModalState({
+                                    isOpen: true,
+                                    student,
+                                  })
+                                }
+                              >
+                                <KeyRound className="mr-2 h-4 w-4" />
+                                <span>Reset Password</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => handleAction('delete', student)}
@@ -352,7 +440,44 @@ const StudentsPage = () => {
           />
         </DialogContent>
       </Dialog>
-    </LayoutComponent>
+
+      {/* Status update modal */}
+      {statusModalState.student && (
+        <UserStatusModal
+          isOpen={statusModalState.isOpen}
+          onOpenChange={(open) =>
+            setStatusModalState((prev) => ({ ...prev, isOpen: open }))
+          }
+          userName={statusModalState.student.name}
+          currentStatus={(statusModalState.student as any).status || 'ACTIVE'}
+          onStatusUpdate={(status) =>
+            updateStatusMutation.mutate({
+              userId: statusModalState.student!.id,
+              status,
+            })
+          }
+          isLoading={updateStatusMutation.isPending}
+        />
+      )}
+
+      {/* Password reset modal */}
+      {passwordModalState.student && (
+        <UserPasswordModal
+          isOpen={passwordModalState.isOpen}
+          onOpenChange={(open) =>
+            setPasswordModalState((prev) => ({ ...prev, isOpen: open }))
+          }
+          userName={passwordModalState.student.name}
+          onPasswordUpdate={(password) =>
+            updatePasswordMutation.mutate({
+              userId: passwordModalState.student!.id,
+              password,
+            })
+          }
+          isLoading={updatePasswordMutation.isPending}
+        />
+      )}
+    </AdminLayout>
   );
 };
 
