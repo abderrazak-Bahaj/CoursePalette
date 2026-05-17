@@ -114,6 +114,9 @@ const CreateAssignmentPage = () => {
         title: isEditMode ? 'Assignment Updated' : 'Assignment Created',
         description: `Assignment has been ${isEditMode ? 'updated' : 'created'} successfully.`,
       });
+      queryClient.invalidateQueries({
+        queryKey: ['course-assignments', courseId],
+      });
       navigate(`/admin/courses/${courseId}/assignments`);
     },
     onError: () => {

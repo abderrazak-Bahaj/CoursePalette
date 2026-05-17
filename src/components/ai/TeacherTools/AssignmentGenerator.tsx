@@ -359,24 +359,34 @@ export const AssignmentGenerator = memo(function AssignmentGenerator({
     ]
   );
 
-  const handleSave = useCallback(async () => {
-    if (!generatedAssignment || isSaving) return;
+  const handleSave = useCallback(
+    async (status: 'DRAFT' | 'PUBLISHED' = 'DRAFT') => {
+      if (!generatedAssignment || isSaving) return;
 
-    // Run validation first — saveAssignment also validates, but we want to
-    // surface the error without throwing.
-    if (!validatePoints()) return;
+      // Run validation first — saveAssignment also validates, but we want to
+      // surface the error without throwing.
+      if (!validatePoints()) return;
 
-    setIsSaving(true);
-    try {
-      await saveAssignment(title);
-      setSaveSuccess(true);
-      onSave?.(generatedAssignment);
-    } catch {
-      // Error is already set in the hook state; nothing extra needed here.
-    } finally {
-      setIsSaving(false);
-    }
-  }, [generatedAssignment, isSaving, validatePoints, saveAssignment, onSave]);
+      setIsSaving(true);
+      try {
+        await saveAssignment(title, status);
+        setSaveSuccess(true);
+        onSave?.(generatedAssignment);
+      } catch {
+        // Error is already set in the hook state; nothing extra needed here.
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [
+      generatedAssignment,
+      isSaving,
+      validatePoints,
+      saveAssignment,
+      onSave,
+      title,
+    ]
+  );
 
   const handleReset = useCallback(() => {
     reset();
@@ -636,14 +646,29 @@ export const AssignmentGenerator = memo(function AssignmentGenerator({
             </div>
           )}
 
-          {/* Save button */}
-          <div className="flex justify-end">
+          {/* Save buttons */}
+          <div className="flex justify-end gap-3">
             <button
               type="button"
-              onClick={handleSave}
+              onClick={() => handleSave('DRAFT')}
+              disabled={isSaving || saveSuccess}
+              className={cn(
+                'flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-colors',
+                'min-h-[44px]',
+                'border border-input bg-background text-foreground hover:bg-accent',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+                'disabled:pointer-events-none disabled:opacity-50'
+              )}
+            >
+              <Save className="h-4 w-4" aria-hidden="true" />
+              Save as Draft
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSave('PUBLISHED')}
               disabled={isSaving || saveSuccess}
               aria-label={
-                isSaving ? 'Saving assignment…' : 'Save generated assignment'
+                isSaving ? 'Saving assignment…' : 'Save and publish assignment'
               }
               className={cn(
                 'flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-colors',
@@ -664,7 +689,7 @@ export const AssignmentGenerator = memo(function AssignmentGenerator({
               ) : (
                 <>
                   <Save className="h-4 w-4" aria-hidden="true" />
-                  Save Assignment
+                  Save & Publish
                 </>
               )}
             </button>

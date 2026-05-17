@@ -77,7 +77,10 @@ export interface UseAssignmentGenerationReturn {
    *
    * @throws When validation fails or the API call fails.
    */
-  saveAssignment: (title?: string) => Promise<void>;
+  saveAssignment: (
+    title?: string,
+    status?: 'DRAFT' | 'PUBLISHED'
+  ) => Promise<void>;
   /** Reset all state back to initial values. */
   reset: () => void;
 }
@@ -249,7 +252,10 @@ export function useAssignmentGeneration(
   // ── saveAssignment ────────────────────────────────────────────────────────
 
   const saveAssignment = useCallback(
-    async (customTitle?: string): Promise<void> => {
+    async (
+      customTitle?: string,
+      customStatus?: 'DRAFT' | 'PUBLISHED'
+    ): Promise<void> => {
       if (!generatedAssignment) {
         throw new Error('No assignment has been generated yet.');
       }
@@ -275,7 +281,7 @@ export function useAssignmentGeneration(
         title: customTitle || 'AI Generated Assignment',
         description: generatedAssignment.rubric,
         type: 'QUIZ',
-        status: 'DRAFT',
+        status: customStatus || 'DRAFT',
         max_score: totalScore,
         questions: generatedAssignment.questions.map((q, idx) => ({
           question: q.text,

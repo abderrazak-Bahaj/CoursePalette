@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ChevronLeft, Sparkles, Loader2 } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { courseService } from '@/services/api';
 import AdminLayout from '@/components/layout/AdminLayout';
 import WrapperLoading from '@/components/ui/wrapper-loading';
@@ -27,6 +27,7 @@ const LazyAssignmentGenerator = lazy(() =>
 const GenerateAssignmentPage = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
   const [assignmentTitle, setAssignmentTitle] = useState('');
@@ -57,6 +58,9 @@ const GenerateAssignmentPage = () => {
   const lessons = lessonsData?.lessons || [];
 
   const handleGenerated = () => {
+    queryClient.invalidateQueries({
+      queryKey: ['course-assignments', courseId],
+    });
     navigate(`/admin/courses/${courseId}/assignments`);
   };
 

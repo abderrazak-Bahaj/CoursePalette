@@ -364,7 +364,7 @@ const AppRoutes = () => (
       element={
         <RouteWrapper accessType="ALL">
           <SuspenseWrapper>
-            <AssignmentPage />
+            <AssignmentPage isPreview={false} />
           </SuspenseWrapper>
         </RouteWrapper>
       }
