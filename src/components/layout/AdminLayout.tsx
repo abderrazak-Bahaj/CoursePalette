@@ -5,15 +5,12 @@ import {
   LayoutDashboard,
   FolderKanban,
   Users,
-  BarChart3,
-  Settings,
   LogOut,
   UsersRound,
   User,
-  Lock,
   File,
   Files,
-  ClipboardList,
+  GraduationCap,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -41,22 +38,16 @@ interface AdminLayoutProps {
   title?: string;
 }
 
-// Inner component that has access to UI sidebar context
 const AdminLayoutInner = ({ children, title }: AdminLayoutProps) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { isCollapsed, setSidebarCollapsed } = useCustomSidebar();
+  const { setSidebarCollapsed } = useCustomSidebar();
   const { state: sidebarState } = useUISidebar();
 
-  // Sync UI sidebar state with our context
   useEffect(() => {
-    if (sidebarState === 'collapsed') {
-      setSidebarCollapsed(true);
-    } else {
-      setSidebarCollapsed(false);
-    }
+    setSidebarCollapsed(sidebarState === 'collapsed');
   }, [sidebarState, setSidebarCollapsed]);
 
   const handleLogout = async () => {
@@ -67,7 +58,7 @@ const AdminLayoutInner = ({ children, title }: AdminLayoutProps) => {
         title: 'Logged out successfully',
         description: 'You have been logged out of your account',
       });
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to log out. Please try again.',
@@ -85,21 +76,21 @@ const AdminLayoutInner = ({ children, title }: AdminLayoutProps) => {
   };
 
   const baseLinks = [
-    { to: '/admin/dashboard', label: 'Dashboard', icon: <LayoutDashboard /> },
-    { to: '/admin/courses', label: 'Courses', icon: <FolderKanban /> },
-    { to: '/admin/lessons', label: 'Lessons', icon: <BookText /> },
+    { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { to: '/admin/courses', label: 'Courses', icon: FolderKanban },
+    { to: '/admin/lessons', label: 'Lessons', icon: BookText },
   ];
 
-  const newink =
+  const invoiceLink =
     user?.role === 'ADMIN'
-      ? { to: '/admin/all-invoices', label: 'All Invoices', icon: <Files /> }
-      : { to: '/admin/invoices', label: 'Invoices', icon: <File /> };
+      ? { to: '/admin/all-invoices', label: 'All Invoices', icon: Files }
+      : { to: '/admin/invoices', label: 'Invoices', icon: File };
 
   const adminLinks = [
-    { to: '/admin/instructors', label: 'Instructors', icon: <UsersRound /> },
-    { to: '/admin/students', label: 'Students', icon: <Users /> },
-    { to: '/admin/categories', label: 'Categories', icon: <FolderKanban /> },
-    newink,
+    { to: '/admin/instructors', label: 'Instructors', icon: UsersRound },
+    { to: '/admin/students', label: 'Students', icon: Users },
+    { to: '/admin/categories', label: 'Categories', icon: FolderKanban },
+    invoiceLink,
   ];
 
   const mainLinks = [
@@ -107,9 +98,7 @@ const AdminLayoutInner = ({ children, title }: AdminLayoutProps) => {
     ...(user?.role === 'ADMIN' ? adminLinks : []),
   ];
 
-  const accountLinks = [
-    { to: '/admin/profile', label: 'Profile', icon: <User /> },
-  ];
+  const accountLinks = [{ to: '/admin/profile', label: 'Profile', icon: User }];
 
   const isActive = (path: string) => {
     if (path === '/admin/dashboard') {
@@ -122,53 +111,58 @@ const AdminLayoutInner = ({ children, title }: AdminLayoutProps) => {
     <div className="flex min-h-screen w-full">
       <Sidebar
         variant="inset"
-        className="border-r bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-slate-100"
         collapsible="icon"
+        className="border-r border-[#1e293b] bg-[#0c1222]"
       >
-        <SidebarHeader className="border-b border-slate-800/50">
-          <div className="flex items-center gap-2 px-4 py-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
-              <BookText className="h-4 w-4 text-primary-foreground" />
+        {/* Logo */}
+        <SidebarHeader className="border-b border-white/5 px-4 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-violet-700 shadow-lg shadow-violet-500/20">
+              <GraduationCap className="h-5 w-5 text-white" />
             </div>
             <div className="group-data-[collapsible=icon]:hidden">
-              <span className="text-sm font-semibold tracking-tight">
-                ELearning
+              <span className="text-sm font-bold text-neutral-50 tracking-tight">
+                CoursePalette
               </span>
-              <p className="text-[10px] text-slate-400">Admin Portal</p>
+              <p className="text-[10px] text-neutral-500">
+                {user?.role === 'ADMIN' ? 'Admin Panel' : 'Teacher Panel'}
+              </p>
             </div>
           </div>
         </SidebarHeader>
-        <SidebarContent className="px-2 py-3">
+
+        {/* Navigation */}
+        <SidebarContent className="px-3 py-4">
           <SidebarGroup>
-            <SidebarGroupLabel className="px-2 text-[10px] font-medium text-slate-400 group-data-[collapsible=icon]:hidden">
-              Main Navigation
+            <SidebarGroupLabel className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-neutral-500 group-data-[collapsible=icon]:hidden">
+              Navigation
             </SidebarGroupLabel>
-            <SidebarMenu className="mt-1 space-y-0.5">
-              {mainLinks.map(({ to, label, icon }) => (
+            <SidebarMenu className="space-y-1">
+              {mainLinks.map(({ to, label, icon: Icon }) => (
                 <SidebarMenuItem key={to}>
                   <SidebarMenuButton asChild tooltip={label}>
                     <a
                       href={to}
                       onClick={(e) => handleClickLink(e, to)}
                       className={cn(
-                        'flex items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium transition-colors',
-                        'hover:bg-white/10 hover:text-slate-100',
-                        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-700',
-                        isActive(to) &&
-                          'bg-violet-600/10 text-violet-400 border-l-2 border-violet-500'
+                        'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200',
+                        isActive(to)
+                          ? 'bg-violet-500/15 text-violet-400 shadow-sm shadow-violet-500/5'
+                          : 'text-neutral-400 hover:bg-white/5 hover:text-neutral-200'
                       )}
                     >
-                      <span
+                      <Icon
                         className={cn(
-                          'text-slate-400',
-                          isActive(to) && 'text-violet-400'
+                          'h-4 w-4 shrink-0',
+                          isActive(to) ? 'text-violet-400' : 'text-neutral-500'
                         )}
-                      >
-                        {icon}
-                      </span>
+                      />
                       <span className="group-data-[collapsible=icon]:hidden">
                         {label}
                       </span>
+                      {isActive(to) && (
+                        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-violet-400 group-data-[collapsible=icon]:hidden" />
+                      )}
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -176,33 +170,30 @@ const AdminLayoutInner = ({ children, title }: AdminLayoutProps) => {
             </SidebarMenu>
           </SidebarGroup>
 
-          <SidebarGroup className="mt-4">
-            <SidebarGroupLabel className="px-2 text-[10px] font-medium text-slate-400 group-data-[collapsible=icon]:hidden">
-              Account Settings
+          <SidebarGroup className="mt-6">
+            <SidebarGroupLabel className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-neutral-500 group-data-[collapsible=icon]:hidden">
+              Account
             </SidebarGroupLabel>
-            <SidebarMenu className="mt-1 space-y-0.5">
-              {accountLinks.map(({ to, label, icon }) => (
+            <SidebarMenu className="space-y-1">
+              {accountLinks.map(({ to, label, icon: Icon }) => (
                 <SidebarMenuItem key={to}>
                   <SidebarMenuButton asChild tooltip={label}>
                     <a
                       href={to}
                       onClick={(e) => handleClickLink(e, to)}
                       className={cn(
-                        'flex items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium transition-colors',
-                        'hover:bg-white/10 hover:text-slate-100',
-                        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-700',
-                        isActive(to) &&
-                          'bg-violet-600/10 text-violet-400 border-l-2 border-violet-500'
+                        'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200',
+                        isActive(to)
+                          ? 'bg-violet-500/15 text-violet-400'
+                          : 'text-neutral-400 hover:bg-white/5 hover:text-neutral-200'
                       )}
                     >
-                      <span
+                      <Icon
                         className={cn(
-                          'text-slate-400',
-                          isActive(to) && 'text-violet-400'
+                          'h-4 w-4 shrink-0',
+                          isActive(to) ? 'text-violet-400' : 'text-neutral-500'
                         )}
-                      >
-                        {icon}
-                      </span>
+                      />
                       <span className="group-data-[collapsible=icon]:hidden">
                         {label}
                       </span>
@@ -214,13 +205,9 @@ const AdminLayoutInner = ({ children, title }: AdminLayoutProps) => {
                 <SidebarMenuButton
                   onClick={handleLogout}
                   tooltip="Logout"
-                  className={cn(
-                    'flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
-                    'hover:bg-red-500/10 hover:text-red-400',
-                    'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-700'
-                  )}
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-neutral-400 transition-all duration-200 hover:bg-red-500/10 hover:text-red-400"
                 >
-                  <LogOut className="h-3.5 w-3.5" />
+                  <LogOut className="h-4 w-4 shrink-0 text-neutral-500" />
                   <span className="group-data-[collapsible=icon]:hidden">
                     Logout
                   </span>
@@ -230,38 +217,39 @@ const AdminLayoutInner = ({ children, title }: AdminLayoutProps) => {
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter className="border-t border-slate-800/50">
-          <div className="bg-[#1e293b] p-3 rounded-t-lg">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20">
-                <span className="text-xs font-medium text-primary">
-                  {user?.name?.charAt(0)}
-                </span>
-              </div>
-              <div className="group-data-[collapsible=icon]:hidden">
-                <p className="text-xs font-medium text-neutral-100">
-                  {user?.name}
-                </p>
-                <p className="text-[10px] text-neutral-400 capitalize">
-                  {user?.role?.toLowerCase()}
-                </p>
-              </div>
+        {/* User card */}
+        <SidebarFooter className="border-t border-white/5 p-3">
+          <div className="flex items-center gap-3 rounded-lg bg-white/[0.03] px-3 py-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-500/20 to-violet-600/20 ring-1 ring-violet-500/20">
+              <span className="text-xs font-semibold text-violet-400">
+                {user?.name?.charAt(0)?.toUpperCase()}
+              </span>
+            </div>
+            <div className="group-data-[collapsible=icon]:hidden min-w-0">
+              <p className="text-xs font-medium text-neutral-200 truncate">
+                {user?.name}
+              </p>
+              <p className="text-[10px] text-neutral-500 capitalize">
+                {user?.role?.toLowerCase()}
+              </p>
             </div>
           </div>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset className="flex flex-col">
-        <div className="flex-1 px-4 py-6 md:px-6 md:py-8">
-          <div className="mb-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-              <SidebarTrigger />
-            </div>
+
+      {/* Main content */}
+      <SidebarInset className="flex flex-col bg-[#0f172a]">
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-white/5 bg-[#0f172a]/80 backdrop-blur-sm px-6 py-4">
+          <div className="flex items-center gap-3">
+            <SidebarTrigger className="text-neutral-400 hover:text-neutral-200" />
+            {title && (
+              <h1 className="text-lg font-semibold text-neutral-50">{title}</h1>
+            )}
           </div>
-          <main>
-            <ErrorBoundary>{children}</ErrorBoundary>
-          </main>
-        </div>
+        </header>
+        <main className="flex-1 px-6 py-6">
+          <ErrorBoundary>{children}</ErrorBoundary>
+        </main>
       </SidebarInset>
     </div>
   );
@@ -272,7 +260,7 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-[#0f172a]">
         <UISidebarProvider defaultOpen={!isCollapsed}>
           <AdminLayoutInner title={title}>{children}</AdminLayoutInner>
         </UISidebarProvider>
