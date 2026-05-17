@@ -4,6 +4,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import HeroSection from '@/components/home/HeroSection';
 import CategorySection from '@/components/home/CategorySection';
 import FeaturedCourses from '@/components/home/FeaturedCourses';
+import HowItWorksSection from '@/components/home/HowItWorksSection';
 import TestimonialSection from '@/components/home/TestimonialSection';
 import StatisticsSection from '@/components/home/StatisticsSection';
 import CtaSection from '@/components/home/CtaSection';
@@ -13,7 +14,6 @@ const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect admin users to dashboard
   useEffect(() => {
     if (user?.role === 'ADMIN') {
       navigate('/dashboard');
@@ -23,13 +23,14 @@ const Index = () => {
   return (
     <MainLayout>
       <HeroSection />
-      <CategorySection />
+      <HowItWorksSection />
       <FeaturedCourses
         title="Top-Rated Courses"
         description="Explore our highest-rated courses across different categories"
       />
-      <TestimonialSection />
+      <CategorySection />
       <StatisticsSection />
+      <TestimonialSection />
       <CtaSection />
     </MainLayout>
   );

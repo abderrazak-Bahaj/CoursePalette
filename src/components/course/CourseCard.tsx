@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Star } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 
 interface CourseCardProps {
   id: string;
@@ -15,6 +13,12 @@ interface CourseCardProps {
   level: string;
 }
 
+const levelColors: Record<string, string> = {
+  BEGINNER: 'bg-emerald-500/90 text-white',
+  INTERMEDIATE: 'bg-violet-500/90 text-white',
+  ADVANCED: 'bg-amber-500/90 text-white',
+};
+
 const CourseCard = ({
   id,
   title,
@@ -22,37 +26,57 @@ const CourseCard = ({
   price,
   category,
   level,
+  instructor,
 }: CourseCardProps) => {
   return (
-    <Link to={`/courses/${id}`}>
-      <Card className="overflow-hidden h-full course-card-shadow course-card-hover">
-        <div className="relative h-40 overflow-hidden">
+    <Link to={`/courses/${id}`} className="group block h-full">
+      <div className="h-full rounded-xl border border-white/5 bg-white/[0.02] overflow-hidden transition-all duration-300 hover:border-white/10 hover:bg-white/[0.04] hover:shadow-lg hover:shadow-violet-500/5 hover:-translate-y-1">
+        {/* Image */}
+        <div className="relative h-44 overflow-hidden">
           <img
             src={image_url}
             alt={title}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
-          <Badge className="absolute top-2 right-2 bg-course-blue">
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a]/60 to-transparent" />
+          {/* Level badge */}
+          <span
+            className={`absolute top-3 right-3 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${levelColors[level] || 'bg-neutral-600/90 text-white'}`}
+          >
             {level}
-          </Badge>
+          </span>
         </div>
-        <CardContent className="pt-4">
-          <h3 className="font-semibold text-lg line-clamp-2 mb-1">{title}</h3>
-          {/*           <p className="text-sm text-gray-500 mb-2">{instructor}</p>
-           */}{' '}
-          <div className="flex items-center space-x-1 mb-2"></div>
-          <Badge variant="outline" className="bg-gray-50">
-            {category?.name}
-          </Badge>
-        </CardContent>
-        <CardFooter className="border-t pt-3 pb-4">
-          <div className="w-full flex justify-between items-center">
-            <span className="font-bold text-lg">
-              ${Number(price).toFixed(2)}
+
+        {/* Content */}
+        <div className="p-4 flex flex-col flex-1">
+          <h3 className="font-semibold text-neutral-100 line-clamp-2 mb-2 group-hover:text-violet-300 transition-colors">
+            {title}
+          </h3>
+
+          {instructor && (
+            <p className="text-xs text-neutral-500 mb-3">{instructor}</p>
+          )}
+
+          {category?.name && (
+            <span className="inline-flex items-center gap-1.5 text-xs text-neutral-400 mb-3">
+              <BookOpen className="w-3 h-3" />
+              {category.name}
+            </span>
+          )}
+
+          {/* Price */}
+          <div className="mt-auto pt-3 border-t border-white/5">
+            <span className="text-lg font-bold text-neutral-50">
+              {Number(price) === 0 ? (
+                <span className="text-emerald-400">Free</span>
+              ) : (
+                `$${Number(price).toFixed(2)}`
+              )}
             </span>
           </div>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </Link>
   );
 };
