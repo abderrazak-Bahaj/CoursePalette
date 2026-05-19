@@ -84,6 +84,10 @@
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 220 26% 20%;
     --sidebar-ring: 263 70% 50%;
+
+    --sb-track-color: #313d54;
+    --sb-thumb-color: #8b5cf6;
+    --sb-size: 8px;
   }
 }
 
@@ -104,5 +108,25 @@
   h2,
   h3 {
     @apply font-serif;
+  }
+}
+
+*::-webkit-scrollbar {
+  width: var(--sb-size);
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 8px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   }
 }

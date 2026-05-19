@@ -30,8 +30,8 @@ const Index = () => {
       />
       <CategorySection />
       <StatisticsSection />
-      <TestimonialSection />
       <CtaSection />
+      <TestimonialSection />
     </MainLayout>
   );
 };
