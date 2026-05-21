@@ -8,7 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Check, ChevronLeft, ChevronRight, Award } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Award, Folders } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { Lesson } from '@/types/course';
 import { courseService, lessonService } from '@/services/api';
@@ -21,6 +21,7 @@ import ResourceItem from '@/components/learning/ResourceItem';
 import AssignmentItem from '@/components/learning/AssignmentItem';
 import LessonItem from '@/components/learning/LessonItem';
 import { LessonPageIntegration } from '@/components/ai/Integrations/LessonPageIntegration';
+import ReactMarkdown from 'react-markdown';
 
 const LessonPage = () => {
   const { courseId, lessonId } = useParams<{
@@ -202,21 +203,22 @@ const LessonPage = () => {
                 <VideoPlayer url={lesson?.video_url || ''} />
 
                 {/* Lesson content */}
-                <div
-                  className="prose max-w-none mb-8"
-                  dangerouslySetInnerHTML={{
-                    __html: lesson?.content || '',
-                  }}
-                />
-
+                <div className="py-6">
+                  <ReactMarkdown>{lesson?.content}</ReactMarkdown>
+                </div>
                 {/* Resources Section */}
                 {lesson?.resources && lesson.resources.length > 0 && (
                   <div className="mb-8">
-                    <h3 className="font-serif text-xl font-semibold text-neutral-50 mb-4 flex items-center">
-                      <span className="mr-2">📚</span>
+                    <h3 className="font-serif text-xl font-semibold text-neutral-50 mb-4 flex items-center gap-2">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-violet-500/10">
+                        <Folders className="h-4 w-4 text-violet-400" />
+                      </div>
                       Resources
+                      <span className="text-sm font-normal text-neutral-500 ml-1">
+                        ({lesson.resources.length})
+                      </span>
                     </h3>
-                    <div className="grid gap-4">
+                    <div className="grid gap-3 sm:grid-cols-2">
                       {lesson.resources.map((resource) => (
                         <ResourceItem key={resource.id} resource={resource} />
                       ))}

@@ -5,6 +5,7 @@ import {
   Link as LinkIcon,
   Download,
   ExternalLink,
+  File,
 } from 'lucide-react';
 import { Resource } from '@/types/course';
 import { useState } from 'react';
@@ -21,35 +22,63 @@ const ResourceItem = ({ resource }: ResourceItemProps) => {
 
   const resourceAny = resource as any;
 
-  const getResourceIcon = (type: string) => {
+  const getResourceConfig = (type: string) => {
     switch (type) {
       case 'PDF':
-        return <FileText className="h-5 w-5 text-red-400" />;
+        return {
+          icon: FileText,
+          label: 'Document',
+          color: 'text-rose-400',
+          bg: 'bg-rose-500/10',
+          border: 'border-rose-500/20',
+          hoverBorder: 'hover:border-rose-500/40',
+          accent: 'bg-rose-500',
+        };
       case 'VIDEO':
-        return <Video className="h-5 w-5 text-violet-400" />;
+        return {
+          icon: Video,
+          label: 'Video',
+          color: 'text-violet-400',
+          bg: 'bg-violet-500/10',
+          border: 'border-violet-500/20',
+          hoverBorder: 'hover:border-violet-500/40',
+          accent: 'bg-violet-500',
+        };
       case 'AUDIO':
-        return <Headphones className="h-5 w-5 text-amber-400" />;
+        return {
+          icon: Headphones,
+          label: 'Audio',
+          color: 'text-amber-400',
+          bg: 'bg-amber-500/10',
+          border: 'border-amber-500/20',
+          hoverBorder: 'hover:border-amber-500/40',
+          accent: 'bg-amber-500',
+        };
       case 'LINK':
-        return <LinkIcon className="h-5 w-5 text-green-400" />;
+        return {
+          icon: LinkIcon,
+          label: 'Link',
+          color: 'text-emerald-400',
+          bg: 'bg-emerald-500/10',
+          border: 'border-emerald-500/20',
+          hoverBorder: 'hover:border-emerald-500/40',
+          accent: 'bg-emerald-500',
+        };
       default:
-        return <FileText className="h-5 w-5 text-neutral-400" />;
+        return {
+          icon: File,
+          label: 'File',
+          color: 'text-neutral-400',
+          bg: 'bg-neutral-500/10',
+          border: 'border-neutral-500/20',
+          hoverBorder: 'hover:border-neutral-500/40',
+          accent: 'bg-neutral-500',
+        };
     }
   };
 
-  const getResourceTypeLabel = (type: string) => {
-    switch (type) {
-      case 'PDF':
-        return 'Document';
-      case 'VIDEO':
-        return 'Video';
-      case 'AUDIO':
-        return 'Audio';
-      case 'LINK':
-        return 'Link';
-      default:
-        return 'File';
-    }
-  };
+  const config = getResourceConfig(resource.type);
+  const Icon = config.icon;
 
   const isLink =
     resource.type === 'LINK' || resource.file_url?.startsWith('http');
@@ -111,10 +140,11 @@ const ResourceItem = ({ resource }: ResourceItemProps) => {
   return (
     <div
       className={cn(
-        'flex items-center p-4 border rounded-xl transition-all duration-200 cursor-pointer',
-        isDownloading
-          ? 'bg-violet-600/10 border-violet-500/50'
-          : 'bg-[#1e293b] border-neutral-700 hover:border-violet-500/50 hover:bg-[#1e293b]'
+        'group relative flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 cursor-pointer',
+        config.border,
+        config.hoverBorder,
+        'bg-neutral-900/50 hover:bg-neutral-800/60',
+        isDownloading && 'ring-1 ring-violet-500/50'
       )}
       onClick={handleResourceClick}
       role="button"
@@ -126,51 +156,50 @@ const ResourceItem = ({ resource }: ResourceItemProps) => {
         }
       }}
     >
-      <div className="flex-shrink-0 mr-3">{getResourceIcon(resource.type)}</div>
-
-      <div className="flex-1 min-w-0">
-        <h4 className="font-medium text-neutral-100">{resource.title}</h4>
-        {resourceAny.description && (
-          <p className="text-sm text-neutral-400 mt-0.5 line-clamp-2">
-            {resourceAny.description}
-          </p>
+      {/* Icon container */}
+      <div
+        className={cn(
+          'flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg',
+          config.bg
         )}
-        <div className="flex items-center gap-3 mt-2">
-          <span className="text-xs text-neutral-500 bg-neutral-700/50 px-2 py-0.5 rounded">
-            {getResourceTypeLabel(resource.type)}
+      >
+        <Icon className={cn('h-5 w-5', config.color)} />
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <h4 className="font-medium text-sm text-neutral-100 truncate group-hover:text-white transition-colors">
+          {resource.title}
+        </h4>
+        <div className="flex items-center gap-2 mt-1.5">
+          <span
+            className={cn(
+              'inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full',
+              config.bg,
+              config.color
+            )}
+          >
+            {config.label}
           </span>
           {resource.file_size_formatted && (
-            <span className="text-xs text-neutral-500">
+            <span className="text-[11px] text-neutral-500">
               {resource.file_size_formatted}
-            </span>
-          )}
-          {isLink && (
-            <span className="text-xs text-violet-400 bg-violet-600/10 px-2 py-0.5 rounded">
-              External Link
             </span>
           )}
         </div>
       </div>
 
-      <div className="flex-shrink-0 ml-3 flex flex-col items-center gap-1">
+      {/* Action */}
+      <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-neutral-800 group-hover:bg-neutral-700 transition-colors">
         {isDownloading ? (
-          <Download className="h-4 w-4 text-violet-400 animate-bounce" />
+          <Download className={cn('h-4 w-4 animate-bounce', config.color)} />
         ) : isLink ? (
-          <ExternalLink className="h-4 w-4 text-neutral-400" />
+          <ExternalLink className="h-4 w-4 text-neutral-400 group-hover:text-white transition-colors" />
         ) : canDownload ? (
-          <Download className="h-4 w-4 text-neutral-400" />
+          <Download className="h-4 w-4 text-neutral-400 group-hover:text-white transition-colors" />
         ) : (
-          <FileText className="h-4 w-4 text-neutral-400" />
+          <ExternalLink className="h-4 w-4 text-neutral-400 group-hover:text-white transition-colors" />
         )}
-        <span className="text-xs text-neutral-500">
-          {isDownloading
-            ? 'Downloading...'
-            : isLink
-              ? 'Open Link'
-              : canDownload
-                ? 'Download'
-                : 'View'}
-        </span>
       </div>
     </div>
   );
