@@ -205,8 +205,8 @@ const Footer = () => {
                 className="inline-flex items-center gap-2.5 mb-5 group"
               >
                 <img
-                  src="/logo-CoursePalette.svg"
-                  alt="CoursePalette"
+                  src="/logo-skillorai-light.svg"
+                  alt="skillorai"
                   width={300}
                 />
               </Link>

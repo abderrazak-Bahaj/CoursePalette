@@ -203,8 +203,8 @@ const Navbar = () => {
               className="flex-shrink-0 flex items-center gap-2 group"
             >
               <img
-                src="/logo-CoursePalette.svg"
-                alt="CoursePalette"
+                src="/logo-skillorai-light.svg"
+                alt="skillorai"
                 width={200}
               />
             </Link>
