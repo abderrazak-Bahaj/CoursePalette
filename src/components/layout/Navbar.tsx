@@ -168,11 +168,6 @@ const Navbar = () => {
         .user-avatar-btn {
           transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .user-avatar-btn:hover {
-          transform: scale(1.05);
-          box-shadow: 0 0 0 2px rgba(139,92,246,0.4);
-          border-radius: 50%;
-        }
         .nav-action-btn {
           transition: all 0.2s ease;
         }
