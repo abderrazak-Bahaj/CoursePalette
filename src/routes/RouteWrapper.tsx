@@ -1,10 +1,9 @@
 import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { Loader } from '@/components/ui/loader';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { Role } from '@/types';
-import LoadingFallback from '@/components/common/LoadingFallback';
+import SplashScreen from '@/components/common/SplashScreen';
 
 // Define the possible access types
 export type AccessType = 'PUBLIC' | 'ALL' | Role | Array<Role>;
@@ -27,7 +26,7 @@ export const RouteWrapper = ({
 
   // Show loader while authentication status is being determined
   if (isLoading) {
-    return <LoadingFallback size="lg" text="Loading page..." fullPage />;
+    return <SplashScreen />;
   }
   // Public routes are accessible to everyone
   if (accessType === 'PUBLIC') {

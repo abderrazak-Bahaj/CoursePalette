@@ -7,11 +7,8 @@ import {
 } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { authService } from '@/services/api/authService';
-import { Loader } from '@/components/ui/loader';
 import { AuthContextType, User } from '@/types';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import LoadingFallback from '@/components/common/LoadingFallback';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -308,14 +305,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     resetPassword,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {isLoading && (
-        <LoadingFallback size="lg" text="Loading page..." fullPage />
-      )}
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

@@ -18,3 +18,10 @@ import { performanceMonitor } from '@/utils/ai/performanceMonitor';
 performanceMonitor.observeWebVitals();
 
 createRoot(document.getElementById('root')!).render(<App />);
+
+// Remove the pre-React splash screen once the app mounts
+const preSplash = document.getElementById('pre-splash');
+if (preSplash) {
+  preSplash.style.opacity = '0';
+  setTimeout(() => preSplash.remove(), 800);
+}

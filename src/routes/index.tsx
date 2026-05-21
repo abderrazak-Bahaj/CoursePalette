@@ -3,7 +3,19 @@ import { Suspense, lazy } from 'react';
 
 import { RouteWrapper } from './RouteWrapper';
 import { AuthRouteWrapper } from './AuthRouteWrapper';
-import { PageLoadingFallback } from '@/components/common/LoadingFallback';
+
+// Minimal inline loader for Suspense (chunk downloads are fast)
+const ChunkLoader = () => (
+  <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-surface-base">
+    <div className="relative w-48 h-1 bg-neutral-800 rounded-full overflow-hidden">
+      <div
+        className="absolute inset-0 h-full bg-gradient-to-r from-violet-600 via-orange-500 to-violet-600 rounded-full animate-[shimmer_1.5s_ease-in-out_infinite]"
+        style={{ animationName: 'shimmerBar' }}
+      />
+    </div>
+    <style>{`@keyframes shimmerBar { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }`}</style>
+  </div>
+);
 
 // Lazy load all components
 // Public pages
@@ -127,7 +139,7 @@ const InvoiceDetailPage = lazy(
 
 // Wrapper component for Suspense
 const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
-  <Suspense fallback={<PageLoadingFallback />}>{children}</Suspense>
+  <Suspense fallback={<ChunkLoader />}>{children}</Suspense>
 );
 
 const AppRoutes = () => (
