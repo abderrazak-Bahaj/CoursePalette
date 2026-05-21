@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
+import { useSEO } from '@/hooks/useSEO';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -76,6 +77,12 @@ const ResourceManagementPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  useSEO({
+    title: 'Manage Resources',
+    description: 'Manage lesson resources and attachments on Skillorai.',
+    noIndex: true,
+  });
 
   const [editingResource, setEditingResource] = useState<Resource | null>(null);
   const [resourceToDelete, setResourceToDelete] = useState<Resource | null>(

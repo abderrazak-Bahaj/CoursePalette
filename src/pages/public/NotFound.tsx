@@ -1,9 +1,17 @@
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useSEO } from '@/hooks/useSEO';
 
 const NotFound = () => {
   const location = useLocation();
+
+  useSEO({
+    title: 'Page Not Found',
+    description:
+      'The page you are looking for does not exist. Return to the homepage to continue browsing courses on Skillorai.',
+    noIndex: true,
+  });
 
   useEffect(() => {
     console.error(

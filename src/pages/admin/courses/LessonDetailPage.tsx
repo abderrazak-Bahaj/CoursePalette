@@ -23,6 +23,7 @@ import AdminLayout from '@/components/layout/AdminLayout';
 import LessonModal from '@/components/admin/LessonModal';
 import { lessonService } from '@/services/api/lessonService';
 import { useAuth } from '@/hooks/useAuth';
+import { useSEO } from '@/hooks/useSEO';
 
 const LessonDetailPage = () => {
   const { courseId, lessonId } = useParams<{
@@ -42,6 +43,12 @@ const LessonDetailPage = () => {
     queryKey: ['lesson', courseId, lessonId],
     queryFn: () => lessonService.getLesson(courseId!, lessonId!),
     enabled: !!courseId && !!lessonId,
+  });
+
+  useSEO({
+    title: 'Lesson Details',
+    description: 'View and manage lesson details on Skillorai.',
+    noIndex: true,
   });
 
   const lesson = lessonData?.lesson;

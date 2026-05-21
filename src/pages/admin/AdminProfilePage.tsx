@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import AdminLayout from '@/components/layout/AdminLayout';
+import { useSEO } from '@/hooks/useSEO';
 import TeacherProfileInformation from '@/components/profile/TeacherProfileInformation';
 import AdminProfileInformation from '@/components/profile/AdminProfileInformation';
 import AvatarProfile from '@/components/profile/AvatarProfile';
@@ -10,6 +11,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const AdminProfilePage = () => {
   const { isAdmin } = useAuth();
+
+  useSEO({
+    title: 'Admin Profile',
+    description: 'Manage your admin profile and account settings on Skillorai.',
+    noIndex: true,
+  });
 
   const profileContent = isAdmin ? (
     <AdminProfileInformation />

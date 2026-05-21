@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { invoiceApi, Invoice } from '@/services/api/invoice';
 import { Loader2 } from 'lucide-react';
+import { useSEO } from '@/hooks/useSEO';
 
 const statusColors = {
   PENDING: 'bg-yellow-100 text-yellow-800',
@@ -19,6 +20,13 @@ export default function InvoiceDetailPage() {
   const navigate = useNavigate();
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useSEO({
+    title: 'Invoice Details',
+    description:
+      'View detailed invoice information and payment summary on Skillorai.',
+    noIndex: true,
+  });
 
   useEffect(() => {
     const fetchInvoice = async () => {

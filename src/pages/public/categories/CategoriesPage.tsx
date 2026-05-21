@@ -11,9 +11,18 @@ import { categoryStyles } from '@/lib/utils';
 import WrapperLoading from '@/components/ui/wrapper-loading';
 import { useDebounce } from '@/hooks/useDebounce';
 import { SkeletonLoader } from '@/components/ui/skeleton-loader';
+import { useSEO } from '@/hooks/useSEO';
 
 const CategoriesPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
+
+  useSEO({
+    title: 'Browse Categories',
+    description:
+      'Explore all course categories on Skillorai. Find courses in web development, data science, design, business, and more.',
+    keywords:
+      'categories, course topics, web development, data science, design, business',
+  });
   const [filterLoading, setFilterLoading] = useState(false);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);

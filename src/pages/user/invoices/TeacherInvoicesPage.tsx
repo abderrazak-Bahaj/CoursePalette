@@ -24,6 +24,7 @@ import { PaginationMeta } from '@/services/pagination/PaginationService';
 import { useToast } from '@/components/ui/use-toast';
 import { useQuery } from '@tanstack/react-query';
 import { AdminLayout } from '@/components';
+import { useSEO } from '@/hooks/useSEO';
 
 const TeacherInvoicesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -36,6 +37,13 @@ const TeacherInvoicesPage: React.FC = () => {
     total: 0,
   });
   const { toast } = useToast();
+
+  useSEO({
+    title: 'Invoices',
+    description:
+      'View and manage your teaching invoices and revenue on Skillorai.',
+    noIndex: true,
+  });
 
   const { data, isLoading, error } = useQuery<Invoice[]>({
     queryKey: [

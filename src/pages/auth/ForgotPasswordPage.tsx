@@ -12,6 +12,7 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
+import { useSEO } from '@/hooks/useSEO';
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
@@ -19,6 +20,13 @@ const ForgotPasswordPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { forgotPassword } = useAuth();
+
+  useSEO({
+    title: 'Forgot Password',
+    description:
+      'Reset your Skillorai password. Enter your email address and we will send you a link to create a new password.',
+    keywords: 'forgot password, reset password, account recovery',
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

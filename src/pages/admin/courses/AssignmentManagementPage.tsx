@@ -61,12 +61,19 @@ import { courseService } from '@/services/api';
 import { Assignment } from '@/types/course';
 import AdminLayout from '@/components/layout/AdminLayout';
 import WrapperLoading from '@/components/ui/wrapper-loading';
+import { useSEO } from '@/hooks/useSEO';
 
 const AssignmentManagementPage = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  useSEO({
+    title: 'Manage Assignments',
+    description: 'Manage course assignments on Skillorai.',
+    noIndex: true,
+  });
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);

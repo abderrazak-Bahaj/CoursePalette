@@ -25,6 +25,7 @@ import { useToast } from '@/hooks/use-toast';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { courseService } from '@/services/api/courseService';
 import { useAuth } from '@/hooks/useAuth';
+import { useSEO } from '@/hooks/useSEO';
 
 const CourseDetailPage = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -32,6 +33,12 @@ const CourseDetailPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { isTeacher } = useAuth();
+
+  useSEO({
+    title: 'Course Management',
+    description: 'View and manage course details on Skillorai.',
+    noIndex: true,
+  });
 
   const {
     data: courseData,

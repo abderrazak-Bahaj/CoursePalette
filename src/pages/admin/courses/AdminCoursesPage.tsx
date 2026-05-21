@@ -17,6 +17,7 @@ import { courseService, CourseParams } from '@/services/api/courseService';
 import { useAuth } from '@/hooks/useAuth';
 import { categoryService } from '@/services/api/categoryService';
 import { CategoriesResponse } from '@/types/category';
+import { useSEO } from '@/hooks/useSEO';
 
 const AdminCoursesPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,6 +26,12 @@ const AdminCoursesPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [page, setPage] = useState(1);
   const { isAdmin, isTeacher } = useAuth();
+
+  useSEO({
+    title: 'Manage Courses',
+    description: 'Manage and organize courses on Skillorai.',
+    noIndex: true,
+  });
 
   const params: CourseParams = {
     page,

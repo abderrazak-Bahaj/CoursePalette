@@ -16,6 +16,7 @@ import LessonModal from '@/components/admin/LessonModal';
 import { courseService } from '@/services/api/courseService';
 import { useAuth } from '@/hooks/useAuth';
 import { useUrlParams } from '@/hooks/useUrlParams';
+import { useSEO } from '@/hooks/useSEO';
 
 const AdminLessonsPage = () => {
   const { getParam, setParam } = useUrlParams();
@@ -24,6 +25,12 @@ const AdminLessonsPage = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isTeacher } = useAuth();
+
+  useSEO({
+    title: 'Manage Lessons',
+    description: 'Manage and organize course lessons on Skillorai.',
+    noIndex: true,
+  });
 
   const { data: coursesResponse = [], isLoading: isLoadingCourses } = useQuery({
     queryKey: ['courses'],

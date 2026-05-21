@@ -13,6 +13,7 @@ import { useToast } from '@/components/ui/use-toast';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { Eye, EyeOff } from 'lucide-react';
+import { useSEO } from '@/hooks/useSEO';
 
 const ResetPasswordPage = () => {
   const [token, setToken] = useState('');
@@ -33,6 +34,14 @@ const ResetPasswordPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { resetPassword } = useAuth();
+
+  useSEO({
+    title: 'Reset Password',
+    description:
+      'Create a new password for your Skillorai account. Enter your new password to regain access to your learning dashboard.',
+    keywords: 'reset password, new password, account recovery',
+    noIndex: true,
+  });
 
   // Parse token and email from URL query parameters
   useEffect(() => {

@@ -17,8 +17,16 @@ import {
   Book,
   MessageCircle,
 } from 'lucide-react';
+import { useSEO } from '@/hooks/useSEO';
 
 const HelpPage = () => {
+  useSEO({
+    title: 'Help Center',
+    description:
+      'Get answers to frequently asked questions about Skillorai. Find help with courses, payments, certificates, and account management.',
+    keywords: 'help, FAQ, support, questions, troubleshooting, guide',
+  });
+
   const faqItems = [
     {
       question: 'How do I enroll in a course?',

@@ -38,6 +38,7 @@ import { formatTimeLimit } from '@/utils/dateLimit';
 import { aiApiClient } from '@/services/ai/aiApiClient';
 import type { PreGrade } from '@/services/ai/types';
 import ReactMarkdown from 'react-markdown';
+import { useSEO } from '@/hooks/useSEO';
 
 /** Auto-resizing textarea that adjusts height to content */
 function AutoResizeTextarea({
@@ -86,6 +87,12 @@ const SubmissionReviewDetailPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  useSEO({
+    title: 'Submission Review',
+    description: 'Review and grade a student submission on Skillorai.',
+    noIndex: true,
+  });
 
   const [gradingData, setGradingData] = useState<GradingData>({
     score: 0,

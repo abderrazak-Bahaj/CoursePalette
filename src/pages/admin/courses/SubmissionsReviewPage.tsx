@@ -40,6 +40,7 @@ import { courseService, submissionService } from '@/services/api';
 import { Assignment, Submission, AssignmentQuestion } from '@/types/course';
 import AdminLayout from '@/components/layout/AdminLayout';
 import WrapperLoading from '@/components/ui/wrapper-loading';
+import { useSEO } from '@/hooks/useSEO';
 
 const SubmissionsReviewPage = () => {
   const { courseId, assignmentId } = useParams<{
@@ -52,6 +53,13 @@ const SubmissionsReviewPage = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+
+  useSEO({
+    title: 'Review Submissions',
+    description:
+      'Review and grade student assignment submissions on Skillorai.',
+    noIndex: true,
+  });
 
   const { data: assignmentData, isLoading: assignmentLoading } = useQuery({
     queryKey: ['assignment', courseId, assignmentId],

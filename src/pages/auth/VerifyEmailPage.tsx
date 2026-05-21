@@ -10,8 +10,17 @@ import { CheckCircle, XCircle, Mail } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { authService } from '@/services/api/authService';
 import LoadingFallback from '@/components/common/LoadingFallback';
+import { useSEO } from '@/hooks/useSEO';
 
 const VerifyEmailPage = () => {
+  useSEO({
+    title: 'Verify Email',
+    description:
+      'Verify your email address to activate your Skillorai account and start accessing courses.',
+    keywords: 'verify email, email confirmation, account activation',
+    noIndex: true,
+  });
+
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
   const [error, setError] = useState('');

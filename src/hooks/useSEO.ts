@@ -11,28 +11,28 @@ interface SEOProps {
 }
 
 const BASE_TITLE = 'Skillorai';
+const BASE_URL = 'https://skillorai.com';
 const DEFAULT_DESCRIPTION =
   "Master new skills with Skillorai's AI-powered learning platform. Access expert-led courses, interactive assignments, and personalized learning paths.";
+const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.png`;
 
 /**
- * Lightweight SEO hook that updates document head meta tags.
- * Use on each page to set page-specific metadata.
+ * SEO hook that dynamically updates document head meta tags.
+ * Use at the top of each page component to set page-specific metadata.
  */
 export function useSEO({
   title,
   description = DEFAULT_DESCRIPTION,
   keywords,
-  ogImage = '/og-image.png',
+  ogImage = DEFAULT_OG_IMAGE,
   ogType = 'website',
   canonical,
   noIndex = false,
 }: SEOProps = {}) {
   useEffect(() => {
-    // Title
     const fullTitle = title ? `${title} | ${BASE_TITLE}` : BASE_TITLE;
     document.title = fullTitle;
 
-    // Helper to set/create meta tags
     const setMeta = (attr: string, key: string, content: string) => {
       let el = document.querySelector(`meta[${attr}="${key}"]`);
       if (!el) {
@@ -53,13 +53,15 @@ export function useSEO({
     setMeta('property', 'og:description', description);
     setMeta('property', 'og:image', ogImage);
     setMeta('property', 'og:type', ogType);
+    if (canonical) setMeta('property', 'og:url', canonical);
 
-    // Twitter
+    // Twitter Card
+    setMeta('name', 'twitter:card', 'summary_large_image');
     setMeta('name', 'twitter:title', fullTitle);
     setMeta('name', 'twitter:description', description);
     setMeta('name', 'twitter:image', ogImage);
 
-    // Canonical
+    // Canonical link
     if (canonical) {
       let link = document.querySelector(
         'link[rel="canonical"]'

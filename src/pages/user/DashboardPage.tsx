@@ -9,8 +9,16 @@ import { enrollmentService } from '@/services/api';
 import { Enrollment } from '@/types';
 import { useFilteredCourses } from '@/hooks/useFilteredCourses';
 import WrapperLoading from '@/components/ui/wrapper-loading';
+import { useSEO } from '@/hooks/useSEO';
 
 const DashboardPage = () => {
+  useSEO({
+    title: 'My Learning Dashboard',
+    description:
+      'Track your learning progress, view enrolled courses, and manage your educational journey on Skillorai.',
+    noIndex: true,
+  });
+
   const { data: myEnrollments, isLoading } = useQuery({
     queryKey: ['my-enrollments'],
     queryFn: async () => await enrollmentService.getMyEnrollments(),

@@ -19,6 +19,7 @@ import {
 import { ArrowLeft, FolderIcon, Code, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import WrapperLoading from '@/components/ui/wrapper-loading';
+import { useSEO } from '@/hooks/useSEO';
 
 interface Course {
   id: string;
@@ -37,6 +38,11 @@ interface Course {
 }
 
 const AdminCategoriesViewPage = () => {
+  useSEO({
+    title: 'Category Details',
+    description: 'Manage category details on Skillorai.',
+    noIndex: true,
+  });
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
 

@@ -15,6 +15,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Eye, EyeOff } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
 import ReCaptcha from '@/components/ui/ReCaptcha';
+import { useSEO } from '@/hooks/useSEO';
 
 // Replace with your actual site key
 const RECAPTCHA_SITE_KEY =
@@ -33,6 +34,13 @@ export const RegisterPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { register } = useAuth();
+
+  useSEO({
+    title: 'Create Account',
+    description:
+      'Sign up for Skillorai and start your learning journey. Create a free account to access courses, track progress, and earn certificates.',
+    keywords: 'register, sign up, create account, join, free account',
+  });
 
   // Cleanup effect to reset reCAPTCHA state when component unmounts
   useEffect(() => {

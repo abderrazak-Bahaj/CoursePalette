@@ -29,6 +29,7 @@ import { submissionService } from '@/services/api/submissionService';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import WrapperLoading from '@/components/ui/wrapper-loading';
 import MainLayout from '@/components/layout/MainLayout';
+import { useSEO } from '@/hooks/useSEO';
 
 interface AnswerData {
   question_id: string;
@@ -43,6 +44,12 @@ const AssignmentPage = ({ isPreview = false }: { isPreview: boolean }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  useSEO({
+    title: 'Assignment',
+    description: 'Complete your course assignment on Skillorai.',
+    noIndex: true,
+  });
 
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);

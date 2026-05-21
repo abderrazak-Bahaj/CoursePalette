@@ -14,8 +14,17 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
 import DisplayCertificate from '@/components/certificate/DisplayCertificate';
 import MainLayout from '@/components/layout/MainLayout';
+import { useSEO } from '@/hooks/useSEO';
 
 const CheckCertificatePage = () => {
+  useSEO({
+    title: 'Verify Certificate',
+    description:
+      'Verify the authenticity of a Skillorai certificate. Enter a certificate number to confirm its validity and view details.',
+    keywords:
+      'verify certificate, certificate validation, credential check, authenticity',
+  });
+
   const [certificateNumber, setCertificateNumber] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 

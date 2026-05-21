@@ -36,6 +36,7 @@ import { UserStatusModal } from '@/components/admin/UserStatusModal';
 import { UserPasswordModal } from '@/components/admin/UserPasswordModal';
 import { DeleteUserModal } from '@/components/admin/DeleteUserModal';
 import WrapperLoading from '@/components/ui/wrapper-loading';
+import { useSEO } from '@/hooks/useSEO';
 
 interface EducationItem {
   degree: string;
@@ -89,6 +90,11 @@ interface Course {
 }
 
 const AdminTeacherViewPage = () => {
+  useSEO({
+    title: 'Instructor Details',
+    description: 'Manage instructor details on Skillorai.',
+    noIndex: true,
+  });
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();

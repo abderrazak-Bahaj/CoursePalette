@@ -16,8 +16,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
 import { AdminLayout } from '@/components';
 import WrapperLoading from '@/components/ui/wrapper-loading';
+import { useSEO } from '@/hooks/useSEO';
 
 export default function AdminInvoicesPage() {
+  useSEO({
+    title: 'All Invoices',
+    description: 'Manage all invoices on Skillorai.',
+    noIndex: true,
+  });
   const [status, setStatus] = useState<string>('ALL');
   const [dateRange, setDateRange] = useState({
     from: addDays(new Date(), -30),

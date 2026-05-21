@@ -1,8 +1,17 @@
 import MainLayout from '@/components/layout/MainLayout';
 import { Card } from '@/components/ds/primitives/Card';
 import { ChevronRight } from 'lucide-react';
+import { useSEO } from '@/hooks/useSEO';
 
 const TermsPage = () => {
+  useSEO({
+    title: 'Terms of Service',
+    description:
+      'Review the terms and conditions for using Skillorai. Understand your rights, responsibilities, and our platform policies.',
+    keywords:
+      'terms of service, terms and conditions, user agreement, platform rules',
+  });
+
   const sections = [
     { id: 'acceptance', title: 'Acceptance of Terms' },
     { id: 'changes', title: 'Changes to Terms' },

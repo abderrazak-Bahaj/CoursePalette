@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -165,6 +166,13 @@ const ProfilePage = () => {
   const typedUser = user as UserWithStudent;
   const { toast } = useToast();
   const [isEditMode, setIsEditMode] = useState(false);
+
+  useSEO({
+    title: 'My Profile',
+    description:
+      'Manage your Skillorai profile, personal information, and account settings.',
+    noIndex: true,
+  });
 
   const [interests, setInterests] = useState<string[]>(
     typedUser?.student?.interests || []

@@ -1,6 +1,7 @@
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent } from '@/components/ds/primitives/Card';
 import { Button } from '@/components/ds/primitives/Button';
+import { useSEO } from '@/hooks/useSEO';
 import { Link } from 'react-router-dom';
 import { Award, Download, Share2, Loader2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -9,6 +10,13 @@ import { format } from 'date-fns';
 import CertificatesSection from '@/components/dashboard/CertificatesSection';
 
 const CertificatesPage = () => {
+  useSEO({
+    title: 'My Certificates',
+    description:
+      'View and share your earned certificates from completed courses on Skillorai.',
+    noIndex: true,
+  });
+
   return (
     <MainLayout>
       <div className="bg-[#0f172a] py-8">

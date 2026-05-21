@@ -11,8 +11,17 @@ import { useDebounce } from '@/hooks/useDebounce';
 import WrapperLoading from '@/components/ui/wrapper-loading';
 import { MetaPagination } from '@/components/ui/pagination';
 import { Course } from '@/types/course';
+import { useSEO } from '@/hooks/useSEO';
 
 const SearchResultsPage = () => {
+  useSEO({
+    title: 'Search Results',
+    description:
+      'Search and discover courses on Skillorai. Find the perfect course to advance your skills and career.',
+    keywords:
+      'search courses, find courses, online learning, skill development',
+  });
+
   const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
 

@@ -49,6 +49,7 @@ import { UserStatusModal } from '@/components/admin/UserStatusModal';
 import { UserPasswordModal } from '@/components/admin/UserPasswordModal';
 import { DeleteUserModal } from '@/components/admin/DeleteUserModal';
 import StudentModal from '@/components/admin/StudentModal';
+import { useSEO } from '@/hooks/useSEO';
 
 interface Lesson {
   id: string;
@@ -135,6 +136,12 @@ const AdminStudentsPage = () => {
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [currentPage, setCurrentPage] = useState(1);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  useSEO({
+    title: 'Manage Students',
+    description: 'Manage students on Skillorai.',
+    noIndex: true,
+  });
 
   // Modal states for user actions
   const [statusModalState, setStatusModalState] = useState({

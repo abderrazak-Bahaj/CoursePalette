@@ -11,11 +11,18 @@ import { invoiceApi, Invoice, InvoiceFilters } from '@/services/api/invoice';
 import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useSEO } from '@/hooks/useSEO';
 
 export default function StudentInvoicesPage() {
   const [status, setStatus] = useState<string>('all');
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useSEO({
+    title: 'My Invoices',
+    description: 'View and manage your payment invoices on Skillorai.',
+    noIndex: true,
+  });
 
   const {
     data: invoices,

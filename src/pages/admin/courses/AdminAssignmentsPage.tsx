@@ -30,12 +30,19 @@ import { courseService } from '@/services/api';
 import { Assignment } from '@/types/course';
 import AdminLayout from '@/components/layout/AdminLayout';
 import WrapperLoading from '@/components/ui/wrapper-loading';
+import { useSEO } from '@/hooks/useSEO';
 
 const AdminAssignmentsPage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+
+  useSEO({
+    title: 'All Assignments',
+    description: 'View and manage all assignments across courses on Skillorai.',
+    noIndex: true,
+  });
 
   // Get all courses first
   const { data: coursesData, isLoading: coursesLoading } = useQuery({

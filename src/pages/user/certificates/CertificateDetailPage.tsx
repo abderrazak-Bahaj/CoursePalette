@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Award, Download, Share2, ChevronLeft, Printer } from 'lucide-react';
@@ -15,6 +16,13 @@ import HideCertificate from '@/components/certificate/HideCertificate';
 const CertificateDetailPage = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const certificateRef = useRef<HTMLDivElement>(null);
+
+  useSEO({
+    title: 'Certificate',
+    description:
+      'View and download your course completion certificate from Skillorai.',
+    noIndex: true,
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ['certificate', courseId],

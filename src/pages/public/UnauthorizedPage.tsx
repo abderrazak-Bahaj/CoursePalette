@@ -4,10 +4,18 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import AdminLayout from '@/components/layout/AdminLayout';
 import MainLayout from '@/components/layout/MainLayout';
+import { useSEO } from '@/hooks/useSEO';
 
 const UnauthorizedPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  useSEO({
+    title: 'Unauthorized Access',
+    description:
+      'You do not have permission to access this page. Please contact support if you believe this is an error.',
+    noIndex: true,
+  });
   const goToDashboard = () => {
     if (user?.role === 'ADMIN' || user?.role === 'TEACHER') {
       navigate('/admin/dashboard');

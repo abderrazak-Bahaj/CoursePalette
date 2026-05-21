@@ -16,6 +16,7 @@ import {
   Twitter,
   Linkedin,
 } from 'lucide-react';
+import { useSEO } from '@/hooks/useSEO';
 
 const mockBlogPosts = [
   {
@@ -194,6 +195,13 @@ console.log(multiply(2, 3)); // Outputs: 6
 const BlogDetailPage = () => {
   const { id } = useParams();
   const post = mockBlogPosts.find((post) => post.id === id);
+
+  useSEO({
+    title: 'Blog Article',
+    description:
+      'Read in-depth articles and tutorials on Skillorai. Learn from industry experts about programming, design, and career development.',
+    keywords: 'blog post, article, tutorial, learning, education',
+  });
 
   if (!post) {
     return (

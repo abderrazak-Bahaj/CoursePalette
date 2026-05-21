@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Search, Calendar, User } from 'lucide-react';
+import { useSEO } from '@/hooks/useSEO';
 
 const mockBlogPosts = [
   {
@@ -109,6 +110,14 @@ const categories = [
 const BlogPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+
+  useSEO({
+    title: 'Blog',
+    description:
+      'Read the latest articles on web development, data science, design, and online learning tips from Skillorai experts.',
+    keywords:
+      'blog, articles, tutorials, web development, data science, learning tips',
+  });
 
   const filteredPosts = mockBlogPosts.filter((post) => {
     const matchesSearch =

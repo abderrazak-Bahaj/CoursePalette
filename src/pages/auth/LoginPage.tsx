@@ -14,8 +14,15 @@ import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { Eye, EyeOff } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
+import { useSEO } from '@/hooks/useSEO';
 
 const LoginPage = () => {
+  useSEO({
+    title: 'Sign In',
+    description:
+      'Sign in to your Skillorai account to access your courses, track progress, and continue learning.',
+  });
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);

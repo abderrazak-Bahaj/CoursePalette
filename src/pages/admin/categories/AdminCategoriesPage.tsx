@@ -31,6 +31,7 @@ import { useToast } from '@/hooks/use-toast';
 import CategoryModal from '@/components/admin/CategoryModal';
 import { DeleteCategoryModal } from '@/components/admin/DeleteCategoryModal';
 import { useNavigate } from 'react-router-dom';
+import { useSEO } from '@/hooks/useSEO';
 
 interface Category {
   id: string;
@@ -57,6 +58,11 @@ interface CategoryFormData {
 }
 
 const AdminCategoriesPage = () => {
+  useSEO({
+    title: 'Manage Categories',
+    description: 'Manage manage categories on Skillorai.',
+    noIndex: true,
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [isCategoryModalOpen, setCategoryModalOpen] = useState(false);
   const [editCategory, setEditCategory] = useState<Category | null>(null);

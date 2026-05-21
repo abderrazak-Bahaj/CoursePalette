@@ -7,6 +7,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import { useMutation } from '@tanstack/react-query';
 import { paymentService } from '@/services/api';
 import { useEffect } from 'react';
+import { useSEO } from '@/hooks/useSEO';
 
 const CartPage = () => {
   const { items, removeFromCart, total, clearCart } = useCart();
@@ -14,6 +15,12 @@ const CartPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
+
+  useSEO({
+    title: 'Checkout',
+    description: 'Complete your course purchase on Skillorai.',
+    noIndex: true,
+  });
 
   const paymentMutation = useMutation({
     retry: false,

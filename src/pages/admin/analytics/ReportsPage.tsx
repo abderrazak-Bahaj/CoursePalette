@@ -38,6 +38,7 @@ import {
 } from 'lucide-react';
 import AdminEnrollmentStats from '@/components/admin/AdminEnrollmentStats';
 import { useAuth } from '@/hooks/useAuth';
+import { useSEO } from '@/hooks/useSEO';
 
 const enrollmentData = [
   { name: 'JavaScript Basics', value: 400, color: '#8884d8' },
@@ -64,6 +65,11 @@ const userActivityData = [
 ];
 
 const ReportsPage = () => {
+  useSEO({
+    title: 'Reports & Analytics',
+    description: 'Manage reports & analytics on Skillorai.',
+    noIndex: true,
+  });
   const { user } = useAuth();
 
   // Only render with AdminLayout if user is admin, fallback to normal view for others

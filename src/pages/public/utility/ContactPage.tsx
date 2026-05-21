@@ -3,8 +3,16 @@ import { Card, CardContent } from '@/components/ds/primitives/Card';
 import { Button } from '@/components/ds/primitives/Button';
 import { Input } from '@/components/ds/primitives/Input';
 import { Mail, MapPin, Phone, Clock, Send } from 'lucide-react';
+import { useSEO } from '@/hooks/useSEO';
 
 const ContactPage = () => {
+  useSEO({
+    title: 'Contact Us',
+    description:
+      'Get in touch with the Skillorai team. We are here to help with questions about courses, partnerships, or technical support.',
+    keywords: 'contact, support, help, reach out, email, feedback',
+  });
+
   return (
     <MainLayout>
       <div className="bg-[#0f172a] py-12">

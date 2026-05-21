@@ -1,8 +1,16 @@
 import MainLayout from '@/components/layout/MainLayout';
 import { Card } from '@/components/ds/primitives/Card';
 import { ChevronRight } from 'lucide-react';
+import { useSEO } from '@/hooks/useSEO';
 
 const PrivacyPolicyPage = () => {
+  useSEO({
+    title: 'Privacy Policy',
+    description:
+      'Learn how Skillorai collects, uses, and protects your personal data. Read our privacy policy for full transparency on data handling.',
+    keywords: 'privacy policy, data protection, personal data, cookies, GDPR',
+  });
+
   const sections = [
     { id: 'information', title: 'Information We Collect' },
     { id: 'usage', title: 'How We Use Your Information' },

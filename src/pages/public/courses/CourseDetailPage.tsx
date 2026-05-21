@@ -15,6 +15,7 @@ import { CourseOverview } from '@/components/course/CourseOverview';
 import { CourseInstructor } from '@/components/course/CourseInstructor';
 import { CourseReviews } from '@/components/course/CourseReviews';
 import { useCart } from '@/contexts/CartContext';
+import { useSEO } from '@/hooks/useSEO';
 
 const CourseDetailPage = () => {
   const { courseId: id } = useParams<{ courseId: string }>();
@@ -23,6 +24,14 @@ const CourseDetailPage = () => {
   const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
   const { addToCart } = useCart();
+
+  useSEO({
+    title: 'Course Details',
+    description:
+      'Explore course curriculum, instructor details, reviews, and enroll to start learning with expert-led content on Skillorai.',
+    keywords:
+      'course, online learning, curriculum, enroll, lessons, instructor',
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ['course', id],

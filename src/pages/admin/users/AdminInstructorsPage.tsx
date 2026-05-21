@@ -44,6 +44,7 @@ import { userService } from '@/services/api/userService';
 import { UserStatusModal } from '@/components/admin/UserStatusModal';
 import { UserPasswordModal } from '@/components/admin/UserPasswordModal';
 import { DeleteUserModal } from '@/components/admin/DeleteUserModal';
+import { useSEO } from '@/hooks/useSEO';
 
 interface Teacher {
   id: number;
@@ -99,6 +100,11 @@ interface NewTeacherData {
 }
 
 const AdminInstructorsPage = () => {
+  useSEO({
+    title: 'Manage Instructors',
+    description: 'Manage manage instructors on Skillorai.',
+    noIndex: true,
+  });
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();

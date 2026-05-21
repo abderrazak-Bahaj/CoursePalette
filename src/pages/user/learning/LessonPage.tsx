@@ -22,6 +22,7 @@ import AssignmentItem from '@/components/learning/AssignmentItem';
 import LessonItem from '@/components/learning/LessonItem';
 import { LessonPageIntegration } from '@/components/ai/Integrations/LessonPageIntegration';
 import ReactMarkdown from 'react-markdown';
+import { useSEO } from '@/hooks/useSEO';
 
 const LessonPage = () => {
   const { courseId, lessonId } = useParams<{
@@ -32,6 +33,12 @@ const LessonPage = () => {
   const queryClient = useQueryClient();
 
   const { toast } = useToast();
+
+  useSEO({
+    title: 'Lesson',
+    description: 'Watch lessons and track your learning progress on Skillorai.',
+    noIndex: true,
+  });
 
   const { data: courseData, isLoading: courseLoading } = useQuery({
     queryKey: ['course'],

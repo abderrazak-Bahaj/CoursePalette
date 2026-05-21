@@ -17,6 +17,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { courseService } from '@/services/api';
 import AdminLayout from '@/components/layout/AdminLayout';
 import WrapperLoading from '@/components/ui/wrapper-loading';
+import { useSEO } from '@/hooks/useSEO';
 
 const LazyAssignmentGenerator = lazy(() =>
   import('@/components/ai/TeacherTools/AssignmentGenerator').then((m) => ({
@@ -28,6 +29,13 @@ const GenerateAssignmentPage = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  useSEO({
+    title: 'Generate Assignment',
+    description:
+      'Generate AI-powered assignments for your courses on Skillorai.',
+    noIndex: true,
+  });
 
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
   const [assignmentTitle, setAssignmentTitle] = useState('');

@@ -55,8 +55,14 @@ import {
 import StudentForm from '@/components/admin/StudentForm';
 import { UserStatusModal } from '@/components/admin/UserStatusModal';
 import { UserPasswordModal } from '@/components/admin/UserPasswordModal';
+import { useSEO } from '@/hooks/useSEO';
 
 const StudentsPage = () => {
+  useSEO({
+    title: 'Students',
+    description: 'Manage students on Skillorai.',
+    noIndex: true,
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const { user, isAdmin, isTeacher } = useAuth();
   const { toast } = useToast();

@@ -35,6 +35,7 @@ import AdminLayout from '@/components/layout/AdminLayout';
 import WrapperLoading from '@/components/ui/wrapper-loading';
 import { formatTimeLimit } from '@/utils/dateLimit';
 import { AssignmentPageIntegration } from '@/components/ai/Integrations/AssignmentPageIntegration';
+import { useSEO } from '@/hooks/useSEO';
 
 interface QuestionOption {
   id?: string;
@@ -73,6 +74,12 @@ const CreateAssignmentPage = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const isEditMode = !!assignmentId;
+
+  useSEO({
+    title: isEditMode ? 'Edit Assignment' : 'Create Assignment',
+    description: 'Create or edit course assignments on Skillorai.',
+    noIndex: true,
+  });
 
   const [formData, setFormData] = useState<AssignmentFormData>({
     title: '',
