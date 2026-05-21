@@ -1,7 +1,16 @@
 import MainLayout from '@/components/layout/MainLayout';
 import CourseList from '@/components/course/CourseList';
+import { useSEO } from '@/hooks/useSEO';
 
 const CoursesPage = () => {
+  useSEO({
+    title: 'Browse All Courses',
+    description:
+      'Explore our extensive collection of AI-powered courses in programming, data science, web development, and more. Learn at your own pace with expert instructors.',
+    keywords:
+      'online courses, programming courses, data science courses, web development, learn coding',
+  });
+
   return (
     <MainLayout>
       <div className="bg-[#0f172a] py-8">

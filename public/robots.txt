@@ -1,3 +1,13 @@
+# Skillorai - Intelligent Learning Platform
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /profile
+Disallow: /checkout
+Disallow: /api
+
+# Social media crawlers
 User-agent: Googlebot
 Allow: /
 
@@ -10,5 +20,5 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
-Allow: /
+# Sitemap
+Sitemap: https://skillorai.bahaj.dev/sitemap.xml
