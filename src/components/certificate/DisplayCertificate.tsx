@@ -27,7 +27,7 @@ const DisplayCertificate = forwardRef<HTMLDivElement, DisplayCertificateProps>(
           {/* Header */}
           <div>
             <div className="text-gray-400 text-base mb-4 tracking-widest">
-              COURSEPALETTE
+              SKILORAI
             </div>
             <div className="text-[32pt] font-bold text-[#0066FF] font-georgia tracking-wide mb-2">
               CERTIFICATE OF COMPLETION

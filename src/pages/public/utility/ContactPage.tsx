@@ -135,7 +135,7 @@ const ContactPage = () => {
                           Email Us
                         </p>
                         <p className="text-sm text-neutral-400">
-                          support@coursepalette.com
+                          skillorai@bahaj.dev
                         </p>
                       </div>
                     </div>

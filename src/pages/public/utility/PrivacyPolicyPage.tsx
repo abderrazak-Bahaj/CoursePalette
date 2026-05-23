@@ -182,7 +182,7 @@ const PrivacyPolicyPage = () => {
                   contact us at:
                 </p>
                 <p className="text-neutral-300 mt-2">
-                  <strong>Email:</strong> privacy@coursepalette.com
+                  <strong>Email:</strong> skillorai@bahaj.dev
                   <br />
                   <strong>Address:</strong> 123 Education Street, San Francisco,
                   CA 94107, United States

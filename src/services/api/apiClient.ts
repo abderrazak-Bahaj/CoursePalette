@@ -10,10 +10,19 @@ interface ApiOptions {
 }
 
 export const getAuthToken = (): string | null => {
+  // Primary: read the token stored directly by useAuth
+  const token = localStorage.getItem('token');
+  if (token) return token;
+
+  // Fallback: legacy storage format
   const user = localStorage.getItem('user');
   if (user) {
-    const parsedUser = JSON.parse(user);
-    return parsedUser.token || null;
+    try {
+      const parsedUser = JSON.parse(user);
+      return parsedUser.token || null;
+    } catch {
+      return null;
+    }
   }
   return null;
 };
@@ -42,6 +51,7 @@ export const apiClient = async (
   // Prepare headers
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    Accept: 'application/json',
     ...(options.headers || {}),
   };
 
@@ -55,6 +65,7 @@ export const apiClient = async (
   const requestOptions: RequestInit = {
     method,
     headers,
+    redirect: 'manual', // Don't follow redirects — treat them as errors
   };
 
   // Add body for non-GET requests
@@ -70,6 +81,11 @@ export const apiClient = async (
 
   try {
     const response = await fetch(url, requestOptions);
+
+    // Handle redirects (shouldn't happen with our API, indicates a middleware issue)
+    if (response.type === 'opaqueredirect' || response.status === 0) {
+      throw new Error('Request was redirected unexpectedly. Please try again.');
+    }
 
     if (!response.ok) {
       if (response.status === 422) {

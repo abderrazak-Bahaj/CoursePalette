@@ -221,7 +221,7 @@ const Footer = () => {
               <div className="flex flex-col gap-2 mb-7">
                 <div className="flex items-center gap-2 text-xs text-neutral-500">
                   <Mail className="w-3.5 h-3.5 text-violet-400/60" />
-                  <span>support@coursepalette.com</span>
+                  <span>skillorai@bahaj.dev</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-neutral-500">
                   <MapPin className="w-3.5 h-3.5 text-violet-400/60" />
